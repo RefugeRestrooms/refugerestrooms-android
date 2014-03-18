@@ -1,0 +1,10 @@
+# Bare bones of an Android client for www.refugerestrooms.org
+
+The app opens as MainActivity, from whence you can either add a restroom or perform a search.
+
+## TODO
+* Flesh out the Bathroom class
+* Flesh out all the screens with form elements
+* Actually connect the API
+* Fix the branding (logos, purple, etc)
+* Add maps
