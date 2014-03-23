@@ -22,6 +22,7 @@ import android.widget.ListView;
 
 public class ListSearchActivity extends ActionBarActivity implements ServerListener {
 	public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
+	
 	private Server mServer;
 	
 	@Override
@@ -50,6 +51,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	private void launchDetails(Bathroom bathroom) {
 		//TODO add bathroom details
 		Intent intent = new Intent(this, DetailViewActivity.class);
+		intent.putExtra(DetailViewActivity.EXTRA_BATHROOM, bathroom.toJson());
 		startActivity(intent);
 	}
 					
