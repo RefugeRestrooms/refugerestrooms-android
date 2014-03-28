@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ListSearchActivity extends ActionBarActivity implements ServerListener {
 	public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
@@ -66,6 +67,11 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	@Override
 	public void onSubmission(boolean success) {
 		//nothing
+	}
+	
+	@Override
+	public void onError(String errorMessage) {
+		Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
 	}
 	
 	public class BathroomListAdapter extends ArrayAdapter<Bathroom> {

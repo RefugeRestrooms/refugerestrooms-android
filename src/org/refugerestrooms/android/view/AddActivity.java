@@ -49,5 +49,10 @@ public class AddActivity extends ActionBarActivity implements ServerListener {
 			Toast.makeText(getApplicationContext(), R.string.fail_toast, Toast.LENGTH_SHORT).show();
 		}
 	}
+
+	@Override
+	public void onError(String errorMessage) {
+		Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+	}
 	
 }
