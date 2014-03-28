@@ -24,6 +24,7 @@ public class Server {
 		List<Bathroom> results = new LinkedList<Bathroom>();
 		results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P."));
 		results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional"));
+		results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink"));
 		if (mListener != null) {
 			mListener.onSearchResults(results);
 		}

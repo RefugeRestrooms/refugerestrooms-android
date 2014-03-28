@@ -28,6 +28,11 @@ public class DetailViewActivity extends ActionBarActivity {
 	    	mBathroom = Bathroom.fromJson(getIntent().getExtras().getString(EXTRA_BATHROOM));
 	    }
 	    
+	    String name = mBathroom.getName();
+		if (name != null) {
+	    	setTitle(name);
+	    }
+	    
 	    updateView();
 	}
 
@@ -47,7 +52,11 @@ public class DetailViewActivity extends ActionBarActivity {
 	}
 
 	private CharSequence getBathroomText() {
-		return mBathroom.getAddress().toString() + "\n" +
+		String address = "";
+		for (int i = 0; i < mBathroom.getAddress().getMaxAddressLineIndex(); i++) {
+			address += mBathroom.getAddress().getAddressLine(i) + "\n";
+		}
+		return address +
 				"Directions: " + mBathroom.getDirections() + "\n" +
 				"Comments: " + mBathroom.getComments();
 	}

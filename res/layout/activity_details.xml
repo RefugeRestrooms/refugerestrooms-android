@@ -13,16 +13,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <View
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1" /> 
+            
             <ImageView
                 android:id="@+id/unisex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
+                android:layout_weight="0"
                 android:contentDescription="@string/unisex"
                 android:visibility="gone"
                 android:src="@drawable/unisex" />
@@ -31,13 +35,12 @@
                 android:id="@+id/accessible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/unisex"
+                android:layout_weight="0"
                 android:contentDescription="@string/accessible"
                 android:visibility="gone"
                 android:src="@drawable/accessible" />
 
-        </RelativeLayout>
+        </LinearLayout>
         
 
 
