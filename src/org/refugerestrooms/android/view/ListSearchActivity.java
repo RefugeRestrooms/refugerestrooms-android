@@ -70,8 +70,13 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	}
 	
 	@Override
-	public void onError(String errorMessage) {
-		Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+	public void onError(final String errorMessage) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(ListSearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 	
 	public class BathroomListAdapter extends ArrayAdapter<Bathroom> {

@@ -2,6 +2,7 @@ package org.refugerestrooms.android.server;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -44,19 +45,18 @@ public class Server {
 			}
 			
 			@Override
-			public URI buildUrl() {
-				// TODO build it
-				return null;
+			public URI buildUrl() throws URISyntaxException {
+				return new URI("http://www.refugerestrooms.org/api/v1/bathrooms");
 			}
-		};//TODO .setSearchTerm().execute();
+		}.setSearchTerm(searchTerm).execute();
 		
-		List<Bathroom> results = new LinkedList<Bathroom>();
-		results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P."));
-		results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional"));
-		results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink"));
-		if (mListener != null) {
-			mListener.onSearchResults(results);
-		}
+//		List<Bathroom> results = new LinkedList<Bathroom>();
+//		results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P.", 100));
+//		results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional", 0));
+//		results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink", 68));
+//		if (mListener != null) {
+//			mListener.onSearchResults(results);
+//		}
 	}
 
 	protected void reportError(String errorMessage) {
@@ -77,10 +77,10 @@ public class Server {
 		
 		@Override
 		protected String doInBackground(Void... arg0) {
-			HttpGet request = new HttpGet(buildUrl());
-			HttpClient client = new DefaultHttpClient();
-			
+			HttpGet request;
 			try {
+				request = new HttpGet(buildUrl());
+				HttpClient client = new DefaultHttpClient();
 				HttpResponse response = client.execute(request);
 				int code = response.getStatusLine().getStatusCode();
 				
@@ -95,15 +95,20 @@ public class Server {
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
 				reportError("IOException");
+			} catch (URISyntaxException e1) {
+				Log.e(TAG, "Failed to build URL " + e1.getMessage());
 			}
 			return null;
 		}
 
-		public abstract URI buildUrl();
+		public abstract URI buildUrl() throws URISyntaxException;
 
 		@Override
 		protected void onPostExecute(String result) {
-			//TODO return the results
+			Log.d(TAG, "Result: " + result);
+			if (mListener != null) {
+				mListener.onSearchResults(new LinkedList<Bathroom>());
+			}
 		}
 	}
 
