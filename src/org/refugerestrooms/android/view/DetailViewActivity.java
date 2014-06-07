@@ -2,6 +2,11 @@ package org.refugerestrooms.android.view;
 
 import org.refugerestrooms.android.model.Bathroom;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.jmpumphrey.refugerestrooms.R;
 
 import android.os.Bundle;
@@ -41,7 +46,19 @@ public class DetailViewActivity extends ActionBarActivity {
 			tv.setText(getBathroomText());
 			View specsView = findViewById(R.id.specs);
 			BathroomSpecsViewUpdater.update(specsView, mBathroom);
+
+			updateMap();
 		}
+	}
+
+	private void updateMap() {
+		LatLng latLng = new LatLng(48, 0);
+		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		if (map != null) {
+			map.addMarker(new MarkerOptions().title(mBathroom.getName()).position(latLng));
+		}
+		map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+		map.moveCamera(CameraUpdateFactory.zoomTo(15));
 	}
 
 	private CharSequence getBathroomText() {
