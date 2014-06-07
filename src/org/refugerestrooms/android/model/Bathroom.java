@@ -24,15 +24,18 @@ public class Bathroom {
 	private String mDirections;
 	@SerializedName("comments")
 	private String mComments;
+	@SerializedName("score")
+	private int mScore;
 
 	public Bathroom(String mName, Address mAddress, boolean mAccessible,
-			boolean mUnisex, String mDirections, String mComments) {
+			boolean mUnisex, String mDirections, String mComments, int score) {
 		this.mName = mName;
 		this.mAddress = mAddress;
 		this.mAccessible = mAccessible;
 		this.mUnisex = mUnisex;
 		this.mDirections = mDirections;
 		this.mComments = mComments;
+		this.mScore = score;
 	}
 
 	public String getName() {
@@ -53,6 +56,10 @@ public class Bathroom {
 
 	public String getDirections() {
 		return mDirections;
+	}
+
+	public int getScore() {
+		return mScore;
 	}
 
 	public String getComments() {
