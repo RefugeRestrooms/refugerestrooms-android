@@ -40,6 +40,9 @@ public class DetailViewActivity extends ActionBarActivity {
 		if (mBathroom != null) {
 			TextView tv = (TextView) findViewById(R.id.text);
 			tv.setText(getBathroomText());
+			TextView scoreTv = (TextView) findViewById(R.id.score);
+			scoreTv.setText("" + mBathroom.getScore());
+			
 			if (mBathroom.isAccessible()) {
 				ImageView iv = (ImageView) findViewById(R.id.accessible);
 				iv.setVisibility(View.VISIBLE);
@@ -57,7 +60,7 @@ public class DetailViewActivity extends ActionBarActivity {
 			address += mBathroom.getAddress().getAddressLine(i) + "\n";
 		}
 		return address +
-				"Directions: " + mBathroom.getDirections() + "\n" +
+				"Directions: " + mBathroom.getDirections() + "\n\n" +
 				"Comments: " + mBathroom.getComments();
 	}
 	
