@@ -8,10 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.SpannedString;
 import android.text.util.Linkify;
 
 public class MainActivity extends ActionBarActivity {

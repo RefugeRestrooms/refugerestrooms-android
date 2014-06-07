@@ -45,7 +45,7 @@ public class DetailViewActivity extends ActionBarActivity {
 			TextView tv = (TextView) findViewById(R.id.text);
 			tv.setText(getBathroomText());
 			View specsView = findViewById(R.id.specs);
-			BathroomSpecsViewUpdater.update(specsView, mBathroom);
+			BathroomSpecsViewUpdater.update(specsView, mBathroom, this);
 
 			updateMap();
 		}

@@ -4,6 +4,7 @@ import org.refugerestrooms.android.model.Bathroom;
 
 import com.jmpumphrey.refugerestrooms.R;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,10 +12,10 @@ import android.widget.TextView;
 
 public class BathroomSpecsViewUpdater {
 
-	public static void update(View view, Bathroom bathroom) {
+	public static void update(View view, Bathroom bathroom, Context context) {
 		TextView scoreTv = (TextView) view.findViewById(R.id.score);
 		int score = bathroom.getScore();
-		scoreTv.setText("" + score);
+		scoreTv.setText(context.getString(R.string.score) + " " + score);
 		scoreTv.setBackgroundColor(getScoreColour(score));
 		
 		if (bathroom.isAccessible()) {

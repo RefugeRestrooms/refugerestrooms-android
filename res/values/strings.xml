@@ -14,6 +14,7 @@
     <string name="fail_toast">There was an error submitting the restroom</string>
     <string name="accessible">Accessible</string>
     <string name="unisex">Unisex</string>
+    <string name="score">Score:  </string>
     <string name="about">The REFUGE app is an android client for refugerestrooms.org, a web app which seeks to provide safe restroom access for transgender, intersex, and gender nonconforming individuals.\n\nREFUGE picks up the torch where Safe2Pee left off, bringing help to those who find themselves in need of a place to pee safely once again. We seek to create a community focused not only on finding existing safe restroom access but also looking forward and participating in restroom advocacy for transgender, intersex, and gender nonconforming folk.\n\nEnter your location above to get started.</string>
     <string name="about_link">For more information, see http://www.refugerestrooms.org/about</string>
 </resources>

@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/score"
-        android:layout_width="64dp"
+        android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="0"
