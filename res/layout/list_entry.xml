@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/light_purple"
     android:layout_height="wrap_content"
@@ -6,8 +6,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
+        android:minHeight="64dp"
         android:padding="16dp"
+        android:orientation="vertical"
         android:background="@android:color/white">
         <TextView
 	        android:id="@+id/list_item_text"
@@ -17,7 +19,8 @@
 	        android:textColor="@color/dark_purple"
 	        android:textSize="18sp" >
         </TextView>
-    </LinearLayout>
+        <include layout="@layout/bathroom_specs_view" />
+        </LinearLayout>
 
 
-</LinearLayout>
+</FrameLayout>

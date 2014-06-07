@@ -40,17 +40,8 @@ public class DetailViewActivity extends ActionBarActivity {
 		if (mBathroom != null) {
 			TextView tv = (TextView) findViewById(R.id.text);
 			tv.setText(getBathroomText());
-			TextView scoreTv = (TextView) findViewById(R.id.score);
-			scoreTv.setText("" + mBathroom.getScore());
-			
-			if (mBathroom.isAccessible()) {
-				ImageView iv = (ImageView) findViewById(R.id.accessible);
-				iv.setVisibility(View.VISIBLE);
-			}
-			if (mBathroom.isUnisex()) {
-				ImageView iv = (ImageView) findViewById(R.id.unisex);
-				iv.setVisibility(View.VISIBLE);
-			}
+			View specsView = findViewById(R.id.specs);
+			BathroomSpecsViewUpdater.update(specsView, mBathroom);
 		}
 	}
 

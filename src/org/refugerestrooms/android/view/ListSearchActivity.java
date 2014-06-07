@@ -90,6 +90,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final Bathroom bathroom = getItem(position);
 			View view = super.getView(position, convertView, parent);
+			BathroomSpecsViewUpdater.update(view, bathroom);
 			if (bathroom != null) {
 				view.setOnClickListener(new OnClickListener() {
 					@Override
