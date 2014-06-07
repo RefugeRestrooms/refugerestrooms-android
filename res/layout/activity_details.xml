@@ -1,5 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView1"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="8dp"
     android:background="@color/light_purple"
@@ -22,10 +21,13 @@
             android:id="@+id/specs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
-        
-
-
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+        <fragment
+		    class="com.google.android.gms.maps.SupportMapFragment"
+		    android:id="@+id/map"
+		    android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
-</ScrollView>
+</FrameLayout>
