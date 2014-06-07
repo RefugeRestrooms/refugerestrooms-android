@@ -74,6 +74,9 @@ public class Server {
 					results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P.", 100));
 					results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional", 0));
 					results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink", 68));
+					results.add(new Bathroom("Bathroom in the Horse and Jockey", new Address(Locale.getDefault()), true, true, "Upstairs", "They have some nice craft beers", 25));
+					results.add(new Bathroom("Bathroom in the Wheatsheaf", new Address(Locale.getDefault()), true, true, "In the basement", "A bit dark", 50));
+					
 					if (mListener != null) {
 						mListener.onSearchResults(results);
 					}
