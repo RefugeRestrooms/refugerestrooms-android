@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -15,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.refugerestrooms.android.model.Bathroom;
+import org.refugerestrooms.android.model.ListOfBathrooms;
 
 import android.location.Address;
 import android.os.AsyncTask;
@@ -48,15 +52,35 @@ public class Server {
 			public URI buildUrl() throws URISyntaxException {
 				return new URI("http://www.refugerestrooms.org/api/v1/bathrooms");
 			}
+			
+			@Override
+			protected void onPostExecute(String result) {
+				Log.d(TAG, "Result: " + result);
+				if (result != null) {
+					try {
+						Gson gson = new Gson();
+						ListOfBathrooms list = gson.fromJson(result, ListOfBathrooms.class);
+						
+						if (mListener != null) {
+							mListener.onSearchResults(list);
+						}
+					} catch (JsonSyntaxException jse) {
+						String msg = "JSON Error: " + jse.getMessage();
+						Log.e(TAG, msg);
+						reportError(msg);
+					}
+				} else {
+					List<Bathroom> results = new LinkedList<Bathroom>();
+					results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P.", 100));
+					results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional", 0));
+					results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink", 68));
+					if (mListener != null) {
+						mListener.onSearchResults(results);
+					}
+				}
+			}
+			
 		}.setSearchTerm(searchTerm).execute();
-		
-//		List<Bathroom> results = new LinkedList<Bathroom>();
-//		results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P.", 100));
-//		results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional", 0));
-//		results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink", 68));
-//		if (mListener != null) {
-//			mListener.onSearchResults(results);
-//		}
 	}
 
 	protected void reportError(String errorMessage) {
@@ -102,14 +126,6 @@ public class Server {
 		}
 
 		public abstract URI buildUrl() throws URISyntaxException;
-
-		@Override
-		protected void onPostExecute(String result) {
-			Log.d(TAG, "Result: " + result);
-			if (mListener != null) {
-				mListener.onSearchResults(new LinkedList<Bathroom>());
-			}
-		}
 	}
 
 	public interface ServerListener {
