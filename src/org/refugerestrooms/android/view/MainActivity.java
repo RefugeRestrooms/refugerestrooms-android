@@ -6,7 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.SpannedString;
+import android.text.util.Linkify;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -14,6 +20,11 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		TextView link = (TextView) findViewById(R.id.link);
+		if (link != null) {
+			Linkify.addLinks(link, Linkify.WEB_URLS);
+		}
 	}
 	
 	/**

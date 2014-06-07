@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:background="@color/light_purple"
     android:divider="@android:color/transparent"
+    android:padding="8dp"
     android:layout_height="match_parent" >
 
 </ListView>
