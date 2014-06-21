@@ -3,5 +3,6 @@
 The app opens as MainActivity, from whence you can either add a restroom or perform a search.
 
 ## TODO
-* Actually connect the API
-* Show results on map
+* Search by location
+* Show all results on map
+* Search flags (e.g. accessible, unisex)
