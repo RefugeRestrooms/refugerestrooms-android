@@ -12,6 +12,7 @@ import com.jmpumphrey.refugerestrooms.R;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -52,7 +53,7 @@ public class DetailViewActivity extends ActionBarActivity {
 	}
 
 	private void updateMap() {
-		LatLng latLng = new LatLng(48, 0);
+		LatLng latLng = mBathroom.getLocation();
 		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (map != null) {
 			map.addMarker(new MarkerOptions().title(mBathroom.getName()).position(latLng));
@@ -62,13 +63,21 @@ public class DetailViewActivity extends ActionBarActivity {
 	}
 
 	private CharSequence getBathroomText() {
-		String address = "";
-		for (int i = 0; i < mBathroom.getAddress().getMaxAddressLineIndex(); i++) {
-			address += mBathroom.getAddress().getAddressLine(i) + "\n";
+		String text = "";
+		String address = mBathroom.getAddress();
+		String directions = mBathroom.getDirections();
+		String comments = mBathroom.getComments();
+		if (!TextUtils.isEmpty(address)) {
+			text += address;
 		}
-		return address +
-				"Directions: " + mBathroom.getDirections() + "\n\n" +
-				"Comments: " + mBathroom.getComments();
+		if (!TextUtils.isEmpty(directions)) {
+			text += "\nDirections: " + directions + "\n";
+		}
+		if (!TextUtils.isEmpty(comments)) {
+			text += "\nComments: " + comments;
+		}
+		
+		return  text;
 	}
 	
 }

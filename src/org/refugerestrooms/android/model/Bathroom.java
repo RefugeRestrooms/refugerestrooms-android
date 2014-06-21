@@ -1,9 +1,11 @@
 package org.refugerestrooms.android.model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import android.location.Address;
+import android.text.TextUtils;
 
 /**
  * Placeholder
@@ -14,36 +16,50 @@ public class Bathroom {
 	//TODO Other fields
 	@SerializedName("name")
 	private String mName;
-	@SerializedName("address")
-	private Address mAddress;
+	@SerializedName("street")
+	private String mStreet;
+	@SerializedName("city")
+	private String mCity;
+	@SerializedName("state")
+	private String mState;
+	@SerializedName("country")
+	private String mCountry;
 	@SerializedName("accessible")
 	private boolean mAccessible;
 	@SerializedName("unisex")
 	private boolean mUnisex;
 	@SerializedName("directions")
 	private String mDirections;
-	@SerializedName("comments")
+	@SerializedName("comment")
 	private String mComments;
-	@SerializedName("score")
-	private int mScore;
-
-	public Bathroom(String mName, Address mAddress, boolean mAccessible,
-			boolean mUnisex, String mDirections, String mComments, int score) {
-		this.mName = mName;
-		this.mAddress = mAddress;
-		this.mAccessible = mAccessible;
-		this.mUnisex = mUnisex;
-		this.mDirections = mDirections;
-		this.mComments = mComments;
-		this.mScore = score;
-	}
+	@SerializedName("downvote")
+	private int mDownvote;
+	@SerializedName("upvote")
+	private int mUpvote;
+	@SerializedName("latitude")
+	private float mLatitude;
+	@SerializedName("longitude")
+	private float mLongitude;
 
 	public String getName() {
 		return mName;
 	}
 
-	public Address getAddress() {
-		return mAddress;
+	public String getAddress() {
+		String address = "";
+		if (!TextUtils.isEmpty(mStreet)) {
+			address += mStreet + "\n";
+		}
+		if (!TextUtils.isEmpty(mCity)) {
+			address += mCity + "\n";
+		}
+		if (!TextUtils.isEmpty(mState)) {
+			address += mState + "\n";
+		}
+		if (!TextUtils.isEmpty(mCountry)) {
+			address += mCountry + "\n";
+		}
+		return address;
 	}
 
 	public boolean isAccessible() {
@@ -59,7 +75,10 @@ public class Bathroom {
 	}
 
 	public int getScore() {
-		return mScore;
+		if (mUpvote == 0 && mDownvote == 0) {
+			return -1;
+		}
+		return (mUpvote * 100) / ((mUpvote + mDownvote) * 100);
 	}
 
 	public String getComments() {
@@ -83,5 +102,9 @@ public class Bathroom {
 	public static Bathroom fromJson(String json) {
 		Gson gson = new Gson();
 		return gson.fromJson(json, Bathroom.class);
+	}
+
+	public LatLng getLocation() {
+		return new LatLng(mLatitude, mLongitude);
 	}
 }
