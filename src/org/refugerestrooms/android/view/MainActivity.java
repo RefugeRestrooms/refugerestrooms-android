@@ -16,11 +16,6 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		TextView link = (TextView) findViewById(R.id.link);
-		if (link != null) {
-			Linkify.addLinks(link, Linkify.WEB_URLS);
-		}
 	}
 	
 	/**
@@ -29,6 +24,24 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	public void onClickAdd(View view) {
 		Intent intent = new Intent(this, AddActivity.class);
+		startActivity(intent);
+	}
+	
+	/**
+	 * Search by location
+	 * @param view
+	 */
+	public void onClickLocation(View view) {
+		Intent intent = new Intent(this, AddActivity.class);
+		startActivity(intent);
+	}
+	
+	/**
+	 * Launch the about activity
+	 * @param view
+	 */
+	public void onClickAbout(View view) {
+		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
 	}
 

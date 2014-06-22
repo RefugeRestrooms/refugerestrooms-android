@@ -10,13 +10,10 @@
     android:padding="8dp"
     android:background="@color/light_purple"
     tools:context=".MainActivity" >
-        <ScrollView 
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        android:background="@android:color/white">
     <LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
 	    android:orientation="vertical"
         android:padding="8dp"
         >
@@ -50,25 +47,28 @@
             android:onClick="onClickSearch"
             android:text="@string/search_button" />
     
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:onClick="onClickLocation"
+            android:text="@string/search_location_button" />
+        
 	    <Button
-	        android:id="@+id/button_add"
+	        android:id="@+id/button_location"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:enabled="false"
 	        android:onClick="onClickAdd"
 	        android:text="@string/add_button" />
-	    <TextView 
-	        android:padding="8dp"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:text="@string/about"/>
-        <TextView 
-            android:id="@+id/link"
-            android:padding="8dp"
-            android:layout_width="match_parent"
+	    
+        <Button
+            android:id="@+id/button_about"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/about_link"/>
-	</LinearLayout></ScrollView>
+            android:onClick="onClickAbout"
+            android:text="@string/about_button" />
+    
+	</LinearLayout>
 </FrameLayout>

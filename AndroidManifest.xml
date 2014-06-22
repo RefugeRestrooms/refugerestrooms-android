@@ -54,6 +54,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jmpumphrey.refugerestrooms.view.MainActivity" />
         </activity>
+        <activity 
+            android:name="org.refugerestrooms.android.view.AboutActivity"
+            android:label="@string/about_activity_title" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jmpumphrey.refugerestrooms.view.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
