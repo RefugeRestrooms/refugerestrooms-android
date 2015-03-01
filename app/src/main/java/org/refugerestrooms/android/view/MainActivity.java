@@ -14,23 +14,13 @@ import android.widget.TextView;
 import android.support.v7.app.ActionBarActivity;
 import android.text.util.Linkify;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends ActionBarActivity implements LocationListener {
-    protected LocationManager locationManager;
-    protected LocationListener locationListener;
-    protected Double latitude,longitude;
-    protected boolean gps_enabled,network_enabled;
+public class MainActivity extends ActionBarActivity{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
     }
 	
 	/**
@@ -65,9 +55,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
 	 * @param view
 	 */
 	public void onClickSearchByLocation(View view) {
-        Intent intent = new Intent(this, ListSearchActivity.class);
-        String searchLocation = latitude+ "," + longitude;
-        intent.putExtra(ListSearchActivity.INTENT_EXTRA_LOCATION_PARAMS, searchLocation);
+        Intent intent = new Intent(this, ListSearchByLocationActivity.class);
         startActivity(intent);
 	}
 
@@ -83,25 +71,4 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
 		startActivity(intent);
 	}
 
-    @Override
-    public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
 }
