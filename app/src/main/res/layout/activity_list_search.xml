@@ -1,9 +1,20 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_view"
-    android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/light_purple"
-    android:divider="@android:color/transparent"
-    android:padding="8dp"
-    android:layout_height="match_parent" >
+    >
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:background="@color/light_purple"
+        android:divider="@android:color/transparent"
+        android:padding="8dp"
+        android:layout_height="match_parent" >
 
-</ListView>
+    </ListView>
+    <TextView android:id="@+id/no_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No Results" />
+</LinearLayout>

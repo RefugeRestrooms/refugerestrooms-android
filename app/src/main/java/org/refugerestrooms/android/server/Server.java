@@ -81,6 +81,9 @@ public class Server {
 //					if (mListener != null) {
 //						mListener.onSearchResults(results);
 //					}
+                    if(mListener != null){
+                        mListener.onSearchResults(null);
+                    }
 				}
 			}
 			
