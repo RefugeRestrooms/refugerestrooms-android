@@ -39,7 +39,7 @@
 	        android:hint="@string/search_hint" >
 	
 	    </EditText>
-    
+
         <Button
             android:id="@+id/button_search"
             android:layout_width="fill_parent"
@@ -48,15 +48,15 @@
             android:text="@string/search_button" />
     
         <Button
-            android:id="@+id/button_add"
+            android:id="@+id/button_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:onClick="onClickLocation"
+            android:enabled="true"
+            android:onClick="onClickSearchByLocation"
             android:text="@string/search_location_button" />
         
 	    <Button
-	        android:id="@+id/button_location"
+	        android:id="@+id/button_add"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:enabled="false"
