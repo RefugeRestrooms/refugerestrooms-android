@@ -1,0 +1,39 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+
+        <item name="actionBarStyle">@style/RRActionBar</item>
+    </style>
+    
+    <!-- ActionBar styles -->
+    <style name="RRActionBar"
+           parent="@style/Widget.AppCompat.Light.ActionBar">
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/purple</item>
+        <item name="android:background">@color/purple</item>
+        <item name="titleTextStyle">@style/RRActionBarTitleText</item>
+    </style>
+    
+    <style name="RRActionBarTitleText"
+           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#fff</item>
+    </style>
+    
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        
+        
+    </style>
+
+</resources>
