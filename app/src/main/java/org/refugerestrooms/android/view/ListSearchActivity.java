@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,14 +31,20 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	private Server mServer;
 	private String mSearchTerm;
     private ProgressBar progressBar;
+    private static final String KEY_QUERY = "query";
+    protected static final String TAG =  ListSearchActivity.class.getSimpleName();
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        Log.d(TAG,"Creating List");
 		setContentView(R.layout.activity_list_search);
-		
-		mServer = new Server(this);
+        if (savedInstanceState != null) {
+            Log.d(TAG,"Using Saved instance state");
+            mSearchTerm = savedInstanceState.getString(KEY_QUERY);
+        }
 
+		mServer = new Server(this);
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -130,10 +137,17 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's searchterm
-        savedInstanceState.putString("query", mSearchTerm);
+        // Save the user's search term
+        savedInstanceState.putString(KEY_QUERY, mSearchTerm);
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
+
+        @Override
+        public void onResume(){
+            //Your code here
+            Log.d(TAG,"On Resume");
+            super.onResume();
+        }
 }

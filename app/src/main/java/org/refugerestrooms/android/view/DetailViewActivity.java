@@ -4,6 +4,7 @@ import org.refugerestrooms.android.model.Bathroom;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -13,19 +14,22 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 public class DetailViewActivity extends ActionBarActivity {
 
 	public static final String EXTRA_BATHROOM = "bathroom";
+    protected static final String TAG =  DetailViewActivity.class.getSimpleName();
 	private Bathroom mBathroom;
+    protected GoogleMap map;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_details);
-		
+
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	    
@@ -37,7 +41,9 @@ public class DetailViewActivity extends ActionBarActivity {
 		if (name != null) {
 	    	setTitle(name);
 	    }
-	    
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        map = mapFragment.getMap();
 	    updateView();
 	}
 
@@ -52,14 +58,20 @@ public class DetailViewActivity extends ActionBarActivity {
 		}
 	}
 
+    @Override
+    public void onBackPressed(){
+        //Your code here
+        Log.d(TAG, "On Back Pressed");
+        super.onBackPressed();
+    }
+
 	private void updateMap() {
 		LatLng latLng = mBathroom.getLocation();
-		GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (map != null) {
 			map.addMarker(new MarkerOptions().title(mBathroom.getName()).position(latLng));
-		}
-		map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-		map.moveCamera(CameraUpdateFactory.zoomTo(15));
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+		    map.moveCamera(CameraUpdateFactory.zoomTo(15));
+        }
 	}
 
 	private CharSequence getBathroomText() {
@@ -79,5 +91,7 @@ public class DetailViewActivity extends ActionBarActivity {
 		
 		return  text;
 	}
+
 	
 }
+

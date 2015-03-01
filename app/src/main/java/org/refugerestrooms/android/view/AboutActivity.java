@@ -5,9 +5,6 @@ import android.support.v7.app.ActionBarActivity;
 
 import org.refugerestrooms.android.R;
 
-/**
- * Created by naimahmumin on 2/28/15.
- */
 public class AboutActivity extends ActionBarActivity {
 
     @Override

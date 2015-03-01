@@ -28,7 +28,7 @@ import android.util.Log;
 
 public class Server {
 
-	protected static final String TAG = null;
+	protected static final String TAG =  Server.class.getSimpleName();
 	private ServerListener mListener;
 	
 	public Server(ServerListener mListener) {

@@ -40,10 +40,10 @@ public class MainActivity extends ActionBarActivity {
 	 * Launch the about activity
 	 * @param view
 	 */
-//	public void onClickAbout(View view) {
-//		Intent intent = new Intent(this, AboutActivity.class);
-//		startActivity(intent);
-//	}
+	public void onClickAbout(View view) {
+		Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+	}
 
 	/**
 	 * Launch the Search activity
