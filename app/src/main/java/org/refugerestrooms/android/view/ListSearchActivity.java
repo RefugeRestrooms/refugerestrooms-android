@@ -20,13 +20,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.view.Gravity;
 
 public class ListSearchActivity extends ActionBarActivity implements ServerListener {
 	public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
 	
 	private Server mServer;
-	
-	@Override
+	private String mSearchTerm;
+    private ProgressBar progressBar;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_search);
@@ -35,14 +40,24 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
-	    
+
+        // Create a progress bar to display while the list loads
+        progressBar = new ProgressBar(this,null, android.R.attr.progressBarStyleSmall);
+        progressBar.setIndeterminate(true);
+
+        // Must add the progress bar to the root of the layout
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        root.addView(progressBar);
+
 	    Bundle extras = getIntent().getExtras();
 	    if (extras != null) {
-	    	String searchTerm = extras.getString(INTENT_EXTRA_SEARCH_PARAMS);
+	    	String searchTerm = (!extras.containsKey("query")) ?
+                    extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
+                    : extras.getString("query");
+            mSearchTerm = searchTerm; //save query so we can return to activity later
 	    	mServer.performSearch(searchTerm);
 	    }
-	    //TODO save results
-	}
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,18 +70,27 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 		intent.putExtra(DetailViewActivity.EXTRA_BATHROOM, bathroom.toJson());
 		startActivity(intent);
 	}
-					
-	//Listener for the server
-	@Override
-	public void onSearchResults(List<Bathroom> results) {
-		ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
-		
-		((ListView) findViewById(R.id.list_view)).setAdapter(adapter);
-	}
+
+    //Listener for the server
+    @Override
+    public void onSearchResults(List<Bathroom> results) {
+        ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
+
+        ListView list = (ListView) findViewById(R.id.list_view);
+        list.setEmptyView(findViewById(R.id.no_results));
+        list.setAdapter(adapter);
+        progressBar.setVisibility(ProgressBar.GONE);
+    }
+
 
 	@Override
 	public void onSubmission(boolean success) {
 		//nothing
+	}
+
+
+	public void noResults() {
+        //setContentView(findViewById(R.id.no_results));
 	}
 	
 	@Override
@@ -101,5 +125,15 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 			}
 			return view;
 		}
+
 	}
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's searchterm
+        savedInstanceState.putString("query", mSearchTerm);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
 }
