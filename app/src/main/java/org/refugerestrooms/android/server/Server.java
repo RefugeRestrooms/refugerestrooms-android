@@ -38,20 +38,30 @@ public class Server {
 	
 
 	@SuppressWarnings("unused")
-	public void performSearch(final String searchTerm) {
+	public void performSearch(final String searchTerm, final boolean location) {
 		// TODO Lark around on the internet
 		
 		new RemoteCallTask() {
 			private String searchTerm;
+			private String lat;
+            private String lng;
 
 			private RemoteCallTask setSearchTerm(String searchTerm) {
-				this.searchTerm = searchTerm;
+                if(location) {
+                    String[] tokens = searchTerm.split(",");
+                    this.lat = tokens[0];
+                    this.lng = tokens[1];
+                }else
+				    this.searchTerm = searchTerm;
 				return this;
 			}
-			
+
 			@Override
 			public URI buildUrl() throws URISyntaxException {
-				return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
+                if(location)
+                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
+                else
+				    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng));
 			}
 			
 			@Override

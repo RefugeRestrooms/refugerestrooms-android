@@ -26,7 +26,9 @@ import android.view.Gravity;
 
 public class ListSearchActivity extends ActionBarActivity implements ServerListener {
 	public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
-	
+	public static final String INTENT_EXTRA_QUERY_PARAMS = "query"; //TODO one of these for each search param
+	public static final String INTENT_EXTRA_LOCATION_PARAMS = "location"; //TODO one of these for each search param
+
 	private Server mServer;
 	private String mSearchTerm;
     private ProgressBar progressBar;
@@ -51,11 +53,16 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
 	    Bundle extras = getIntent().getExtras();
 	    if (extras != null) {
-	    	String searchTerm = (!extras.containsKey("query")) ?
-                    extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
-                    : extras.getString("query");
-            mSearchTerm = searchTerm; //save query so we can return to activity later
-	    	mServer.performSearch(searchTerm);
+            if(!extras.containsKey(INTENT_EXTRA_LOCATION_PARAMS)) {
+                String searchTerm = (!extras.containsKey(INTENT_EXTRA_QUERY_PARAMS)) ?
+                        extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
+                        : extras.getString(INTENT_EXTRA_QUERY_PARAMS);
+                mSearchTerm = searchTerm; //save query so we can return to activity later
+                mServer.performSearch(searchTerm, false);
+            }else{ //search by location
+                String location =  extras.getString(INTENT_EXTRA_LOCATION_PARAMS);
+                mServer.performSearch(location, false);
+            }
 	    }
     }
 	
@@ -74,7 +81,8 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
     //Listener for the server
     @Override
     public void onSearchResults(List<Bathroom> results) {
-        ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
+        ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(),
+                        R.layout.list_entry, R.id.list_item_text, results);
 
         ListView list = (ListView) findViewById(R.id.list_view);
         list.setEmptyView(findViewById(R.id.no_results));
@@ -131,7 +139,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's searchterm
-        savedInstanceState.putString("query", mSearchTerm);
+        savedInstanceState.putString(INTENT_EXTRA_QUERY_PARAMS, mSearchTerm);
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
