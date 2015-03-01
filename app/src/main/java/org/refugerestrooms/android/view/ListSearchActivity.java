@@ -50,6 +50,10 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
         root.addView(progressBar);
 
 	    Bundle extras = getIntent().getExtras();
+        //if (extras != null) {
+        //    String searchTerm = extras.getString(INTENT_EXTRA_SEARCH_PARAMS);
+        //    mServer.performSearch(searchTerm);
+        //}
 	    if (extras != null) {
 	    	String searchTerm = (!extras.containsKey("query")) ?
                     extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
