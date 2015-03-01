@@ -55,7 +55,6 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
         // Must add the progress bar to the root of the layout
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
-
 	    Bundle extras = getIntent().getExtras();
 	    if (extras != null) {
 	    	String searchTerm = (!extras.containsKey("query")) ?
@@ -68,11 +67,14 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    return super.onCreateOptionsMenu(menu);
+        Log.d(TAG,"Create Options Menu");
+        return super.onCreateOptionsMenu(menu);
+
 	}
 	
 	private void launchDetails(Bathroom bathroom) {
 		//TODO add bathroom details
+        Log.d(TAG,"Launch Details");
 		Intent intent = new Intent(this, DetailViewActivity.class);
 		intent.putExtra(DetailViewActivity.EXTRA_BATHROOM, bathroom.toJson());
 		startActivity(intent);
@@ -81,6 +83,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
     //Listener for the server
     @Override
     public void onSearchResults(List<Bathroom> results) {
+        Log.d(TAG,"Search Results");
         ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
 
         ListView list = (ListView) findViewById(R.id.list_view);
@@ -92,6 +95,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
 	@Override
 	public void onSubmission(boolean success) {
+        Log.d(TAG,"Submission");
 		//nothing
 	}
 
@@ -102,6 +106,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	
 	@Override
 	public void onError(final String errorMessage) {
+        Log.d(TAG,"on Error");
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
