@@ -3,7 +3,7 @@ package org.refugerestrooms.android.view;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import com.jmpumphrey.refugerestrooms.R;
+import org.refugerestrooms.android.R;
 
 /**
  * Created by naimahmumin on 2/28/15.
