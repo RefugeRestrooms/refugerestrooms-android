@@ -17,10 +17,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="app: org.refugerestrooms.android" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10f0d061-9b3f-4137-a0c5-459039a876b7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/org/refugerestrooms/android/view/ListSearchActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/org/refugerestrooms/android/view/ListSearchActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="10f0d061-9b3f-4137-a0c5-459039a876b7" name="Default" comment="" />
     <ignored path="refugerestrooms-android.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,8 +42,8 @@
       <file leaf-file-name="ListSearchActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/org/refugerestrooms/android/view/ListSearchActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.0797343" vertical-offset="1694" max-vertical-offset="1995">
-              <caret line="34" column="82" selection-start-line="34" selection-start-column="82" selection-end-line="34" selection-end-column="82" />
+            <state vertical-scroll-proportion="0.5016611" vertical-offset="1694" max-vertical-offset="1995">
+              <caret line="154" column="35" selection-start-line="154" selection-start-column="35" selection-end-line="154" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -2280,8 +2277,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/org/refugerestrooms/android/view/ListSearchActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.0797343" vertical-offset="1694" max-vertical-offset="1995">
-          <caret line="34" column="82" selection-start-line="34" selection-start-column="82" selection-end-line="34" selection-end-column="82" />
+        <state vertical-scroll-proportion="0.5016611" vertical-offset="1694" max-vertical-offset="1995">
+          <caret line="154" column="35" selection-start-line="154" selection-start-column="35" selection-end-line="154" selection-end-column="35" />
           <folding />
         </state>
       </provider>
