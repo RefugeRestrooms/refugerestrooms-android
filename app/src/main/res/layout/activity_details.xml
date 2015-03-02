@@ -10,12 +10,16 @@
         android:background="@android:color/white"
         android:padding="8dp"
         android:orientation="vertical" >
-        
-        <TextView
-            android:id="@+id/text"
-            android:textSize="16sp"
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="150dp">
+            <TextView
+                android:id="@+id/text"
+                android:textSize="16sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
 
         <include layout="@layout/bathroom_specs_view"
             android:id="@+id/specs"
@@ -24,8 +28,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"/>
         <fragment
-		    class="com.google.android.gms.maps.SupportMapFragment"
-		    android:id="@+id/map"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
 		    android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>

@@ -2,11 +2,7 @@ package org.refugerestrooms.android.view;
 
 import org.refugerestrooms.android.R;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +11,13 @@ import android.widget.TextView;
 import android.support.v7.app.ActionBarActivity;
 import android.text.util.Linkify;
 
-
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-    }
+	}
 	
 	/**
 	 * Launch the Add loo activity
@@ -47,16 +42,7 @@ public class MainActivity extends ActionBarActivity{
 	 * @param view
 	 */
 	public void onClickAbout(View view) {
- 		Intent intent = new Intent(this, AboutActivity.class);
-		startActivity(intent);
-	}
-
-	/**
-	 * Launch the Search by location activity
-	 * @param view
-	 */
-	public void onClickSearchByLocation(View view) {
-        Intent intent = new Intent(this, ListSearchByLocationActivity.class);
+		Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
 	}
 
@@ -71,5 +57,4 @@ public class MainActivity extends ActionBarActivity{
 		intent.putExtra(ListSearchActivity.INTENT_EXTRA_SEARCH_PARAMS, searchTerm);
 		startActivity(intent);
 	}
-
 }

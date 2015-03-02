@@ -28,7 +28,7 @@ import android.util.Log;
 
 public class Server {
 
-	protected static final String TAG = null;
+	protected static final String TAG =  Server.class.getSimpleName();
 	private ServerListener mListener;
 	
 	public Server(ServerListener mListener) {
@@ -38,26 +38,20 @@ public class Server {
 	
 
 	@SuppressWarnings("unused")
-	public void performSearch(final String searchTerm, final boolean location) {
+	public void performSearch(final String searchTerm) {
 		// TODO Lark around on the internet
 		
 		new RemoteCallTask() {
 			private String searchTerm;
-			private String lat;
-            private String lng;
 
 			private RemoteCallTask setSearchTerm(String searchTerm) {
-                if(location) {
-                    String[] tokens = searchTerm.split(",");
-                    this.lat = tokens[0];
-                    this.lng = tokens[1];
-                }else
-				    this.searchTerm = searchTerm;
+				this.searchTerm = searchTerm;
 				return this;
 			}
-
+			
 			@Override
 			public URI buildUrl() throws URISyntaxException {
+<<<<<<< HEAD
                 if(!location)
 				    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
 				else {
@@ -68,6 +62,9 @@ public class Server {
                     Log.d("Captain's log", "uri: http://www.refugerestrooms.org:80/api/v1/restrooms/location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
                     return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
                 }
+=======
+				return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
+>>>>>>> d35d72205c123ef96b8803dd6d041208794dd373
 			}
 			
 			@Override
