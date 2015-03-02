@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
     public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
 
     private Server mServer;
-    //private String mSearchTerm;
+    private String mSearchTerm;
     private ProgressBar progressBar;
 
     @Override
@@ -51,11 +52,11 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            //String searchTerm = (!extras.containsKey("query")) ?
-            //        extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
-            //        : extras.getString("query");
-            String searchTerm =  extras.getString(INTENT_EXTRA_SEARCH_PARAMS);
-            //mSearchTerm = searchTerm; //save query so we can return to activity later
+            String searchTerm = (!extras.containsKey("query")) ?
+                    extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
+                    : extras.getString("query");
+            mSearchTerm = searchTerm; //save query so we can return to activity later
+            Log.d("Captain's log", "mSearchTerm - " + mSearchTerm);
             mServer.performSearch(searchTerm, false);
         }
     }

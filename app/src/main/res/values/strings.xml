@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="search_button">Find a Restroom</string>
     <string name="add_button">Add a Restroom - coming soon</string>
-    <string name="search_location_button">Restrooms Near You - coming soon</string>
+    <string name="search_location_button">Restrooms Near You</string>
     <string name="about_button">About</string>
     <string name="submit_button">Submit</string>
     <string name="add_activity_title">Add a Restroom</string>

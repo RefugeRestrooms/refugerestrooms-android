@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,7 +38,7 @@ public class MainActivity extends ActionBarActivity{
 	 * @param view
 	 */
 	public void onClickLocation(View view) {
-		Intent intent = new Intent(this, AddActivity.class);
+		Intent intent = new Intent(this, ListSearchByLocationActivity.class);
 		startActivity(intent);
 	}
 	
