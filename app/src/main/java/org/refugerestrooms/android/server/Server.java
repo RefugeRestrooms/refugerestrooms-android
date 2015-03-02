@@ -38,7 +38,7 @@ public class Server {
 	
 
 	@SuppressWarnings("unused")
-	public void performSearch(final String searchTerm) {
+	public void performSearch(final String searchTerm, final boolean location) {
 		// TODO Lark around on the internet
 		
 		new RemoteCallTask() {
@@ -51,7 +51,16 @@ public class Server {
 			
 			@Override
 			public URI buildUrl() throws URISyntaxException {
-				return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
+                if(!location)
+				    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
+				else {
+                    String[] latLng = searchTerm.split(",");
+                    String lat = latLng[0];
+                    String lng = latLng[1];
+                    Log.d("Captain's log", "lat: " + lat + " lng:" + lng);
+                    Log.d("Captain's log", "uri: http://www.refugerestrooms.org:80/api/v1/restrooms/location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
+                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
+                }
 			}
 			
 			@Override
@@ -71,16 +80,7 @@ public class Server {
 						reportError(msg);
 					}
 				} else {
-//					List<Bathroom> results = new LinkedList<Bathroom>();
-//					results.add(new Bathroom("High St Public Bathroom", new Address(Locale.getDefault()), false, true, "Public toilet outside the library", "Bring your own T.P.", 100));
-//					results.add(new Bathroom("Leisure Centre Bathroom", new Address(Locale.getDefault()), true, false, "Just off the lobby", "Swimwear optional", 0));
-//					results.add(new Bathroom("Bathroom in the Duke's Head", new Address(Locale.getDefault()), true, true, "To the right of the bar", "You should probably buy a drink", 68));
-//					results.add(new Bathroom("Bathroom in the Horse and Jockey", new Address(Locale.getDefault()), true, true, "Upstairs", "They have some nice craft beers", 25));
-//					results.add(new Bathroom("Bathroom in the Wheatsheaf", new Address(Locale.getDefault()), true, true, "In the basement", "A bit dark", 50));
-//					
-//					if (mListener != null) {
-//						mListener.onSearchResults(results);
-//					}
+                    Log.d("Captain's log", "onpostexecute");
                     if(mListener != null){
                         mListener.onSearchResults(null);
                     }

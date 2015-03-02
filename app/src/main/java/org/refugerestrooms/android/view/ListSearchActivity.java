@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +60,8 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
                     extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
                     : extras.getString("query");
             mSearchTerm = searchTerm; //save query so we can return to activity later
-	    	mServer.performSearch(searchTerm);
+            Log.d("Captain's log", "mSearchTerm - " + mSearchTerm);
+	    	mServer.performSearch(searchTerm, false);
 	    }
     }
 	
