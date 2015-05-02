@@ -18,3 +18,6 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 ## TODO
 * Show all results on map
 * Search flags (e.g. accessible, unisex)
+* Prettify (Materialise?)
+* Tests
+* Refactor the list activities so they can share more code (possibly use same activity)
