@@ -25,134 +25,43 @@ import org.refugerestrooms.android.server.Server.ServerListener;
 
 import java.util.List;
 
-public class ListSearchByLocationActivity extends ActionBarActivity implements ServerListener, LocationListener {
+public class ListSearchByLocationActivity extends ListSearchActivity implements LocationListener {
 
-	private Server mServer;
     protected LocationManager mLocationManager;
     protected Location mLastKnownLocation;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_list_search);
+    protected void doSearch(Bundle extras) {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        mLastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        String latLng = mLastKnownLocation.getLatitude() + "," + mLastKnownLocation.getLongitude();
+        performSearch(latLng, true);
 
-            mServer = new Server(this);
-
-            ActionBar actionBar = getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-
-            // Create a progress bar to display while the list loads
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-            progressBar.setVisibility(View.GONE);
-
-            Bundle extras = getIntent().getExtras();
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            mLastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            String latLng = mLastKnownLocation.getLatitude() + "," + mLastKnownLocation.getLongitude();
-            mServer.performSearch(latLng, true);
-            Log.d("Captain's log", "latLng - " + latLng);
-        }catch(Exception e){
-            Log.d("Captain's log", e.getMessage());
-        }
+        Log.d("Captain's log", "latLng - " + latLng);
     }
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    return super.onCreateOptionsMenu(menu);
-	}
-	
-	private void launchDetails(Bathroom bathroom) {
-		//TODO add bathroom details
-		Intent intent = new Intent(this, DetailViewActivity.class);
-		intent.putExtra(DetailViewActivity.EXTRA_BATHROOM, bathroom.toJson());
-		startActivity(intent);
-	}
-
-    //Listener for the server
-    @Override
-    public void onSearchResults(List<Bathroom> results) {
-        ListView list = (ListView) findViewById(R.id.list_view);
-        list.setEmptyView(findViewById(R.id.no_results));
-        if(results != null) {
-            ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
-            list.setAdapter(adapter);
-        } else {
-            list.setAdapter(null);
-        }
-        Log.d("Captain's log", "results - " + results);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-        progressBar.setVisibility(ProgressBar.GONE);
-    }
-
-
-	@Override
-	public void onSubmission(boolean success) {
-		//nothing
-	}
-
-	
-	@Override
-	public void onError(final String errorMessage) {
-		runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ListSearchByLocationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-	}
 
     @Override
     public void onLocationChanged(Location location) {
         if(mLastKnownLocation != location) {
             String latLng = location.getLatitude() + "," + location.getLongitude();
-            mServer.performSearch(latLng, true);
+            performSearch(latLng, true);
             Log.d("Captain's log", "onlocationchanged - " + latLng);
         }
     }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-
         Log.d("Captain's log", "statusChanged");
     }
 
     @Override
     public void onProviderEnabled(String s) {
         Log.d("Captain's log", "onproviderenabled");
-
     }
 
     @Override
     public void onProviderDisabled(String s) {
         Log.d("Captain's log", "onproviderdisabled");
-
     }
-
-    public class BathroomListAdapter extends ArrayAdapter<Bathroom> {
-
-		public BathroomListAdapter(Context applicationContext, int listEntry,
-				int listItemText, List<Bathroom> results) {
-			super(applicationContext, listEntry, listItemText, results);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			final Bathroom bathroom = getItem(position);
-			View view = super.getView(position, convertView, parent);
-			BathroomSpecsViewUpdater.update(view, bathroom, getContext());
-			if (bathroom != null) {
-				view.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						launchDetails(bathroom);
-					}
-				});
-			}
-			return view;
-		}
-
-	}
-
 }

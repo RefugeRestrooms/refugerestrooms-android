@@ -52,15 +52,23 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 		progressBar.setVisibility(View.VISIBLE);
 
 	    Bundle extras = getIntent().getExtras();
-	    if (extras != null) {
-	    	String searchTerm = (!extras.containsKey("query")) ?
-                    extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
-                    : extras.getString("query");
-            mSearchTerm = searchTerm; //save query so we can return to activity later
-	    	mServer.performSearch(searchTerm, false);
-	    }
+		doSearch(extras);
     }
-	
+
+	protected void doSearch(Bundle extras) {
+		if (extras != null) {
+			String searchTerm = (!extras.containsKey("query")) ?
+					extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
+					: extras.getString("query");
+			mSearchTerm = searchTerm; //save query so we can return to activity later
+			mServer.performSearch(searchTerm, false);
+		}
+	}
+
+	protected void performSearch(String searchTerm, boolean location) {
+		mServer.performSearch(searchTerm, location);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG,"Create Options Menu");
@@ -92,13 +100,13 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 
 	@Override
 	public void onSubmission(boolean success) {
-        Log.d(TAG,"Submission");
+        Log.d(TAG, "Submission");
 		//nothing
 	}
 	
 	@Override
 	public void onError(final String errorMessage) {
-        Log.d(TAG,"on Error");
+        Log.d(TAG, "on Error");
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
