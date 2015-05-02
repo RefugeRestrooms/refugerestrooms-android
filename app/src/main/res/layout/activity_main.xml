@@ -48,19 +48,15 @@
             android:text="@string/search_button" />
 
         <Button
-            android:id="@+id/button_add"
+            android:id="@+id/button_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-<<<<<<< HEAD
             android:enabled="true"
-=======
-            android:enabled="false"
->>>>>>> d35d72205c123ef96b8803dd6d041208794dd373
             android:onClick="onClickLocation"
             android:text="@string/search_location_button" />
 
 	    <Button
-	        android:id="@+id/button_location"
+	        android:id="@+id/button_add"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:enabled="false"

@@ -61,7 +61,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
                     extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
                     : extras.getString("query");
             mSearchTerm = searchTerm; //save query so we can return to activity later
-	    	mServer.performSearch(searchTerm);
+	    	mServer.performSearch(searchTerm, false);
 	    }
     }
 	

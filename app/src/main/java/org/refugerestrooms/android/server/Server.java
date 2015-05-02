@@ -38,7 +38,7 @@ public class Server {
 	
 
 	@SuppressWarnings("unused")
-	public void performSearch(final String searchTerm) {
+	public void performSearch(final String searchTerm, final boolean location) {
 		// TODO Lark around on the internet
 		
 		new RemoteCallTask() {
@@ -51,7 +51,6 @@ public class Server {
 			
 			@Override
 			public URI buildUrl() throws URISyntaxException {
-<<<<<<< HEAD
                 if(!location)
 				    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
 				else {
@@ -62,9 +61,6 @@ public class Server {
                     Log.d("Captain's log", "uri: http://www.refugerestrooms.org:80/api/v1/restrooms/location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
                     return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?lat=" + Uri.encode(lat) + "&lng=" + Uri.encode(lng) );
                 }
-=======
-				return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?query=" + Uri.encode(searchTerm));
->>>>>>> d35d72205c123ef96b8803dd6d041208794dd373
 			}
 			
 			@Override

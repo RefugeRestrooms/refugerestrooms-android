@@ -57,3 +57,9 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+# Android studio
+*.iml
+.idea/
+.gradle
+build/
