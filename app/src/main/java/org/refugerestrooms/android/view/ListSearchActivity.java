@@ -30,14 +30,13 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	
 	private Server mServer;
 	private String mSearchTerm;
-    private ProgressBar progressBar;
     private static final String KEY_QUERY = "query";
     protected static final String TAG =  ListSearchActivity.class.getSimpleName();
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        Log.d(TAG,"Creating List");
+        Log.d(TAG, "Creating List");
 		setContentView(R.layout.activity_list_search);
         if (savedInstanceState != null) {
             Log.d(TAG,"Using Saved instance state");
@@ -49,12 +48,9 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Create a progress bar to display while the list loads
-        progressBar = new ProgressBar(this,null, android.R.attr.progressBarStyleSmall);
-        progressBar.setIndeterminate(true);
+		ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+		progressBar.setVisibility(View.VISIBLE);
 
-        // Must add the progress bar to the root of the layout
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-        root.addView(progressBar);
 	    Bundle extras = getIntent().getExtras();
 	    if (extras != null) {
 	    	String searchTerm = (!extras.containsKey("query")) ?
@@ -83,13 +79,14 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
     //Listener for the server
     @Override
     public void onSearchResults(List<Bathroom> results) {
-        Log.d(TAG,"Search Results");
+        Log.d(TAG, "Search Results");
         ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
 
         ListView list = (ListView) findViewById(R.id.list_view);
         list.setEmptyView(findViewById(R.id.no_results));
         list.setAdapter(adapter);
-        progressBar.setVisibility(ProgressBar.GONE);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+		progressBar.setVisibility(ProgressBar.GONE);
     }
 
 
@@ -97,11 +94,6 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 	public void onSubmission(boolean success) {
         Log.d(TAG,"Submission");
 		//nothing
-	}
-
-
-	public void noResults() {
-        //setContentView(findViewById(R.id.no_results));
 	}
 	
 	@Override

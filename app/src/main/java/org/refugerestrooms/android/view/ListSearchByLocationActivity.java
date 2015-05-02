@@ -26,14 +26,10 @@ import org.refugerestrooms.android.server.Server.ServerListener;
 import java.util.List;
 
 public class ListSearchByLocationActivity extends ActionBarActivity implements ServerListener, LocationListener {
-	public static final String INTENT_EXTRA_SEARCH_PARAMS = "location"; //TODO one of these for each search param
 
 	private Server mServer;
-    private ProgressBar progressBar;
-    protected LocationManager locationManager;
-    protected LocationListener locationListener;
-    protected Location lastKnownLocation;
-    protected boolean gps_enabled,network_enabled;
+    protected LocationManager mLocationManager;
+    protected Location mLastKnownLocation;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +43,14 @@ public class ListSearchByLocationActivity extends ActionBarActivity implements S
             actionBar.setDisplayHomeAsUpEnabled(true);
 
             // Create a progress bar to display while the list loads
-            progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleSmall);
-            progressBar.setIndeterminate(true);
-
-            // Must add the progress bar to the root of the layout
-            ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-            root.addView(progressBar);
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+            progressBar.setVisibility(View.GONE);
 
             Bundle extras = getIntent().getExtras();
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            String latLng = lastKnownLocation.getLatitude() + "," + lastKnownLocation.getLongitude();
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            mLastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            String latLng = mLastKnownLocation.getLatitude() + "," + mLastKnownLocation.getLongitude();
             mServer.performSearch(latLng, true);
             Log.d("Captain's log", "latLng - " + latLng);
         }catch(Exception e){
@@ -86,9 +78,11 @@ public class ListSearchByLocationActivity extends ActionBarActivity implements S
         if(results != null) {
             ArrayAdapter<Bathroom> adapter = new BathroomListAdapter(getApplicationContext(), R.layout.list_entry, R.id.list_item_text, results);
             list.setAdapter(adapter);
-        }else
+        } else {
             list.setAdapter(null);
+        }
         Log.d("Captain's log", "results - " + results);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar.setVisibility(ProgressBar.GONE);
     }
 
@@ -111,7 +105,7 @@ public class ListSearchByLocationActivity extends ActionBarActivity implements S
 
     @Override
     public void onLocationChanged(Location location) {
-        if(lastKnownLocation != location) {
+        if(mLastKnownLocation != location) {
             String latLng = location.getLatitude() + "," + location.getLongitude();
             mServer.performSearch(latLng, true);
             Log.d("Captain's log", "onlocationchanged - " + latLng);
