@@ -28,25 +28,25 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - Currently location defaults to Minneapolis (Fix this!)
 
 ## TODO
-- [] Signed keystore for play store
-- [] Search bar
-- [] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
-- [] Detailed info button like in ios app, Add bathroom rating to info window
-- [] Indicate red markers vs blue markers for accessibility
-- [] Navigate button floating action button instead?
-- [] Style
-  - [] Style Feedback Form better
-  - [] Navigation drawer icons
-  - [] Style text directions section -- directions.html
-- [] Better add bathroom section, currently just a webview
-- [] Contact form without email client
-- [] Update text directions while on tab
-- [] Actionbar activity depreciated (HttpClient as well)
-- [] Enable crash reports
+- [ ] Signed keystore for play store
+- [ ] Search bar
+- [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
+- [ ] Detailed info button like in ios app, Add bathroom rating to info window
+- [ ] Indicate red markers vs blue markers for accessibility
+- [ ] Navigate button floating action button instead?
+- [ ] Style
+  - [ ] Style Feedback Form better
+  - [ ] Navigation drawer icons
+  - [ ] Style text directions section -- directions.html
+- [ ] Better add bathroom section, currently just a webview
+- [ ] Contact form without email client
+- [ ] Update text directions while on tab
+- [ ] Actionbar activity depreciated (HttpClient as well)
+- [ ] Enable crash reports
 
 ## Bugs
-- [] Screen rotation re-updates map to initial closest location
-- [] Turning location off after it's been on doesn't grab last known location on app reopen
+- [ ] Screen rotation re-updates map to initial closest location
+- [ ] Turning location off after it's been on doesn't grab last known location on app reopen
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
