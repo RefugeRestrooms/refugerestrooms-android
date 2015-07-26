@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="match_parent"
+    android:background="#ffffff"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewSubject"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:background="#c1bbd7"
+        android:text="Subject : "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editTextSubject"
+        android:layout_margin="5dp"
+        android:background="@drawable/back"
+        android:padding="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+    </EditText>
+
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:padding="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#c1bbd7"
+        android:text="Message : "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editTextMessage"
+        android:layout_margin="5dp"
+        android:layout_width="fill_parent"
+        android:background="@drawable/back"
+        android:padding="20dp"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:lines="5" />
+
+    <Button
+        android:id="@+id/buttonSend"
+        android:background="#8377AF"
+        android:padding="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Send" />
+
+</LinearLayout>

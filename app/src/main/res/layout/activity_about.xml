@@ -18,7 +18,7 @@
         android:orientation="vertical"
         android:padding="8dp"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="org.refugerestrooms.android.view.AboutActivity"
+        tools:context="org.refugerestrooms.alt.AboutActivity"
         >
         <TextView
             android:layout_width="wrap_content"

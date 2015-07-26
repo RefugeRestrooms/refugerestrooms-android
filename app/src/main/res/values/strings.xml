@@ -1,8 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Refuge Restrooms</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="location_settings_title">Improve location accuracy</string>
+    <string name="location_settings">Settings</string>
+    <string name="location_skip">Skip</string>
+    <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
+    <string name="never_show_again">Never show this again</string>
+
+    <string name="title_section1">Map</string>
+    <string name="title_section2">Add a Bathroom</string>
+    <string name="title_section3">Feedback</string>
+    <string name="email">refugerestroomsapp@gmail.com</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="location_not_enabled">Location not enabled</string>
+    <string name="no_nearby_locations">No nearby restrooms found</string>
+    <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
+    <string name="action_directions">Text</string>
     <string name="action_settings">Settings</string>
+
     <string name="search_button">Find a Restroom</string>
     <string name="add_button">Add a Restroom - coming soon</string>
     <string name="search_location_button">Restrooms Near You</string>
@@ -10,8 +29,8 @@
     <string name="submit_button">Submit</string>
     <string name="add_activity_title">Add a Restroom</string>
     <string name="list_activity_title">Search Results</string>
-    <string name="action_search">Search</string>
-    <string name="search_hint">Search restrooms</string>
+    <string name="action_search">Search Address</string>
+    <string name="search_hint">Search Address</string>
     <string name="success_toast">Restroom successfully submitted</string>
     <string name="fail_toast">There was an error submitting the restroom</string>
     <string name="accessible">Accessible</string>

@@ -1,6 +1,5 @@
-# Bare bones of an Android client for www.refugerestrooms.org
-
-The app opens as MainActivity, from whence you can either add a restroom or perform a search.
+# Refuge Restrooms
+Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 
 ## Getting started
 You can use Android Studio (http://developer.android.com/tools/studio/index.html) to build this project, and it should behave like any other android studio project.
@@ -8,15 +7,50 @@ You can use Android Studio (http://developer.android.com/tools/studio/index.html
 Clone the repo here and the in Android Studio go to File -> New -> Import Project and navigate to your clone.
 
 ## Contributing
-By all means contribute :) Areas which deifinitely need work are listed as TODOs below. Feel free to add more.
+By all means contribute :) Areas which definitely need work are listed as TODOs below. Feel free to add more.
 
 Please try to stick to the android style guidelines http://source.android.com/source/code-style.html. Fields should start with 'm'
 In addition, please put curly brackets round your blocks.
 
 If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code.
 
+## Functionality
+- Works best with GPS Location enabled
+- Uses [Google Maps Gestures](https://support.google.com/gmm/answer/3139292?hl=en)
+- Selecting location marker shows bathroom info and changes navigation to that location
+- Navigation icon in the top right gives text directions
+- Blue marker = accessible, red marker = not accessible
+- "Alt" Folder/Source files are from original android app
+- When GPS isn't enabled
+  - Popup box will recommend turning it on initial app start
+  - Navigation icon gives a toast to enable location
+  - Selecting marker doesn't give location
+  - Currently location defaults to Minneapolis (Fix this!)
+
 ## TODO
-* Show all results on map
-* Search flags (e.g. accessible, unisex)
-* Prettify (Materialise?)
-* Tests
+- [] Signed keystore for play store
+- [] Search bar
+- [] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
+- [] Detailed info button like in ios app, Add bathroom rating to info window
+- [] Indicate red markers vs blue markers for accessibility
+- [] Navigate button floating action button instead?
+- [] Style
+  - [] Style Feedback Form better
+  - [] Navigation drawer icons
+  - [] Style text directions section -- directions.html
+- [] Better add bathroom section, currently just a webview
+- [] Contact form without email client
+- [] Update text directions while on tab
+- [] Actionbar activity depreciated (HttpClient as well)
+- [] Enable crash reports
+
+## Bugs
+- [] Screen rotation re-updates map to initial closest location
+- [] Turning location off after it's been on doesn't grab last known location on app reopen
+
+## Screenshots
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen2.png?raw=true)
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen3.png?raw=true)
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen4.png?raw=true)
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen5.png?raw=true)
