@@ -34,7 +34,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 
 ## TODO
 - [ ] Signed keystore for play store
-- [ x ] Search bar
+- [x] Search bar
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
 - [ ] Indicate red markers vs blue markers for accessibility
