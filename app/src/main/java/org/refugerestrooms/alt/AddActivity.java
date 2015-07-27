@@ -3,8 +3,8 @@ package org.refugerestrooms.alt;
 import java.lang.Override;import java.lang.String;import java.util.List;
 
 import org.refugerestrooms.models.Bathroom;
-import org.refugerestrooms.alt.ServerAlt;
-import org.refugerestrooms.alt.ServerAlt.ServerListener;
+import org.refugerestrooms.servers.Server;
+import org.refugerestrooms.servers.Server.ServerListener;
 
 import org.refugerestrooms.R;
 
@@ -16,21 +16,21 @@ import android.widget.Toast;
 
 public class AddActivity extends ActionBarActivity implements ServerListener {
 
-	private ServerAlt mServerAlt;
+	private Server mServer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add);
 
-		mServerAlt = new ServerAlt(this);
+		mServer = new Server(this);
 		
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	public void onClickSubmit(View view) {
-		mServerAlt.submitNewEntry();
+		mServer.submitNewEntry();
 	}
 
 	// Listener for server

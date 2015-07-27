@@ -3,8 +3,8 @@ package org.refugerestrooms.alt;
 import java.util.List;
 
 import org.refugerestrooms.models.Bathroom;
-import org.refugerestrooms.alt.ServerAlt;
-import org.refugerestrooms.alt.ServerAlt.ServerListener;
+import org.refugerestrooms.servers.Server;
+import org.refugerestrooms.servers.Server.ServerListener;
 
 import org.refugerestrooms.R;
 
@@ -26,7 +26,7 @@ import android.widget.ProgressBar;
 public class ListSearchActivity extends ActionBarActivity implements ServerListener {
 	public static final String INTENT_EXTRA_SEARCH_PARAMS = "search"; //TODO one of these for each search param
 	
-	private ServerAlt mServerAlt;
+	private Server mServer;
 	private String mSearchTerm;
     private static final String KEY_QUERY = "query";
     protected static final String TAG =  ListSearchActivity.class.getSimpleName();
@@ -41,7 +41,7 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
             mSearchTerm = savedInstanceState.getString(KEY_QUERY);
         }
 
-		mServerAlt = new ServerAlt(this);
+		mServer = new Server(this);
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -59,12 +59,12 @@ public class ListSearchActivity extends ActionBarActivity implements ServerListe
 					extras.getString(INTENT_EXTRA_SEARCH_PARAMS)
 					: extras.getString("query");
 			mSearchTerm = searchTerm; //save query so we can return to activity later
-			mServerAlt.performSearch(searchTerm, false);
+			mServer.performSearch(searchTerm, false);
 		}
 	}
 
 	protected void performSearch(String searchTerm, boolean location) {
-		mServerAlt.performSearch(searchTerm, location);
+		mServer.performSearch(searchTerm, location);
 	}
 
 	@Override

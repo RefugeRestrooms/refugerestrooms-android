@@ -279,7 +279,7 @@ public class MainActivity extends ActionBarActivity
                 curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
 
                 mServer = new Server(this);
-                mServer.performSearch(curLatLng);
+                mServer.performSearch(curLatLng, true);
             }
 
             else {
@@ -432,7 +432,8 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // For search results
+        handleIntent(getIntent());
         // Checks if gps is enabled, kicks out message to turn on if not.
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         android.location.LocationListener locationListener = new android.location.LocationListener(){
@@ -553,6 +554,22 @@ public class MainActivity extends ActionBarActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+    // For search activity in action bar
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search
+            Server mServer = new Server(this);
+            mServer.performSearch(query, false);
+        }
+    }
+
     /** Swaps fragments in the main content view */
 
     @Override
@@ -823,6 +840,7 @@ public class MainActivity extends ActionBarActivity
     int lastLoc[];
     int location_count = 0;
 
+    // Handles both the address search in the action bar and the nearest locations search when gps is on
     public void onSearchResults(List<Bathroom> results) {
         locations = new LatLng[results.size()];
         names = new String[results.size()];
@@ -858,6 +876,15 @@ public class MainActivity extends ActionBarActivity
             locations[i] = temp;
             names[i] = name;
         }
+        // If no location, navigate to first marker that was found on search
+        if (mCurrentLocation == null) {
+            if (numLocations != 0) {
+                Toast.makeText(this,R.string.please_wait,
+                        Toast.LENGTH_SHORT).show();
+            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
+        }
+
         // New marker onclicklistener to navigate to selected marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -1048,9 +1075,6 @@ public class MainActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (item.getItemId()) {
-            case R.id.action_search:
-                //openSearch();
-                return true;
             case R.id.action_directions:
                 Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
                 //passes in current location to TextDirectionsActivity

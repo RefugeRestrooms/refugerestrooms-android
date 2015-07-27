@@ -1,5 +1,6 @@
 package org.refugerestrooms.servers;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -36,9 +37,7 @@ public class Server {
         this.mListener = mListener;
     }
 
-
-    @SuppressWarnings("unused")
-    public void performSearch(final String searchTerm) {
+    public void performSearch(final String searchTerm, final boolean location) {
         // TODO Lark around on the internet
 
         new RemoteCallTask() {
@@ -51,10 +50,14 @@ public class Server {
 
             @Override
             public URI buildUrl() throws URISyntaxException {
-
-                // Refuge Restrooms API bathrooms queried
-                // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
-                return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?per_page=20&" + searchTerm);
+                if(!location)
+                    // limit per_page=20 so only the 20 nearest/most relevant results display
+                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?per_page=20&query=" + Uri.encode(searchTerm));
+                else {
+                    // Refuge Restrooms API bathrooms queried
+                    // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
+                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?per_page=20&" + searchTerm);
+                }
             }
 
             @Override
