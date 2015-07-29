@@ -31,7 +31,7 @@
     <string name="list_activity_title">Search Results</string>
     <string name="action_search">Search Address</string>
     <string name="search_hint">Minneapolis, MN</string>
-    <string name="please_wait">Restrooms found!</string>
+    <string name="restrooms_found">Restrooms found!</string>
     <string name="success_toast">Restroom successfully submitted</string>
     <string name="fail_toast">There was an error submitting the restroom</string>
     <string name="accessible">Accessible</string>

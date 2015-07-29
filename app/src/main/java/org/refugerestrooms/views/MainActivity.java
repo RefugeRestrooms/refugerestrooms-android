@@ -285,9 +285,9 @@ public class MainActivity extends ActionBarActivity
             else {
                 //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
                 // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                //curLatLng = "lat=44.9727&lng=-93.2354";
-                //mServer = new Server(this);
-                //mServer.performSearch(curLatLng);
+                curLatLng = "lat=44.9727&lng=-93.2354";
+                mServer = new Server(this);
+                mServer.performSearch(curLatLng, true);
             }
 
             /*******************************************************************
@@ -879,10 +879,14 @@ public class MainActivity extends ActionBarActivity
         // If no location, navigate to first marker that was found on search
         if (mCurrentLocation == null) {
             if (numLocations != 0) {
-                Toast.makeText(this,R.string.please_wait,
+                Toast.makeText(this,R.string.restrooms_found,
+                        Toast.LENGTH_SHORT).show();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
+            }
+            else {
+                Toast.makeText(this, R.string.no_nearby_locations,
                         Toast.LENGTH_SHORT).show();
             }
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
         }
 
         // New marker onclicklistener to navigate to selected marker
