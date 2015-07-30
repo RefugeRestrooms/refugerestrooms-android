@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:rrapp="http://schemas.android.com/apk/res-auto" >
-    <item android:id="@+id/action_search"
-          android:title="@string/action_search"
-          rrapp:showAsAction="ifRoom"
-          rrapp:actionViewClass="android.support.v7.widget.SearchView" />
-</menu>
