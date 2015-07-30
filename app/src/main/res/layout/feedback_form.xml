@@ -2,41 +2,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearLayout1"
     android:layout_width="match_parent"
-    android:background="#ffffff"
+    android:background="#e9e9e9"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/textViewSubject"
         android:layout_width="fill_parent"
+        android:layout_marginLeft="15dp"
+        android:textColor="#8377AF"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:background="#c1bbd7"
-        android:text="Subject : "
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:text="Subject "
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/editTextSubject"
-        android:layout_margin="5dp"
+        android:hint="Bug.."
+        android:layout_margin="15dp"
         android:background="@drawable/back"
         android:padding="20dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content" >
     </EditText>
 
     <TextView
         android:id="@+id/textViewMessage"
-        android:padding="20dp"
+        android:layout_marginLeft="15dp"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:textColor="#8377AF"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#c1bbd7"
-        android:text="Message : "
+        android:text="Message"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/editTextMessage"
-        android:layout_margin="5dp"
+        android:hint="Write a detailed description here..."
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:background="@drawable/back"
         android:padding="20dp"
@@ -47,10 +52,14 @@
 
     <Button
         android:id="@+id/buttonSend"
-        android:background="#8377AF"
+        android:textColor="#8377AF"
+        android:background="#b4adcf"
         android:padding="20dp"
+
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:text="Send" />
 
 </LinearLayout>

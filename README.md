@@ -37,7 +37,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Make Navigate button floating action button instead?
 - [ ] Style
-  - [ ] Style Feedback Form better
+  - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
   - [ ] Style text directions section -- directions.html
 - [ ] Better add bathroom section, currently just a webview
