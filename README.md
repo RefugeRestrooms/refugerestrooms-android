@@ -33,9 +33,10 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 ## TODO
 - [x] Search bar
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
+	- [ ] Populate map with nearby pins like when gps is enabled
+- [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
 - [ ] Indicate red markers vs blue markers for accessibility
-- [ ] Make Navigate button floating action button instead?
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
