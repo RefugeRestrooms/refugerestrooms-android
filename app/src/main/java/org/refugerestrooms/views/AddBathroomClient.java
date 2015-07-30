@@ -9,7 +9,9 @@ import android.webkit.WebViewClient;
 
 public class AddBathroomClient extends WebViewClient {
     private String currentUrl;
-
+    public AddBathroomClient() {
+        super();
+    }
     public AddBathroomClient(String currentUrl){
         this.currentUrl = currentUrl;
     }

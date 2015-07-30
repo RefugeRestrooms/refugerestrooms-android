@@ -45,14 +45,14 @@ public class TextDirectionsActivity extends ActionBarActivity {
             is = getAssets().open("directions.html");
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+         //   e.printStackTrace();
         }
         int size = 0;
         try {
             size = is.available();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+         //   e.printStackTrace();
         }
 
         // Read the entire asset into a local byte buffer.
@@ -61,13 +61,13 @@ public class TextDirectionsActivity extends ActionBarActivity {
             is.read(buffer);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+          //  e.printStackTrace();
         }
         try {
             is.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         // Convert the buffer into a string.

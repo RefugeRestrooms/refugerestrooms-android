@@ -73,15 +73,9 @@ public class MainActivity extends ActionBarActivity
         RoutingListener, Server.ServerListener {
 
     private GoogleMap mMap = null;
-    private StreetViewPanorama mSvp;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private final String TAG = "Refuge Restrooms";
-    private JsonRequest mJsonRequest;
-    private Server.ServerListener mListener;
-    private ListOfBathrooms response;
-    private ListView mDrawerList;
-    private ArrayAdapter<String> mAdapter;
     private Boolean initial = true;
 
     Location mCurrentLocation;
@@ -89,7 +83,6 @@ public class MainActivity extends ActionBarActivity
     Location mCurrentLocationNoGps;
     LocationManager locationManager;
     LatLng currentPosition;
-    Marker pos_marker;
     boolean mUpdatesRequested;
     private boolean mInProgress;
 
@@ -196,8 +189,8 @@ public class MainActivity extends ActionBarActivity
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             // In debug mode, log the status
-            Log.d("Location Updates",
-                    "Google Play services is available.");
+          //  Log.d("Location Updates",
+          //          "Google Play services is available.");
             // Continue
             return true;
             // Google Play services was not available for some reason
@@ -230,6 +223,7 @@ public class MainActivity extends ActionBarActivity
      * client finishes successfully. At this point, you can
      * request the current location or start periodic updates
      */
+
     @Override
     public void onConnected(Bundle dataBundle) {
         if (servicesConnected()) {
@@ -285,9 +279,11 @@ public class MainActivity extends ActionBarActivity
             else {
                 //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
                 // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                curLatLng = "lat=44.9727&lng=-93.2354";
+                //curLatLng = "lat=44.9727&lng=-93.2354";
+                /*
+                curLatLng = "Minneapolis, MN";
                 mServer = new Server(this);
-                mServer.performSearch(curLatLng, true);
+                mServer.performSearch(curLatLng, false); */
             }
 
             /*******************************************************************
@@ -355,10 +351,10 @@ public class MainActivity extends ActionBarActivity
 
     private void doNotShowAgain() {
         // Persist shared preference to prevent dialog from showing again.
-        Log.d("MainActivity", "TODO: Persist shared preferences.");
+       // Log.d("MainActivity", "TODO: Persist shared preferences.");
     }
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "GoogleApiClient connection has been suspend");
+       // Log.i(TAG, "GoogleApiClient connection has been suspend");
     }
     /*
      * Called by Location Services if the attempt to
@@ -386,7 +382,7 @@ public class MainActivity extends ActionBarActivity
 	             */
             } catch (IntentSender.SendIntentException e) {
                 // Log the error
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         } else {
 	        /*
@@ -395,7 +391,7 @@ public class MainActivity extends ActionBarActivity
 	         */
             showErrorDialog(connectionResult.getErrorCode());
             /**
-             //TODO Get the error code
+             //Get the error code
              int errorCode = connectionResult.getErrorCode();
              // Get the error dialog from Google Play services
              Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
@@ -441,10 +437,10 @@ public class MainActivity extends ActionBarActivity
             public void onLocationChanged(Location location) {
                 if (location != null)
                 {
-                    Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
+                  //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                    Log.i("latitude,longitude", ""+latitude+","+longitude);
+                  //  Log.i("latitude,longitude", ""+latitude+","+longitude);
                     mCurrentLocation = location;
                 }
             }
@@ -460,7 +456,7 @@ public class MainActivity extends ActionBarActivity
         try {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
-            Log.e("MainActivity", ex.getMessage());
+          //  Log.e("MainActivity", ex.getMessage());
         }
 
         if (!gps_enabled) {
@@ -471,7 +467,7 @@ public class MainActivity extends ActionBarActivity
             try {
                 network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             } catch (Exception ex) {
-                Log.e("MainActivity", ex.getMessage());
+              //  Log.e("MainActivity", ex.getMessage());
             }
         }
         setContentView(R.layout.activity_main);
@@ -775,7 +771,6 @@ public class MainActivity extends ActionBarActivity
     }
 
     private Server mServer;
-
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {

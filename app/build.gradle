@@ -2,11 +2,17 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
+        debug {
             keyAlias 'gnbkey'
             keyPassword 'pFgyRmYsP411'
-            storeFile file('/home/rar/dev/gnb/keystore.jks')
+            storeFile file('../keystore.jks')
             storePassword 'pFgyRmYsP411'
+        }
+        release {
+            keyAlias 'refuge'
+            keyPassword System.console() != null ? System.console().readLine("\nKey password: ") : ""
+            storeFile file('../refuge-release-key.keystore')
+            storePassword System.console() != null ? System.console().readLine("\nKeystore password: ") : ""
         }
     }
     compileSdkVersion 22
@@ -22,10 +28,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
         }
         debug {
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.debug
         }
     }
 }
