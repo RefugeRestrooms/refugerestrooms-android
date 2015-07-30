@@ -29,11 +29,8 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
 - Max locations shown initially = 20
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
-	- Searching multiple times continuously adds markers, past default 20
-- "Alt" Folder/Source files are from original android app
 
 ## TODO
-- [ ] Signed keystore for play store
 - [x] Search bar
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
@@ -47,12 +44,10 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
 - [ ] Actionbar activity depreciated (HttpClient as well)
-- [ ] Enable crash reports
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
-- [ ] Searching multiple times continuously adds markers, not really a bug, but should probably remove old markers on search
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)

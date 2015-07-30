@@ -62,7 +62,7 @@ public class Server {
 
             @Override
             protected void onPostExecute(String result) {
-                Log.d(TAG, "Result: " + result);
+                //Log.d(TAG, "Result: " + result);
                 if (result != null) {
                     try {
                         Gson gson = new Gson();
@@ -73,7 +73,7 @@ public class Server {
                         }
                     } catch (JsonSyntaxException jse) {
                         String msg = "JSON Error: " + jse.getMessage();
-                        Log.e(TAG, msg);
+                        //Log.e(TAG, msg);
                         reportError(msg);
                     }
                 }
@@ -113,13 +113,13 @@ public class Server {
                     reportError("Failed with HTTP code " + code);
                 }
             } catch (ClientProtocolException e) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
                 reportError("ClientProtocolException");
             } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
+               // Log.e(TAG, e.getMessage());
                 reportError("IOException");
             } catch (URISyntaxException e1) {
-                Log.e(TAG, "Failed to build URL " + e1.getMessage());
+                //Log.e(TAG, "Failed to build URL " + e1.getMessage());
             }
             return null;
         }
