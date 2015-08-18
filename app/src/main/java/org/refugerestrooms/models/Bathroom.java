@@ -6,6 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import android.text.TextUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 /**
  * Placeholder
  * @author Refuge Restrooms
@@ -41,6 +45,29 @@ public class Bathroom {
     private double mLongitude;
 
     public String getName() {
+        /******************************************************************************************
+        *  Following section encodes result into ISO-8859-1 and then decodes it into UTF-8.
+        *  This is necessary for displaying accented characters; previously "é" was showing as "Ã©", etc..
+        *  Most likely because of an encoding redundancy from the restroom API, so this may break in the future
+        *  if that is changed/fixed.
+         ******************************************************************************************/
+        if (mName != null) {
+            String encodedString = null;
+            String decodedString = null;
+            try {
+                encodedString = URLEncoder.encode(mName, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            try {
+                decodedString = URLDecoder.decode(encodedString, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            if (decodedString != null) {
+                mName = decodedString;
+            }
+        }
         return mName;
     }
 
@@ -70,6 +97,29 @@ public class Bathroom {
     }
 
     public String getDirections() {
+        /******************************************************************************************
+         *  Following section encodes result into ISO-8859-1 and then decodes it into UTF-8.
+         *  This is necessary for displaying accented characters; previously "é" was showing as "Ã©", etc..
+         *  Most likely because of an encoding redundancy from the restroom API, so this may break in the future
+         *  if that is changed/fixed.
+         ******************************************************************************************/
+        if (mDirections != null) {
+            String encodedString = null;
+            String decodedString = null;
+            try {
+                encodedString = URLEncoder.encode(mDirections, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            try {
+                decodedString = URLDecoder.decode(encodedString, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            if (decodedString != null) {
+                mDirections = decodedString;
+            }
+        }
         return mDirections;
     }
 
@@ -84,14 +134,10 @@ public class Bathroom {
         return mComments;
     }
 
-    public void setName(String name) {
-        this.mName = name;
-    }
+    public void setName(String name) { this.mName = name; }
 
     @Override
-    public String toString() {
-        return mName;
-    }
+    public String toString() { return mName; }
 
     public String toJson() {
         Gson gson = new Gson();

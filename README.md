@@ -45,6 +45,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
 - [ ] Actionbar activity depreciated (HttpClient as well)
+- [ ] Add different locales in strings.xml file
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location
