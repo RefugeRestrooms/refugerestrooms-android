@@ -62,7 +62,14 @@ import org.refugerestrooms.models.ListOfBathrooms;
 import org.refugerestrooms.servers.JsonRequest;
 import org.refugerestrooms.servers.Server;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.text.Normalizer;
 import java.util.List;
+
+import static java.lang.Character.getNumericValue;
 
 //TODO ActionBarActivity has been depreciated... use toolbar instead
 public class MainActivity extends ActionBarActivity
@@ -848,6 +855,7 @@ public class MainActivity extends ActionBarActivity
             Bathroom bathroom = results.get(i);
             LatLng temp = bathroom.getLocation();
             String name = bathroom.getName();
+           
             int score = bathroom.getScore();
             //String comment = bathroom.getComments();
             // Adds bathroom markers, blue for accessible, red for not
@@ -855,7 +863,7 @@ public class MainActivity extends ActionBarActivity
             {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude, temp.longitude))
-                        .title(bathroom.getName())
+                        .title(name)
                         .snippet(bathroom.getDirections())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             }
@@ -863,7 +871,7 @@ public class MainActivity extends ActionBarActivity
             {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude,temp.longitude))
-                        .title(bathroom.getName())
+                        .title(name)
                         .snippet(bathroom.getDirections())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
