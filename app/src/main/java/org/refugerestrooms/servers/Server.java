@@ -52,7 +52,7 @@ public class Server {
             public URI buildUrl() throws URISyntaxException {
                 if(!location)
                     // limit per_page=20 so only the 20 nearest/most relevant results display
-                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?per_page=20&query=" + Uri.encode(searchTerm));
+                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?per_page=20&query=" + Uri.encode(searchTerm, "UTF-8"));
                 else {
                     // Refuge Restrooms API bathrooms queried
                     // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
