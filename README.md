@@ -35,8 +35,12 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
+  - [ ] Feature to save bathrooms for offline use
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
 - [ ] Indicate red markers vs blue markers for accessibility
+- [ ] Settings
+  - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
+  - [ ] Select number of bathrooms to show 1-50.
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
