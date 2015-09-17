@@ -38,7 +38,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Feature to save bathrooms for offline use
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
 - [ ] Indicate red markers vs blue markers for accessibility
-- [ ] Settings
+- [ ] Settings Menu
   - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
   - [ ] Select number of bathrooms to show 1-50.
 - [ ] Style
