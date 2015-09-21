@@ -56,9 +56,11 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Style text directions section -- directions.html
 - [ ] Better add bathroom section, currently just a webview
   - [x] Style webview in the meantime
+  - [ ] Start webview on app startup, then just switch content views
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
 - [ ] Actionbar activity depreciated (HttpClient as well)
+- [ ] App when no cellular data?
 - [ ] Add different locales in strings.xml file
 
 ## Bugs
