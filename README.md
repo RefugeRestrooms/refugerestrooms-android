@@ -1,4 +1,9 @@
-# Refuge Restrooms
+# Refuge Restrooms for Android
+[![License](https://img.shields.io/badge/license-AGPL-lightgrey.svg)](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms-ios/master/LICENSE)
+![Android](https://img.shields.io/badge/platform-android-lightgrey.svg)
+
+[![App Store Badge](https://github.com/RefugeRestrooms/refugerestrooms/tree/develop/app/assets/images/play-store.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
+
 Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 
 ## Getting started
@@ -27,11 +32,13 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - Currently location defaults to Minneapolis (Fix this!)
   - Only really useful to use search
 - If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
-- Max locations shown initially = 20
+- Max locations shown initially: gps = 20, search = 75
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
 
 ## TODO
 - [x] Search bar
+  - [ ] Search by address option -- need to translate address to lat/lng
+  - [ ] Auto-complete search
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
@@ -40,12 +47,13 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
-  - [ ] Select number of bathrooms to show 1-50.
+  - [ ] Select number of bathrooms to show 1-99 (increase default)
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
   - [ ] Style text directions section -- directions.html
 - [ ] Better add bathroom section, currently just a webview
+  - [x] Style webview in the meantime
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
 - [ ] Actionbar activity depreciated (HttpClient as well)
@@ -54,6 +62,9 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
+- [x] Going back from text directions removes polyline
+- [x] GPS not enabled message shows after every search
+- [x] Searching a second time doesn't remove first search pins
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)

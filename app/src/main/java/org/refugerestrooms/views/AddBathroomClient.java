@@ -4,6 +4,8 @@ package org.refugerestrooms.views;
  * Created by Refuge Restrooms on 7/14/2015.
  */
 
+import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -22,6 +24,8 @@ public class AddBathroomClient extends WebViewClient {
          Bathrooms are submitted correctly, but should probably do this without a text_directions. Note: the
          restroom submitted successfully message is from the refuge restrooms site, not the app.
          */
+        view.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+        view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         if(url.equals(currentUrl)) {
             view.loadUrl(url);
         }
@@ -29,12 +33,25 @@ public class AddBathroomClient extends WebViewClient {
         return true;
     }
 
-    // Removes header, footer -- areas where people can navigate away from the add a bathroom page
     @Override
-    public void onPageFinished(WebView view, String url) {
+    public void onPageFinished(final WebView view, String url) {
+        // Removes header, footer -- areas where people can navigate away from the add a bathroom page
         view.loadUrl("javascript:(function() { " +
-            "document.getElementsByTagName('header')[0].style.display='none'; " +
-            "document.getElementsByTagName('footer')[0].style.display='none';" +
+                "document.getElementsByTagName('header')[0].style.display='none'; " +
+                "document.getElementsByTagName('footer')[0].style.display='none';" +
+                "document.body.style.marginLeft=\"5%\";" +
+                "document.body.style.marginRight=\"5%\";" +
+                "document.body.style.backgroundColor=\"#e9e9e9\";" +
+                "document.body.style.color=\"#8377AF\";" +
+                "document.getElementsByTagName('h5')[0].style.display='none';" +
+                "document.getElementsByClassName('guess-btn')[0].style.display='none';" +
                 "})()");
+        // Time Delay to prevent display showing before javascript finishes
+        view.postDelayed(new Runnable() {
+            public void run() {
+                view.setVisibility(View.VISIBLE);
+            }
+        }, 50);
+
     }
 }
