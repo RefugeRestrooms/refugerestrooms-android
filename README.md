@@ -9,7 +9,7 @@ Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 ## Getting started
 You can use Android Studio (http://developer.android.com/tools/studio/index.html) to build this project, and it should behave like any other android studio project.
 
-Clone the repo here and the in Android Studio go to File -> New -> Import Project and navigate to your clone.
+Clone the repo here and then in Android Studio go to File -> New -> Import Project and navigate to your clone.
 
 ## Contributing
 By all means contribute :) Areas which definitely need work are listed as TODOs below. Feel free to add more.
