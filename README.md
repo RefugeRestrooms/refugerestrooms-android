@@ -1,6 +1,7 @@
 # Refuge Restrooms for Android
 [![License](https://img.shields.io/badge/license-AGPL-lightgrey.svg)](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms-ios/master/LICENSE)
 ![Android](https://img.shields.io/badge/platform-android-lightgrey.svg)
+
 [![App Store Badge](https://github.com/RefugeRestrooms/refugerestrooms/tree/develop/app/assets/images/play-store.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
 
 Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
