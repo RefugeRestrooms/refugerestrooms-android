@@ -92,7 +92,8 @@ public class MainActivity extends ActionBarActivity
     LatLng currentPosition;
     boolean mUpdatesRequested;
     private boolean mInProgress;
-
+    public boolean doNotDisplayDialog = false;
+    public boolean onSearchAction = false;
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
@@ -431,7 +432,6 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     private String mLocationTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -467,8 +467,11 @@ public class MainActivity extends ActionBarActivity
         }
 
         if (!gps_enabled) {
-            Dialog dialog = createDialog();
-            dialog.show();
+            // Added if statement to prevent dialog box from re-showing on search
+            if (!doNotDisplayDialog) {
+                Dialog dialog = createDialog();
+                dialog.show();
+            }
 
             // Tries to get data from network otherwise
             try {
@@ -567,8 +570,11 @@ public class MainActivity extends ActionBarActivity
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            //use the query to search
+            // Use the query to search
             Server mServer = new Server(this);
+            // Boolean to prevent "gps not enabled" dialog box from re-showing on search
+            doNotDisplayDialog = true;
+            onSearchAction = true;
             mServer.performSearch(query, false);
         }
     }
@@ -849,6 +855,11 @@ public class MainActivity extends ActionBarActivity
         numLocations = results.size();
         currentLoc = new int[numLocations];
         lastLoc = new int[numLocations];
+        if (onSearchAction) {
+            // clear map markers before new displaying additional search results
+            mMap.clear();
+            onSearchAction = false;
+        }
 
         for (int i = 0; i < numLocations; i++)
         {
