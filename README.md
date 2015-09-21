@@ -46,8 +46,10 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Detailed info button like in ios app, Add bathroom rating to info window
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
-  - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
-  - [ ] Select number of bathrooms to show 1-99 (increase default)
+  - [ ] Add option to turn off navigation so that the blue line doesn't appear on map.
+  - [ ] Change navigation line colors
+  - [ ] Change bathroom pin colors (accessible vs non-accessible)
+  - [ ] Select number of bathrooms to show 1-99 (separate settings for search, gps)
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
