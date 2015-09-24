@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/license-AGPL-lightgrey.svg)](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms-ios/master/LICENSE)
 ![Android](https://img.shields.io/badge/platform-android-lightgrey.svg)
 
-[![App Store Badge](https://github.com/RefugeRestrooms/refugerestrooms/tree/develop/app/assets/images/play-store.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
+[![App Store Badge](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms/e1b38c4018a25484d2a47befd6800ebf8b97b5bf/app/assets/images/play-store.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
 
 Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 
