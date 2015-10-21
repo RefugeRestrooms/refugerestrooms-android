@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -68,6 +70,9 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.HashMap;
 
 import static java.lang.Character.getNumericValue;
 
@@ -360,6 +365,13 @@ public class MainActivity extends ActionBarActivity
     private void doNotShowAgain() {
         // Persist shared preference to prevent dialog from showing again.
        // Log.d("MainActivity", "TODO: Persist shared preferences.");
+    }
+    private void launchDetails(Bathroom bathroom) {
+        //TODO add bathroom details
+        //Log.d(TAG,"Launch Details");
+        Intent intent = new Intent(this, InfoViewActivity.class);
+        intent.putExtra(InfoViewActivity.EXTRA_BATHROOM, bathroom.toJson());
+        startActivity(intent);
     }
     public void onConnectionSuspended(int i) {
        // Log.i(TAG, "GoogleApiClient connection has been suspend");
@@ -847,9 +859,11 @@ public class MainActivity extends ActionBarActivity
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     int lastLoc[];
     int location_count = 0;
+    // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
+    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
-    public void onSearchResults(List<Bathroom> results) {
+    public void onSearchResults(final List<Bathroom> results) {
         locations = new LatLng[results.size()];
         names = new String[results.size()];
         numLocations = results.size();
@@ -870,22 +884,25 @@ public class MainActivity extends ActionBarActivity
             int score = bathroom.getScore();
             //String comment = bathroom.getComments();
             // Adds bathroom markers, blue for accessible, red for not
+            Marker marker;
             if (bathroom.isAccessible() == true)
             {
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(temp.latitude, temp.longitude))
-                        .title(name)
-                        .snippet(bathroom.getDirections())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                 marker = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(temp.latitude, temp.longitude))
+                    .title(name)
+                    .snippet(bathroom.getDirections())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             }
             else
             {
-                mMap.addMarker(new MarkerOptions()
+                 marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude,temp.longitude))
                         .title(name)
                         .snippet(bathroom.getDirections())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
+            // Put bathrooms in hashmap for use later in info window
+            allBathroomsMap.put(bathroom.getLocation(), bathroom);
 
             locations[i] = temp;
             names[i] = name;
@@ -903,6 +920,8 @@ public class MainActivity extends ActionBarActivity
             }
         }
 
+        // Create info Button
+        final Button infoButton = (Button) findViewById(R.id.info_button);
         // New marker onclicklistener to navigate to selected marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -910,6 +929,19 @@ public class MainActivity extends ActionBarActivity
             public boolean onMarkerClick(Marker marker) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 400, null);
                 marker.showInfoWindow();
+
+                final LatLng markerLatLng = marker.getPosition();
+                // Set onclicklistener for info button
+                infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bathroom bathroom = null;
+                        // Get bathroom from hashmap using marker's location
+                        bathroom = allBathroomsMap.get(markerLatLng);
+                        if (bathroom != null)
+                            launchDetails(bathroom);
+                    }
+                });
                 //mMap.getUiSettings().setMapToolbarEnabled(true);
                 if (mCurrentLocation != null) {
                     navigateToMarker(marker);
@@ -922,6 +954,17 @@ public class MainActivity extends ActionBarActivity
                     }
                 }
                 return true;
+            }
+        });
+        // On info window click
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Bathroom bathroom = null;
+                // Get bathroom from hashmap using marker's location
+                bathroom = allBathroomsMap.get(marker.getPosition());
+                if (bathroom != null)
+                    launchDetails(bathroom);
             }
         });
 

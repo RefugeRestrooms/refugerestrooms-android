@@ -23,6 +23,12 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <Button
+            android:id="@+id/info_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/ic_info_outline_white_24dp" />
 
 </FrameLayout>
     <!-- As the main content view, the view below consumes the entire

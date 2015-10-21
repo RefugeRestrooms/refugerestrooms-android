@@ -77,10 +77,10 @@ public class Bathroom {
             address += mStreet + "\n";
         }
         if (!TextUtils.isEmpty(mCity)) {
-            address += mCity + "\n";
+            address += mCity + ", ";
         }
         if (!TextUtils.isEmpty(mState)) {
-            address += mState + "\n";
+            address += mState + ", ";
         }
         if (!TextUtils.isEmpty(mCountry)) {
             address += mCountry + "\n";

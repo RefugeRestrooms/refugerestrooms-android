@@ -30,7 +30,7 @@
             android:parentActivityName=".views.MainActivity"
             />
         <activity
-            android:name=".views.AddBathroomClient"
+            android:name=".views.InfoViewActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".views.MainActivity"
