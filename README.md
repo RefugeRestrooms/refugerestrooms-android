@@ -47,6 +47,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
+  - [ ] Change colors of navigation line, map markers (accessible vs non-accessible)
   - [ ] Select number of bathrooms to show 1-99 (increase default)
 - [ ] Style
   - [x] Style Feedback Form better
