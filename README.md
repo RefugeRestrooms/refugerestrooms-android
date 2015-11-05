@@ -35,15 +35,39 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Max locations shown initially: gps = 20, search = 75
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
 
+%%%%%%%%%%%%%%%%%%%%
+xx-1) get correct bathroom in main activity
+  xx--works after multiple searches?
+xx-2) add info icon in lower right
+  -- work right away with gps
+  -- no need to select
+  -- don't show until search when no gps
+  -- change where button is instantiated in code
+  -- grey?
+xx-3) 'x' button on info window..
+xx-4) detailed info view
+5) Change map marker to show accessible/unisex/rating instead of directions
+6) bug fix from crash: http://stackoverflow.com/questions/20660561/illegalargumentexception-provider-doesnt-exisit-null-on-maps-v1
+7) change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
+    -- shows gps no restrooms message if gps is on and search
+8) ninas coffee cafe problem in detailed info window
+  -- can't encode it twice? encode these separately in main activity and infoview, or check if right encoding in bathroom.java
+9) add comments to new files
+  --infoviewactivity
+  --bathroomspecsviewupdater
+  --mainactivity (launchdetails)
+%%%%%%%%%%%%%%%%
+
 ## TODO
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
-  - [ ] Auto-complete search
+  - [ ] Auto-complete search (google places api)
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
   - [ ] Feature to save bathrooms for offline use
-- [ ] Detailed info button like in ios app, Add bathroom rating to info window
+- [x] Detailed info window
+  - [ ] Allow users to rate and report bathrooms 
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
@@ -61,7 +85,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add different locales in strings.xml file
 
 ## Bugs
-- [ ] Screen rotation re-updates map to initial closest location
+- [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
 - [x] Going back from text directions removes polyline
 - [x] GPS not enabled message shows after every search
