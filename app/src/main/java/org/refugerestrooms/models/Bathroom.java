@@ -51,6 +51,7 @@ public class Bathroom {
         *  Most likely because of an encoding redundancy from the restroom API, so this may break in the future
         *  if that is changed/fixed.
          ******************************************************************************************/
+        /*
         if (mName != null) {
             String encodedString = null;
             String decodedString = null;
@@ -67,6 +68,12 @@ public class Bathroom {
             if (decodedString != null) {
                 mName = decodedString;
             }
+        }
+        */
+        try {
+            mName = new String(mName.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //e.printStackTrace();
         }
         return mName;
     }
@@ -131,6 +138,24 @@ public class Bathroom {
     }
 
     public String getComments() {
+        // Same encoding fix as getDirections above
+        if (mComments != null) {
+            String encodedString = null;
+            String decodedString = null;
+            try {
+                encodedString = URLEncoder.encode(mComments, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            try {
+                decodedString = URLDecoder.decode(encodedString, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+            }
+            if (decodedString != null) {
+                mComments = decodedString;
+            }
+        }
         return mComments;
     }
 

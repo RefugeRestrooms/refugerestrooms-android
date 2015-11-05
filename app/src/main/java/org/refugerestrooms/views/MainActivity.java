@@ -367,11 +367,14 @@ public class MainActivity extends ActionBarActivity
        // Log.d("MainActivity", "TODO: Persist shared preferences.");
     }
     private void launchDetails(Bathroom bathroom) {
-        //TODO add bathroom details
-        //Log.d(TAG,"Launch Details");
-        Intent intent = new Intent(this, InfoViewActivity.class);
-        intent.putExtra(InfoViewActivity.EXTRA_BATHROOM, bathroom.toJson());
-        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString(InfoViewFragment.EXTRA_BATHROOM, bathroom.toJson());
+        InfoViewFragment infoView = new InfoViewFragment();
+        infoView.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, infoView)
+                .addToBackStack("infoView")
+                .commit();
     }
     public void onConnectionSuspended(int i) {
        // Log.i(TAG, "GoogleApiClient connection has been suspend");
