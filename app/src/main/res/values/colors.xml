@@ -6,4 +6,6 @@
     <color name="purple">#41326B</color>
     <color name="light_purple">#8377af</color>
     <color name="dark_purple">#0E0036</color>
+    <color name="ada_blue">#0047ba</color>
+    <color name="light_text">#AAAAAA</color>
 </resources>
