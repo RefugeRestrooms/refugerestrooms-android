@@ -17,7 +17,7 @@ By all means contribute :) Areas which definitely need work are listed as TODOs 
 Please try to stick to the android style guidelines http://source.android.com/source/code-style.html. Fields should start with 'm'
 In addition, please put curly brackets round your blocks.
 
-If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code.
+If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code. Also create an issue when working on a new feature so we don't duplicate work!
 
 ## Functionality
 - Works best with GPS Location enabled
@@ -35,28 +35,32 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Max locations shown initially: gps = 20, search = 75
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
 
-%%%%%%%%%%%%%%%%%%%%
-xx-1) get correct bathroom in main activity
-  xx--works after multiple searches?
-xx-2) add info icon in lower right
+```
+xx- get correct bathroom in main activity
+xx- bug fix from crash: http://stackoverflow.com/questions/20660561/illegalargumentexception-provider-doesnt-exisit-null-on-maps-v1
+xx- detailed info view
+
+xx-1) add info icon in lower right
   -- work right away with gps
   -- no need to select
   -- don't show until search when no gps
   -- change where button is instantiated in code
   -- grey?
-xx-3) 'x' button on info window..
-xx-4) detailed info view
-5) Change map marker to show accessible/unisex/rating instead of directions
-6) bug fix from crash: http://stackoverflow.com/questions/20660561/illegalargumentexception-provider-doesnt-exisit-null-on-maps-v1
-7) change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
-    -- shows gps no restrooms message if gps is on and search
-8) ninas coffee cafe problem in detailed info window
+xx-2) 'x' button on info window..
+  -- color?
+xx-3) Change map marker to show accessible
+  -- padding left, top when only one logo, when both (MainActivity, custom_info_window)?
+4) ninas coffee cafe problem in detailed info window
+  -- address accents in custom info window..
   -- can't encode it twice? encode these separately in main activity and infoview, or check if right encoding in bathroom.java
-9) add comments to new files
+5) change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
+    -- shows gps no restrooms message if gps is on and search
+6) add comments to new files
   --infoviewactivity
   --bathroomspecsviewupdater
   --mainactivity (launchdetails)
-%%%%%%%%%%%%%%%%
+merge git release tags
+```
 
 ## TODO
 - [x] Search bar
@@ -87,6 +91,8 @@ xx-4) detailed info view
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
+- [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
+- [ ] Map reinstantiates every time a search occurs
 - [x] Going back from text directions removes polyline
 - [x] GPS not enabled message shows after every search
 - [x] Searching a second time doesn't remove first search pins
