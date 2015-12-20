@@ -40,12 +40,14 @@ import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -439,31 +441,35 @@ public class MainActivity extends ActionBarActivity
         handleIntent(getIntent());
         // Checks if gps is enabled, kicks out message to turn on if not.
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        android.location.LocationListener locationListener = new android.location.LocationListener(){
+        android.location.LocationListener locationListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                if (location != null)
-                {
-                  //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
+                if (location != null) {
+                    //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                  //  Log.i("latitude,longitude", ""+latitude+","+longitude);
+                    //  Log.i("latitude,longitude", ""+latitude+","+longitude);
                     mCurrentLocation = location;
                 }
             }
 
-            public void onProviderDisabled(String provider) {}
-            public void onProviderEnabled(String provider) {}
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-        };
+            public void onProviderDisabled(String provider) {
+            }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+        };
         boolean gps_enabled = false;
         boolean network_enabled = false;
-        try {
+        if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+            network_enabled = true;
+        }
+        if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-          //  Log.e("MainActivity", ex.getMessage());
         }
 
         if (!gps_enabled) {
@@ -474,10 +480,12 @@ public class MainActivity extends ActionBarActivity
             }
 
             // Tries to get data from network otherwise
-            try {
-                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch (Exception ex) {
-              //  Log.e("MainActivity", ex.getMessage());
+            if (network_enabled) {
+                try {
+                    network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                } catch (Exception ex) {
+                    //  Log.e("MainActivity", ex.getMessage());
+                }
             }
         }
         setContentView(R.layout.activity_main);
@@ -789,6 +797,9 @@ public class MainActivity extends ActionBarActivity
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
+            // Make this call to ensure that map is initialized for CameraUpdateFactory
+            MapsInitializer.initialize(this);
+
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
             mMap.getUiSettings().setZoomControlsEnabled(false);
 
