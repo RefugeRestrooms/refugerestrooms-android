@@ -24,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -42,12 +44,14 @@ import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -457,12 +461,11 @@ public class MainActivity extends ActionBarActivity
         android.location.LocationListener locationListener = new android.location.LocationListener(){
             @Override
             public void onLocationChanged(Location location) {
-                if (location != null)
-                {
-                  //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
+                if (location != null) {
+                    //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                  //  Log.i("latitude,longitude", ""+latitude+","+longitude);
+                    //  Log.i("latitude,longitude", ""+latitude+","+longitude);
                     mCurrentLocation = location;
                 }
             }
@@ -471,14 +474,15 @@ public class MainActivity extends ActionBarActivity
             public void onProviderEnabled(String provider) {}
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         boolean gps_enabled = false;
         boolean network_enabled = false;
-        try {
+
+        if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+            network_enabled = true;
+        }
+        if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-          //  Log.e("MainActivity", ex.getMessage());
         }
 
         if (!gps_enabled) {
@@ -489,10 +493,12 @@ public class MainActivity extends ActionBarActivity
             }
 
             // Tries to get data from network otherwise
-            try {
-                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch (Exception ex) {
-              //  Log.e("MainActivity", ex.getMessage());
+            if (network_enabled) {
+                try {
+                    network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                } catch (Exception ex) {
+                    //  Log.e("MainActivity", ex.getMessage());
+                }
             }
         }
         setContentView(R.layout.activity_main);
@@ -783,7 +789,7 @@ public class MainActivity extends ActionBarActivity
         }
         else {
             /*
-             * A request is already underway. You can handle
+             * A request is already underway. Can handle
              * this situation by disconnecting the client,
              * re-setting the flag, and then re-trying the
              * request.
@@ -804,6 +810,9 @@ public class MainActivity extends ActionBarActivity
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
+            // Make this call to ensure that map is initialized for CameraUpdateFactory
+            MapsInitializer.initialize(this);
+
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
             mMap.getUiSettings().setZoomControlsEnabled(false);
 
@@ -828,18 +837,41 @@ public class MainActivity extends ActionBarActivity
                     String title = arg0.getTitle();
                     String snippet = arg0.getSnippet();
 
-                    // Getting reference to the TextView to set title
+                    // Getting references to the TextViews to set title and address snippet
                     TextView windowTitle = (TextView) v.findViewById(R.id.window_title);
-
-                    // Getting reference to the TextView to set directions snippet
                     TextView windowSnippet = (TextView) v.findViewById(R.id.window_snippet);
+
+                    // Getting references to the ImageViews to set unisex and accessibility
+                    ImageView windowAccessible = (ImageView) v.findViewById(R.id.accessible);
+                    ImageView windowUnisex = (ImageView) v.findViewById(R.id.unisex);
 
                     // Setting the title
                     windowTitle.setText(title);
                     windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
                     // Setting the directions snippet
-                    windowSnippet.setText("Directions: " + snippet);
+                    windowSnippet.setText(snippet);
+
+                    // Hide accessible, unisex logos by default
+                    windowAccessible.setVisibility(View.INVISIBLE);
+                    windowUnisex.setVisibility(View.INVISIBLE);
+
+                    // Get bathroom from info marker and set accessible, unisex logos respectively
+                    Bathroom bathroom = allBathroomsMap.get(arg0.getPosition());
+                    if (bathroom.isAccessible()) {
+                        windowAccessible.setVisibility(View.VISIBLE);
+                    }
+                    if (bathroom.isUnisex()) {
+                        windowUnisex.setVisibility(View.VISIBLE);
+                        // Moves unisex logo to the accessible logo's positioning if bathroom is not accessible
+                        if(!bathroom.isAccessible()) {
+                            final float scale = getResources().getDisplayMetrics().density;
+                            // Convert pixels to dp
+                            int paddingLeft = (int) (3 * scale + 0.5f);
+                            int paddingTop = (int) (10 * scale + 0.5f);
+                            windowUnisex.setPadding(paddingLeft,paddingTop,0,0);
+                        }
+                    }
 
                     // Returning the view containing InfoWindow contents
                     return v;
@@ -885,23 +917,22 @@ public class MainActivity extends ActionBarActivity
             String name = bathroom.getName();
            
             int score = bathroom.getScore();
-            //String comment = bathroom.getComments();
             // Adds bathroom markers, blue for accessible, red for not
             Marker marker;
             if (bathroom.isAccessible() == true)
             {
                  marker = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(temp.latitude, temp.longitude))
-                    .title(name)
-                    .snippet(bathroom.getDirections())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                        .position(new LatLng(temp.latitude, temp.longitude))
+                        .title(name)
+                        .snippet(bathroom.getAddress())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             }
             else
             {
                  marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude,temp.longitude))
                         .title(name)
-                        .snippet(bathroom.getDirections())
+                        .snippet(bathroom.getAddress())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
             // Put bathrooms in hashmap for use later in info window
