@@ -36,26 +36,15 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
 
 ```
-xx- get correct bathroom in main activity
-xx- bug fix from crash: http://stackoverflow.com/questions/20660561/illegalargumentexception-provider-doesnt-exisit-null-on-maps-v1
+xx- Change map marker to show accessible
 xx- detailed info view
+xx- add info icon in lower right
+xx- change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
 
-xx-1) add info icon in lower right
-  -- work right away with gps
-  -- no need to select
-  -- don't show until search when no gps
-  -- change where button is instantiated in code
-  -- grey?
-xx-2) 'x' button on info window..
-  -- color?
-xx-3) Change map marker to show accessible
-  -- padding left, top when only one logo, when both (MainActivity, custom_info_window)?
-4) ninas coffee cafe problem in detailed info window
+1) ninas coffee cafe problem in detailed info window
   -- address accents in custom info window..
   -- can't encode it twice? encode these separately in main activity and infoview, or check if right encoding in bathroom.java
-5) change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
-    -- shows gps no restrooms message if gps is on and search
-6) add comments to new files
+2) add comments to new files
   --infoviewactivity
   --bathroomspecsviewupdater
   --mainactivity (launchdetails)
@@ -71,7 +60,8 @@ merge git release tags
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
   - [ ] Feature to save bathrooms for offline use
 - [x] Detailed info window
-  - [ ] Allow users to rate and report bathrooms 
+  - [ ] Allow users to rate and report bathrooms
+- [ ] Re-style map pin custom info window
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn of navigation so that the blue line doesn't appear on map.
