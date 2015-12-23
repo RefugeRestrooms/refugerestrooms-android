@@ -22,7 +22,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="top|end"
-                android:background="@drawable/ic_close_white_24dp" />
+                android:background="@drawable/ic_close_white_24dp"
+                android:backgroundTint="#41326B" />
             <TextView
                 android:id="@+id/text_title"
                 android:textStyle="bold"

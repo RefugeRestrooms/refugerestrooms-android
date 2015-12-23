@@ -19,6 +19,9 @@
     <string name="location_not_enabled">Location not enabled</string>
     <string name="no_nearby_locations">No nearby restrooms found</string>
     <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
+    <string name="no_search_locations">No restrooms found in %1$s</string>
+    <string name="no_search_locations_initial">No restrooms found with Search</string>
+    <string name="no_marker_selected">Select a map pin to view its info</string>
     <string name="action_directions">Text</string>
     <string name="action_settings">Settings</string>
 

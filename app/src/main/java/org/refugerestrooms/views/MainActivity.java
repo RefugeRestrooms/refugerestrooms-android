@@ -93,6 +93,7 @@ public class MainActivity extends ActionBarActivity
     private LocationRequest mLocationRequest;
     private final String TAG = "Refuge Restrooms";
     private Boolean initial = true;
+    private Boolean searchPerformed = false;
 
     Location mCurrentLocation;
     Location mLastLocation;
@@ -581,7 +582,7 @@ public class MainActivity extends ActionBarActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
-
+    String query;
     @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
@@ -590,12 +591,13 @@ public class MainActivity extends ActionBarActivity
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            query = intent.getStringExtra(SearchManager.QUERY);
             // Use the query to search
             Server mServer = new Server(this);
             // Boolean to prevent "gps not enabled" dialog box from re-showing on search
             doNotDisplayDialog = true;
             onSearchAction = true;
+            searchPerformed = true;
             mServer.performSearch(query, false);
         }
     }
@@ -949,13 +951,22 @@ public class MainActivity extends ActionBarActivity
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
             }
             else {
-                Toast.makeText(this, R.string.no_nearby_locations,
+                // Concatenate no_search_locations from strings.xml with search term
+                String text = String.format(getResources().getString(R.string.no_search_locations), query);
+                Toast.makeText(this, text,
                         Toast.LENGTH_SHORT).show();
             }
         }
-
-        // Create info Button
+        // Create info Button and set initial onclicklistener to return toast
+        // (before map pin is selected)
         final Button infoButton = (Button) findViewById(R.id.info_button);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+              public void onClick(View v) {
+                  Toast.makeText(MainActivity.this, R.string.no_marker_selected,
+                          Toast.LENGTH_SHORT).show();
+              }
+        });
+
         // New marker onclicklistener to navigate to selected marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -965,7 +976,7 @@ public class MainActivity extends ActionBarActivity
                 marker.showInfoWindow();
 
                 final LatLng markerLatLng = marker.getPosition();
-                // Set onclicklistener for info button
+                // Set onclicklistener for info button -- override toast message
                 infoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -979,8 +990,7 @@ public class MainActivity extends ActionBarActivity
                 //mMap.getUiSettings().setMapToolbarEnabled(true);
                 if (mCurrentLocation != null) {
                     navigateToMarker(marker);
-                }
-                else {
+                } else {
                     mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                             mGoogleApiClient);
                     if (mLastLocation != null) {
@@ -1044,8 +1054,14 @@ public class MainActivity extends ActionBarActivity
                 initial = false;
             }
             else {
-                Toast.makeText(this,R.string.no_nearby_locations_initial,
-                        Toast.LENGTH_LONG).show();
+                // Check to see if a bathroom wasn't found because of a search, or from gps, and
+                // display appropriate toast
+                if (!searchPerformed)
+                    Toast.makeText(this,R.string.no_nearby_locations_initial,
+                            Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(this,R.string.no_search_locations_initial,
+                            Toast.LENGTH_LONG).show();
             }
         }
     }
