@@ -19,11 +19,13 @@
     <string name="location_not_enabled">Location not enabled</string>
     <string name="no_nearby_locations">No nearby restrooms found</string>
     <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
+    <string name="no_search_locations">No restrooms found in %1$s</string>
+    <string name="no_search_locations_initial">No restrooms found with Search</string>
+    <string name="no_marker_selected">Select a map pin to view its info</string>
     <string name="action_directions">Text</string>
     <string name="action_settings">Settings</string>
 
     <string name="search_button">Find a Restroom</string>
-    <string name="add_button">Add a Restroom - coming soon</string>
     <string name="search_location_button">Restrooms Near You</string>
     <string name="about_button">About</string>
     <string name="submit_button">Submit</string>
@@ -37,9 +39,6 @@
     <string name="accessible">Accessible</string>
     <string name="unisex">Unisex</string>
     <string name="score">Score:  </string>
-    <string name="unknown">unknown</string>
-    <string name="about_activity_title">About RefugeRestrooms</string>
-    <string name="about">The REFUGE app is an android client for refugerestrooms.org, a web app which seeks to provide safe restroom access for transgender, intersex, and gender nonconforming individuals.\n\nREFUGE picks up the torch where Safe2Pee left off, bringing help to those who find themselves in need of a place to pee safely once again. We seek to create a community focused not only on finding existing safe restroom access but also looking forward and participating in restroom advocacy for transgender, intersex, and gender nonconforming folk.</string>
-    <string name="about_link">For more information, see http://www.refugerestrooms.org/about</string>
+    <string name="unknown">No Ratings</string>
     <string name="no_results">No results have been found.</string>
 </resources>
