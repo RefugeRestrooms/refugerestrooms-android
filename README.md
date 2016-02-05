@@ -17,7 +17,7 @@ By all means contribute :) Areas which definitely need work are listed as TODOs 
 Please try to stick to the android style guidelines http://source.android.com/source/code-style.html. Fields should start with 'm'
 In addition, please put curly brackets round your blocks.
 
-If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code.
+If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code. Also create an issue when working on a new feature so we don't duplicate work!
 
 ## Functionality
 - Works best with GPS Location enabled
@@ -38,12 +38,14 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 ## TODO
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
-  - [ ] Auto-complete search
+  - [ ] Auto-complete search (google places api)
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
   - [ ] Feature to save bathrooms for offline use
-- [ ] Detailed info button like in ios app, Add bathroom rating to info window
+- [x] Detailed info window
+  - [ ] Allow users to rate and report bathrooms
+- [ ] Re-style map pin custom info window
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn off navigation so that the blue line doesn't appear on map.
@@ -64,8 +66,10 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add different locales in strings.xml file
 
 ## Bugs
-- [ ] Screen rotation re-updates map to initial closest location
+- [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
+- [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
+- [ ] Map reinstantiates every time a search occurs
 - [x] Going back from text directions removes polyline
 - [x] GPS not enabled message shows after every search
 - [x] Searching a second time doesn't remove first search pins
@@ -76,3 +80,4 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen3.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen4.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen5.png?raw=true)
+![](/app/src/main/res/drawable-hdpi/Screenshots/screen6.png?raw=true)

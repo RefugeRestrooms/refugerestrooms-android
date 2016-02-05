@@ -44,30 +44,19 @@ public class Bathroom {
     @SerializedName("longitude")
     private double mLongitude;
 
-    public String getName() {
+    public String getNameDecoded() {
         /******************************************************************************************
-        *  Following section encodes result into ISO-8859-1 and then decodes it into UTF-8.
+        *  Following section(s) encodes result into ISO-8859-1 and then decodes it into UTF-8 using decodeString().
         *  This is necessary for displaying accented characters; previously "é" was showing as "Ã©", etc..
         *  Most likely because of an encoding redundancy from the restroom API, so this may break in the future
         *  if that is changed/fixed.
          ******************************************************************************************/
-        if (mName != null) {
-            String encodedString = null;
-            String decodedString = null;
-            try {
-                encodedString = URLEncoder.encode(mName, "ISO-8859-1");
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-            }
-            try {
-                decodedString = URLDecoder.decode(encodedString, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-            }
-            if (decodedString != null) {
-                mName = decodedString;
-            }
-        }
+        String mNameDecoded = mName;
+        mNameDecoded = decodeString(mNameDecoded);
+        return mNameDecoded;
+    }
+    // Needed to create separate variable for InfoViewFragment
+    public String getName() {
         return mName;
     }
 
@@ -77,13 +66,18 @@ public class Bathroom {
             address += mStreet + "\n";
         }
         if (!TextUtils.isEmpty(mCity)) {
-            address += mCity + "\n";
+            address += mCity + ", ";
         }
         if (!TextUtils.isEmpty(mState)) {
-            address += mState + "\n";
+            address += mState + ", ";
         }
         if (!TextUtils.isEmpty(mCountry)) {
             address += mCountry + "\n";
+        }
+        try {
+            address = new String(address.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //e.printStackTrace();
         }
         return address;
     }
@@ -97,28 +91,8 @@ public class Bathroom {
     }
 
     public String getDirections() {
-        /******************************************************************************************
-         *  Following section encodes result into ISO-8859-1 and then decodes it into UTF-8.
-         *  This is necessary for displaying accented characters; previously "é" was showing as "Ã©", etc..
-         *  Most likely because of an encoding redundancy from the restroom API, so this may break in the future
-         *  if that is changed/fixed.
-         ******************************************************************************************/
         if (mDirections != null) {
-            String encodedString = null;
-            String decodedString = null;
-            try {
-                encodedString = URLEncoder.encode(mDirections, "ISO-8859-1");
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-            }
-            try {
-                decodedString = URLDecoder.decode(encodedString, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-            }
-            if (decodedString != null) {
-                mDirections = decodedString;
-            }
+            mDirections = decodeString(mDirections);
         }
         return mDirections;
     }
@@ -131,6 +105,10 @@ public class Bathroom {
     }
 
     public String getComments() {
+        // Same encoding fix as getDirections above
+        if (mComments != null) {
+            mComments = decodeString(mComments);
+        }
         return mComments;
     }
 
@@ -151,6 +129,15 @@ public class Bathroom {
 
     public LatLng getLocation() {
         return new LatLng(mLatitude, mLongitude);
+    }
+
+    private String decodeString(String string) {
+        try {
+            string = new String(string.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //e.printStackTrace();
+        }
+        return string;
     }
 
 }
