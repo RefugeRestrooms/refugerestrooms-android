@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -70,6 +74,9 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.HashMap;
 
 import static java.lang.Character.getNumericValue;
 
@@ -86,6 +93,7 @@ public class MainActivity extends ActionBarActivity
     private LocationRequest mLocationRequest;
     private final String TAG = "Refuge Restrooms";
     private Boolean initial = true;
+    private Boolean searchPerformed = false;
 
     Location mCurrentLocation;
     Location mLastLocation;
@@ -363,6 +371,17 @@ public class MainActivity extends ActionBarActivity
         // Persist shared preference to prevent dialog from showing again.
        // Log.d("MainActivity", "TODO: Persist shared preferences.");
     }
+    // Launches the detailed info view from InfoViewFragment
+    private void launchDetails(Bathroom bathroom) {
+        Bundle bundle = new Bundle();
+        bundle.putString(InfoViewFragment.EXTRA_BATHROOM, bathroom.toJson());
+        InfoViewFragment infoView = new InfoViewFragment();
+        infoView.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, infoView)
+                .addToBackStack("infoView")
+                .commit();
+    }
     public void onConnectionSuspended(int i) {
        // Log.i(TAG, "GoogleApiClient connection has been suspend");
     }
@@ -453,17 +472,13 @@ public class MainActivity extends ActionBarActivity
                 }
             }
 
-            public void onProviderDisabled(String provider) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
+            public void onProviderDisabled(String provider) {}
+            public void onProviderEnabled(String provider) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         boolean gps_enabled = false;
         boolean network_enabled = false;
+
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
             network_enabled = true;
@@ -568,7 +583,7 @@ public class MainActivity extends ActionBarActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
-
+    String query;
     @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
@@ -577,12 +592,13 @@ public class MainActivity extends ActionBarActivity
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            query = intent.getStringExtra(SearchManager.QUERY);
             // Use the query to search
             Server mServer = new Server(this);
             // Boolean to prevent "gps not enabled" dialog box from re-showing on search
             doNotDisplayDialog = true;
             onSearchAction = true;
+            searchPerformed = true;
             mServer.performSearch(query, false);
         }
     }
@@ -776,7 +792,7 @@ public class MainActivity extends ActionBarActivity
         }
         else {
             /*
-             * A request is already underway. You can handle
+             * A request is already underway. Can handle
              * this situation by disconnecting the client,
              * re-setting the flag, and then re-trying the
              * request.
@@ -824,18 +840,41 @@ public class MainActivity extends ActionBarActivity
                     String title = arg0.getTitle();
                     String snippet = arg0.getSnippet();
 
-                    // Getting reference to the TextView to set title
+                    // Getting references to the TextViews to set title and address snippet
                     TextView windowTitle = (TextView) v.findViewById(R.id.window_title);
-
-                    // Getting reference to the TextView to set directions snippet
                     TextView windowSnippet = (TextView) v.findViewById(R.id.window_snippet);
+
+                    // Getting references to the ImageViews to set unisex and accessibility
+                    ImageView windowAccessible = (ImageView) v.findViewById(R.id.accessible);
+                    ImageView windowUnisex = (ImageView) v.findViewById(R.id.unisex);
 
                     // Setting the title
                     windowTitle.setText(title);
                     windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
                     // Setting the directions snippet
-                    windowSnippet.setText("Directions: " + snippet);
+                    windowSnippet.setText(snippet);
+
+                    // Hide accessible, unisex logos by default
+                    windowAccessible.setVisibility(View.INVISIBLE);
+                    windowUnisex.setVisibility(View.INVISIBLE);
+
+                    // Get bathroom from info marker and set accessible, unisex logos respectively
+                    Bathroom bathroom = allBathroomsMap.get(arg0.getPosition());
+                    if (bathroom.isAccessible()) {
+                        windowAccessible.setVisibility(View.VISIBLE);
+                    }
+                    if (bathroom.isUnisex()) {
+                        windowUnisex.setVisibility(View.VISIBLE);
+                        // Moves unisex logo to the accessible logo's positioning if bathroom is not accessible
+                        if(!bathroom.isAccessible()) {
+                            final float scale = getResources().getDisplayMetrics().density;
+                            // Convert pixels to dp
+                            int paddingLeft = (int) (3 * scale + 0.5f);
+                            int paddingTop = (int) (10 * scale + 0.5f);
+                            windowUnisex.setPadding(paddingLeft,paddingTop,0,0);
+                        }
+                    }
 
                     // Returning the view containing InfoWindow contents
                     return v;
@@ -858,9 +897,11 @@ public class MainActivity extends ActionBarActivity
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     int lastLoc[];
     int location_count = 0;
+    // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
+    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
-    public void onSearchResults(List<Bathroom> results) {
+    public void onSearchResults(final List<Bathroom> results) {
         locations = new LatLng[results.size()];
         names = new String[results.size()];
         numLocations = results.size();
@@ -876,27 +917,29 @@ public class MainActivity extends ActionBarActivity
         {
             Bathroom bathroom = results.get(i);
             LatLng temp = bathroom.getLocation();
-            String name = bathroom.getName();
+            String name = bathroom.getNameDecoded();
            
             int score = bathroom.getScore();
-            //String comment = bathroom.getComments();
             // Adds bathroom markers, blue for accessible, red for not
+            Marker marker;
             if (bathroom.isAccessible() == true)
             {
-                mMap.addMarker(new MarkerOptions()
+                 marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude, temp.longitude))
                         .title(name)
-                        .snippet(bathroom.getDirections())
+                        .snippet(bathroom.getAddress())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             }
             else
             {
-                mMap.addMarker(new MarkerOptions()
+                 marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude,temp.longitude))
                         .title(name)
-                        .snippet(bathroom.getDirections())
+                        .snippet(bathroom.getAddress())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
+            // Put bathrooms in hashmap for use later in info window
+            allBathroomsMap.put(bathroom.getLocation(), bathroom);
 
             locations[i] = temp;
             names[i] = name;
@@ -909,10 +952,21 @@ public class MainActivity extends ActionBarActivity
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
             }
             else {
-                Toast.makeText(this, R.string.no_nearby_locations,
+                // Concatenate no_search_locations from strings.xml with search term
+                String text = String.format(getResources().getString(R.string.no_search_locations), query);
+                Toast.makeText(this, text,
                         Toast.LENGTH_SHORT).show();
             }
         }
+        // Create info Button and set initial onclicklistener to return toast
+        // (before map pin is selected)
+        final Button infoButton = (Button) findViewById(R.id.info_button);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+              public void onClick(View v) {
+                  Toast.makeText(MainActivity.this, R.string.no_marker_selected,
+                          Toast.LENGTH_SHORT).show();
+              }
+        });
 
         // New marker onclicklistener to navigate to selected marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -921,11 +975,23 @@ public class MainActivity extends ActionBarActivity
             public boolean onMarkerClick(Marker marker) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 400, null);
                 marker.showInfoWindow();
+
+                final LatLng markerLatLng = marker.getPosition();
+                // Set onclicklistener for info button -- override toast message
+                infoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bathroom bathroom = null;
+                        // Get bathroom from hashmap using marker's location
+                        bathroom = allBathroomsMap.get(markerLatLng);
+                        if (bathroom != null)
+                            launchDetails(bathroom);
+                    }
+                });
                 //mMap.getUiSettings().setMapToolbarEnabled(true);
                 if (mCurrentLocation != null) {
                     navigateToMarker(marker);
-                }
-                else {
+                } else {
                     mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                             mGoogleApiClient);
                     if (mLastLocation != null) {
@@ -933,6 +999,17 @@ public class MainActivity extends ActionBarActivity
                     }
                 }
                 return true;
+            }
+        });
+        // On info window click
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Bathroom bathroom = null;
+                // Get bathroom from hashmap using marker's location
+                bathroom = allBathroomsMap.get(marker.getPosition());
+                if (bathroom != null)
+                    launchDetails(bathroom);
             }
         });
 
@@ -978,8 +1055,14 @@ public class MainActivity extends ActionBarActivity
                 initial = false;
             }
             else {
-                Toast.makeText(this,R.string.no_nearby_locations_initial,
-                        Toast.LENGTH_LONG).show();
+                // Check to see if a bathroom wasn't found because of a search, or from gps, and
+                // display appropriate toast
+                if (!searchPerformed)
+                    Toast.makeText(this,R.string.no_nearby_locations_initial,
+                            Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(this,R.string.no_search_locations_initial,
+                            Toast.LENGTH_LONG).show();
             }
         }
     }
