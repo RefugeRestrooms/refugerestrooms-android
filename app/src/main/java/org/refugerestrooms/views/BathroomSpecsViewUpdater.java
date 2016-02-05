@@ -2,6 +2,9 @@ package org.refugerestrooms.views;
 
 /**
  * Created by Refuge Restrooms on 9/26/15.
+ *
+ * This file updates the InfoViewFragment with specs such as bathroom rating,
+ * accessibility, and unisex properties
  */
 import org.refugerestrooms.models.Bathroom;
 
@@ -22,6 +25,7 @@ public class BathroomSpecsViewUpdater {
         scoreTv.setTextColor(Color.WHITE);
         scoreTv.setBackgroundColor(getScoreColour(score));
 
+        // Checks if bathroom is accessible, unisex
         if (bathroom.isAccessible()) {
             ImageView iv = (ImageView) view.findViewById(R.id.accessible);
             iv.setVisibility(View.VISIBLE);
@@ -31,11 +35,12 @@ public class BathroomSpecsViewUpdater {
             iv.setVisibility(View.VISIBLE);
         }
     }
-
+    // Get bathroom's rating
     private static String getScoreDescription(Context context, int score) {
         return (score < 0 ? context.getString(R.string.unknown) : "" + score * 100 + "% POSITIVE");
     }
-
+    // Color the bathroom score appropriately.
+    // Green: Good, Yellow: Ok, Red: Bad, Gray: N/A
     private static int getScoreColour(int score) {
         if (score < 0) {
             return Color.GRAY;

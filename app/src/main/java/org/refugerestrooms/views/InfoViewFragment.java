@@ -2,6 +2,9 @@ package org.refugerestrooms.views;
 
 /**
  * Created by Refuge Restrooms on 9/26/15.
+ *
+ * This is the detailed info view fragment which appears upon selecting the info icon, or double clicking
+ * the custom info window.
  */
         import org.refugerestrooms.models.Bathroom;
 
@@ -46,7 +49,6 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_details, container, false);
 
-        // Add back button to action bar when using fragment
         // Cast MainActivity to getSupportActionBar
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -56,6 +58,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         if (args != null) {
             mBathroom = Bathroom.fromJson(args.getString(EXTRA_BATHROOM));
         }
+        // Creates a close button for the fragment
         final Button button = (Button) view.findViewById(R.id.close_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -66,6 +69,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         return view;
 
     }
+    // Sets the TextView to display bathroom info within the fragment
     private void updateView() {
         if (mBathroom != null) {
             TextView tv = (TextView) view.findViewById(R.id.text_title);
@@ -77,15 +81,20 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
             tv.setGravity(Gravity.CENTER);
             tv2.setGravity(Gravity.CENTER);
             tv3.setGravity(Gravity.CENTER);
+            // Gets specs such as bathroom rating, accessibility, and unisex properties
             View specsView = view.findViewById(R.id.specs);
             BathroomSpecsViewUpdater.update(specsView, mBathroom, getActivity());
         }
     }
-
+    // Functions to retrieve info from bathroom object
     private CharSequence getBathroomTitle() {
         String text = "";
         String name = mBathroom.getName();
         if (!TextUtils.isEmpty(name)) {
+
+            /* Had to re-decode bathroom name here for some reason... wouldn't work with same string used
+             * in the customInfoWindow. Created a separate string variable in Bathroom.java
+             * to hold off on decoding for the InfoViewFragment */
             name = decodeString(name);
             text += name;
         }
@@ -95,7 +104,6 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         String text = "";
         String address = mBathroom.getAddress();
         if (!TextUtils.isEmpty(address)) {
-            address = decodeString(address);
             text += address;
         }
         return text;

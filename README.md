@@ -35,22 +35,6 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Max locations shown initially: gps = 20, search = 75
 - Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
 
-```
-xx- Change map marker to show accessible
-xx- detailed info view
-xx- add info icon in lower right
-xx- change "no nearby restrooms" text on search to "no restrooms found in *location*" (joplin, mo)
-
-1) ninas coffee cafe problem in detailed info window
-  -- address accents in custom info window..
-  -- can't encode it twice? encode these separately in main activity and infoview, or check if right encoding in bathroom.java
-2) add comments to new files
-  --infoviewactivity
-  --bathroomspecsviewupdater
-  --mainactivity (launchdetails)
-merge git release tags
-```
-
 ## TODO
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
