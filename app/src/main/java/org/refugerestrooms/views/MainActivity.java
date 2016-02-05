@@ -371,6 +371,7 @@ public class MainActivity extends ActionBarActivity
         // Persist shared preference to prevent dialog from showing again.
        // Log.d("MainActivity", "TODO: Persist shared preferences.");
     }
+    // Launches the detailed info view from InfoViewFragment
     private void launchDetails(Bathroom bathroom) {
         Bundle bundle = new Bundle();
         bundle.putString(InfoViewFragment.EXTRA_BATHROOM, bathroom.toJson());
@@ -916,7 +917,7 @@ public class MainActivity extends ActionBarActivity
         {
             Bathroom bathroom = results.get(i);
             LatLng temp = bathroom.getLocation();
-            String name = bathroom.getName();
+            String name = bathroom.getNameDecoded();
            
             int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
