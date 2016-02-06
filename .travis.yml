@@ -24,4 +24,4 @@ android:
     - sys-img-x86-android-17
 before_install:
  - chmod +x gradlew
- - echo -e "$Keystore_Password"
+ - echo -e "machine github.com\n  login $Keystore_Password" >> ~/.netrc
