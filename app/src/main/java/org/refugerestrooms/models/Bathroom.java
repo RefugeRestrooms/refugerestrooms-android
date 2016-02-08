@@ -52,7 +52,9 @@ public class Bathroom {
         *  if that is changed/fixed.
          ******************************************************************************************/
         String mNameDecoded = mName;
-        mNameDecoded = decodeString(mNameDecoded);
+        if (mNameDecoded != null) {
+            mNameDecoded = decodeString(mNameDecoded);
+        }
         return mNameDecoded;
     }
     // Needed to create separate variable for InfoViewFragment
