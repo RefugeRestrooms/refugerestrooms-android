@@ -3,7 +3,7 @@ package org.refugerestrooms.views;
 /**
  * Created by Refuge Restrooms on 9/26/15.
  *
- * This is the detailed info view fragment which appears upon selecting the info icon, or double clicking
+ * This is the detailed info view fragment which appears upon selecting the info icon, or by clicking on
  * the custom info window.
  */
         import org.refugerestrooms.models.Bathroom;
