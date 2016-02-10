@@ -12,9 +12,9 @@ android {
         }
         release {
             keyAlias 'refuge'
-            keyPassword '$System.env.KEYPASS'
+            keyPassword System.getenv("KEYPASS")
             storeFile file('../refuge-release-key.keystore')
-            storePassword '$System.env.KEYPASS'
+            storePassword System.getenv("KEYPASS")
         }
     }
     compileSdkVersion 23
