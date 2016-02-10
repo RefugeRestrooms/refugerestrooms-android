@@ -24,4 +24,3 @@ android:
     - sys-img-x86-android-17
 before_install:
  - chmod +x gradlew
- - echo "$Release_Password" | ./gradlew
