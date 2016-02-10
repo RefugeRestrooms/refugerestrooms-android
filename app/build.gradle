@@ -23,8 +23,8 @@ android {
         applicationId "org.refugerestrooms"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 6
-        versionName "1.2"
+        versionCode 7
+        versionName "1.2.1"
     }
     buildTypes {
         release {
@@ -51,4 +51,7 @@ dependencies {
 
     compile project(":volley")
 
+}
+run{
+    standardInput = System.in
 }
