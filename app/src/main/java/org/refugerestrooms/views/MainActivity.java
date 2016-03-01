@@ -16,7 +16,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,8 +23,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +32,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +40,6 @@ import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -52,7 +47,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -64,21 +58,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.refugerestrooms.R;
 import org.refugerestrooms.models.Bathroom;
 import org.refugerestrooms.models.Haversine;
-import org.refugerestrooms.models.ListOfBathrooms;
-import org.refugerestrooms.servers.JsonRequest;
 import org.refugerestrooms.servers.Server;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.text.Normalizer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.HashMap;
-
-import static java.lang.Character.getNumericValue;
 
 //TODO ActionBarActivity has been depreciated... use toolbar instead
 public class MainActivity extends ActionBarActivity
@@ -107,7 +91,7 @@ public class MainActivity extends ActionBarActivity
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
-    static final LatLng COFFMAN  	       = new LatLng(44.972905,-93.235613);
+    static final LatLng COFFMAN = new LatLng(44.972905,-93.235613);
 
     private int numLocations;
     SharedPreferences mPrefs;

@@ -1,14 +1,12 @@
 package org.refugerestrooms.models;
 
+import android.text.TextUtils;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import android.text.TextUtils;
-
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * Placeholder

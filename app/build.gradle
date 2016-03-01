@@ -1,8 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    useLibrary 'org.apache.http.legacy'
     signingConfigs {
         debug {
+
             keyAlias 'gnbkey'
             keyPassword 'pFgyRmYsP411'
             storeFile file('../keystore.jks')
@@ -15,12 +17,12 @@ android {
             storePassword System.console() != null ? System.console().readLine("\nKeystore password: ") : ""
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "org.refugerestrooms"
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 6
         versionName "1.2"
     }
@@ -34,14 +36,17 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.jd-alexander:library:1.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.mcxiaoke.volley:library:1.0.17'
     compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:design:23.1.1'
+    compile 'de.greenrobot:greendao:2.1.0'
+    compile project(":volley")
+
 }

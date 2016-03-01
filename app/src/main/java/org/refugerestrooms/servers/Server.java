@@ -2,7 +2,13 @@ package org.refugerestrooms.servers;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,6 +17,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.refugerestrooms.application.RefugeRestroomApplication;
 import org.refugerestrooms.models.Bathroom;
 import org.refugerestrooms.models.ListOfBathrooms;
 
@@ -19,17 +28,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 /**
  * Placeholder
+ *
  * @author Refuge Restrooms
  */
 
 public class Server {
 
     protected static final String TAG = null;
+    private static final String SERVER_URL = "http://www.refugerestrooms.org:80/api/v1/";
+
     private ServerListener mListener;
 
     public Server(ServerListener mListener) {
@@ -37,50 +46,33 @@ public class Server {
         this.mListener = mListener;
     }
 
-    public void performSearch(final String searchTerm, final boolean location) {
-        // TODO Lark around on the internet
+    private String buildUrl(String searchTerm, boolean isLocation) throws URISyntaxException {
+        if (isLocation) {
+            // Refuge Restrooms API bathrooms queried
+            // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
+            // limit per_page=20 so only the 20 nearest relevant results display for search
 
-        new RemoteCallTask() {
-            private String searchTerm;
+            return SERVER_URL + "restrooms/by_location.json?per_page=20&" + searchTerm;
+        } else {
+            // limit per_page=75 so only the 75 most relevant results display for search
+            return SERVER_URL + "restrooms/search.json?per_page=75&query=" + Uri.encode(searchTerm, "UTF-8");
+        }
+    }
 
-            private RemoteCallTask setSearchTerm(String searchTerm) {
-                this.searchTerm = searchTerm;
-                return this;
-            }
 
-            @Override
-            public URI buildUrl() throws URISyntaxException {
-                if(!location)
-                    // limit per_page=75 so only the 75 most relevant results display for search
-                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/search.json?per_page=75&query=" + Uri.encode(searchTerm, "UTF-8"));
-                else {
-                    // Refuge Restrooms API bathrooms queried
-                    // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
-                    // limit per_page=20 so only the 20 nearest relevant results display for search
-                    return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?per_page=20&" + searchTerm);
-                }
-            }
+    public void performSearch( String searchTerm,  boolean location) {
 
-            @Override
-            protected void onPostExecute(String result) {
-                //Log.d(TAG, "Result: " + result);
-                if (result != null) {
-                    try {
-                        Gson gson = new Gson();
-                        ListOfBathrooms list = gson.fromJson(result, ListOfBathrooms.class);
 
-                        if (mListener != null) {
-                            mListener.onSearchResults(list);
-                        }
-                    } catch (JsonSyntaxException jse) {
-                        String msg = "JSON Error: " + jse.getMessage();
-                        //Log.e(TAG, msg);
-                        reportError(msg);
-                    }
-                }
-            }
+        try {
+            String url = buildUrl(searchTerm, location);
+            RequestHandler.requestJsonArray(onSuccessResponseListener, errorListener, RefugeRestroomApplication.getRequestQueue(), url);
 
-        }.setSearchTerm(searchTerm).execute();
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     protected void reportError(String errorMessage) {
@@ -89,49 +81,38 @@ public class Server {
         }
     }
 
-    public void submitNewEntry() {
-        // TODO Lark around on the internet
-        if (mListener != null) {
-            mListener.onSubmission(true);
-        }
-    }
 
-    private abstract class RemoteCallTask extends
-            AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            HttpGet request;
-            try {
-                request = new HttpGet(buildUrl());
-                HttpClient client = new DefaultHttpClient();
-                HttpResponse response = client.execute(request);
-                int code = response.getStatusLine().getStatusCode();
-
-                if (code == HttpStatus.SC_OK) {
-                    return EntityUtils.toString(response.getEntity());
-                } else {
-                    reportError("Failed with HTTP code " + code);
-                }
-            } catch (ClientProtocolException e) {
-                //Log.e(TAG, e.getMessage());
-                reportError("ClientProtocolException");
-            } catch (IOException e) {
-               // Log.e(TAG, e.getMessage());
-                reportError("IOException");
-            } catch (URISyntaxException e1) {
-                //Log.e(TAG, "Failed to build URL " + e1.getMessage());
-            }
-            return null;
-        }
-
-        public abstract URI buildUrl() throws URISyntaxException;
-    }
 
     public interface ServerListener {
         public void onSearchResults(List<Bathroom> results);
+
         public void onSubmission(boolean success);
+
         public void onError(String errorMessage);
     }
+    private Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+                mListener.onError(error.getMessage());
+        }
+    };
+    private Response.Listener<JSONArray> onSuccessResponseListener = new Response.Listener<JSONArray>() {
+        @Override
+        public void onResponse(JSONArray response) {
+            try {
+                String responseStr = response.toString();
+                Gson gson = new Gson();
+                ListOfBathrooms list = gson.fromJson(responseStr, ListOfBathrooms.class);
+
+                if (mListener != null) {
+                    mListener.onSearchResults(list);
+                }
+            } catch (JsonSyntaxException jse) {
+                String msg = "JSON Error: " + jse.getMessage();
+                //Log.e(TAG, msg);
+                reportError(msg);
+            }
+        }
+    };
 
 }
