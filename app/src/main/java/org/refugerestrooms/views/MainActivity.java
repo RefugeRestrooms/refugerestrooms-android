@@ -1,5 +1,6 @@
 package org.refugerestrooms.views;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,12 +11,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -91,12 +94,14 @@ public class MainActivity extends ActionBarActivity
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
-    static final LatLng COFFMAN = new LatLng(44.972905,-93.235613);
+    static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
 
     private int numLocations;
     SharedPreferences mPrefs;
     SharedPreferences.Editor mEditor;
+
     public enum REQUEST_TYPE {START, STOP}
+
     private REQUEST_TYPE mRequestType;
 
     // Global constants
@@ -141,11 +146,13 @@ public class MainActivity extends ActionBarActivity
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
         private Dialog mDialog;
+
         // Default constructor. Sets the dialog field to null
         public ErrorDialogFragment() {
             super();
             mDialog = null;
         }
+
         // Set the dialog to display
         public void setDialog(Dialog dialog) {
             mDialog = dialog;
@@ -157,6 +164,7 @@ public class MainActivity extends ActionBarActivity
             return mDialog;
         }
     }
+
     /*
      * Handle results returned to the FragmentActivity
      * by Google Play services
@@ -167,13 +175,13 @@ public class MainActivity extends ActionBarActivity
         // Decide what to do based on the original request code
         switch (requestCode) {
 
-            case CONNECTION_FAILURE_RESOLUTION_REQUEST :
+            case CONNECTION_FAILURE_RESOLUTION_REQUEST:
             /*
              * If the result code is Activity.RESULT_OK, try
              * to connect again
              */
                 switch (resultCode) {
-                    case Activity.RESULT_OK :
+                    case Activity.RESULT_OK:
                     /*
                      * Try the request again
                      */
@@ -191,8 +199,8 @@ public class MainActivity extends ActionBarActivity
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             // In debug mode, log the status
-          //  Log.d("Location Updates",
-          //          "Google Play services is available.");
+            //  Log.d("Location Updates",
+            //          "Google Play services is available.");
             // Continue
             return true;
             // Google Play services was not available for some reason
@@ -250,12 +258,36 @@ public class MainActivity extends ActionBarActivity
                         // Called when a new location is found by the network location provider.
                         mCurrentLocationNoGps = location;
                     }
-                    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-                    public void onProviderEnabled(String provider) {}
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                    }
 
-                    public void onProviderDisabled(String provider) {}
+                    public void onProviderEnabled(String provider) {
+                    }
+
+                    public void onProviderDisabled(String provider) {
+                    }
                 };
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
             }
 
@@ -276,9 +308,7 @@ public class MainActivity extends ActionBarActivity
 
                 mServer = new Server(this);
                 mServer.performSearch(curLatLng, true);
-            }
-
-            else {
+            } else {
                 //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
                 // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
                 //curLatLng = "lat=44.9727&lng=-93.2354";
@@ -299,7 +329,7 @@ public class MainActivity extends ActionBarActivity
             if (mCurrentLocation != null) {
                 double myLat = mCurrentLocation.getLatitude();
                 double myLng = mCurrentLocation.getLongitude();
-                currentPosition = new LatLng(myLat,myLng);
+                currentPosition = new LatLng(myLat, myLng);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentPosition));
 
                 // Starts directions from location routing library
@@ -353,8 +383,9 @@ public class MainActivity extends ActionBarActivity
 
     private void doNotShowAgain() {
         // Persist shared preference to prevent dialog from showing again.
-       // Log.d("MainActivity", "TODO: Persist shared preferences.");
+        // Log.d("MainActivity", "TODO: Persist shared preferences.");
     }
+
     // Launches the detailed info view from InfoViewFragment
     private void launchDetails(Bathroom bathroom) {
         Bundle bundle = new Bundle();
@@ -366,9 +397,11 @@ public class MainActivity extends ActionBarActivity
                 .addToBackStack("infoView")
                 .commit();
     }
+
     public void onConnectionSuspended(int i) {
-       // Log.i(TAG, "GoogleApiClient connection has been suspend");
+        // Log.i(TAG, "GoogleApiClient connection has been suspend");
     }
+
     /*
      * Called by Location Services if the attempt to
      * Location Services fails.
@@ -425,6 +458,7 @@ public class MainActivity extends ActionBarActivity
              */
         }
     }
+
     void showErrorDialog(int code) {
         GooglePlayServicesUtil.getErrorDialog(code, this,
                 CONNECTION_FAILURE_RESOLUTION_REQUEST).show();
@@ -437,6 +471,7 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     private String mLocationTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -456,14 +491,29 @@ public class MainActivity extends ActionBarActivity
                 }
             }
 
-            public void onProviderDisabled(String provider) {}
-            public void onProviderEnabled(String provider) {}
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onProviderDisabled(String provider) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
         };
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
             network_enabled = true;
         }

@@ -1,30 +1,17 @@
 package org.refugerestrooms.servers;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.refugerestrooms.application.RefugeRestroomApplication;
 import org.refugerestrooms.models.Bathroom;
 import org.refugerestrooms.models.ListOfBathrooms;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
