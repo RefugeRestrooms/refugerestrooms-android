@@ -5,7 +5,9 @@ package org.refugerestrooms.servers;
  */
 
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -21,9 +23,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 
 public class JsonRequest {
