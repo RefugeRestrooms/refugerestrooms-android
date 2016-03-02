@@ -25,7 +25,7 @@ public class Server {
 
     protected static final String TAG = null;
     private static final String SERVER_URL = "http://www.refugerestrooms.org:80/api/v1/";
-
+    private static final String LOCAL_URL = "http://192.168.0.101:3000/api/v1/";
     private ServerListener mListener;
 
     public Server(ServerListener mListener) {
@@ -39,10 +39,10 @@ public class Server {
             // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
             // limit per_page=20 so only the 20 nearest relevant results display for search
 
-            return SERVER_URL + "restrooms/by_location.json?per_page=20&" + searchTerm;
+            return LOCAL_URL + "restrooms/by_location.json?per_page=20&" + searchTerm;
         } else {
             // limit per_page=75 so only the 75 most relevant results display for search
-            return SERVER_URL + "restrooms/search.json?per_page=75&query=" + Uri.encode(searchTerm, "UTF-8");
+            return LOCAL_URL + "restrooms/search.json?per_page=75&query=" + Uri.encode(searchTerm, "UTF-8");
         }
     }
 

@@ -12,11 +12,17 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.analytics.Tracker;
 
+import org.refugerestrooms.database.model.DaoSession;
+import org.refugerestrooms.database.model.DatabaseInitHandler;
+
 public class RefugeRestroomApplication extends Application {
     private static RefugeRestroomApplication instance;
     private static RequestQueue mRequestQueue;
 
     private static Context context;
+
+    private DatabaseInitHandler databaseInitHandler;
+    private DaoSession daoSession;
 
     @Override
     public void onCreate() {
@@ -24,12 +30,20 @@ public class RefugeRestroomApplication extends Application {
 
 
         init(getApplicationContext());
+
+    }
+
+    public DaoSession getDaoSession() {
+        return daoSession;
     }
 
     public void init(Context context) {
+        instance = this;
         this.context = context;
         mRequestQueue = Volley.newRequestQueue(context);
-
+        databaseInitHandler = new DatabaseInitHandler();
+        databaseInitHandler.initDataBase(context);
+        daoSession = databaseInitHandler.getDaoSession();
     }
 
     public static RefugeRestroomApplication getInstance() {

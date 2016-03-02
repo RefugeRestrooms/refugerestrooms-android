@@ -59,6 +59,13 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.refugerestrooms.R;
+import org.refugerestrooms.application.RefugeRestroomApplication;
+import org.refugerestrooms.database.SaveBathroomPropertyHandler;
+import org.refugerestrooms.database.model.BathroomEntity;
+import org.refugerestrooms.database.model.BathroomEntityDao;
+import org.refugerestrooms.database.model.DaoSession;
+import org.refugerestrooms.database.model.DatabaseEntityConverter;
+import org.refugerestrooms.database.model.DatabaseInitHandler;
 import org.refugerestrooms.models.Bathroom;
 import org.refugerestrooms.models.Haversine;
 import org.refugerestrooms.servers.Server;
@@ -475,6 +482,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // For search results
         handleIntent(getIntent());
         // Checks if gps is enabled, kicks out message to turn on if not.
@@ -936,6 +944,12 @@ public class MainActivity extends ActionBarActivity
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
     public void onSearchResults(final List<Bathroom> results) {
+
+
+        loadBathrooms(results);
+    }
+
+    private void loadBathrooms(List<Bathroom> results) {
         locations = new LatLng[results.size()];
         names = new String[results.size()];
         numLocations = results.size();
@@ -950,9 +964,13 @@ public class MainActivity extends ActionBarActivity
         for (int i = 0; i < numLocations; i++)
         {
             Bathroom bathroom = results.get(i);
+            DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
+            SaveBathroomPropertyHandler.saveProperty(daoSession, bathroom);
+
+
             LatLng temp = bathroom.getLocation();
             String name = bathroom.getNameDecoded();
-           
+
             int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
             Marker marker;
@@ -981,7 +999,7 @@ public class MainActivity extends ActionBarActivity
         // If no location, navigate to first marker that was found on search
         if (mCurrentLocation == null) {
             if (numLocations != 0) {
-                Toast.makeText(this,R.string.restrooms_found,
+                Toast.makeText(this, R.string.restrooms_found,
                         Toast.LENGTH_SHORT).show();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
             }
@@ -1101,6 +1119,12 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    private List loadSavedBathrooms(){
+        DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
+        BathroomEntityDao leaseDao = daoSession.getBathroomEntityDao();
+        List restroomsList = leaseDao.loadAll();
+    return  restroomsList;
+    }
     @Override
     public void onSubmission(boolean success) {
         //nothing
@@ -1155,6 +1179,13 @@ public class MainActivity extends ActionBarActivity
                 mFragment = new AddBathroomFragment();
                 break;
             case 2:
+                mTitle = getString(R.string.saved_bathrooms);
+                List bathroomsList = loadSavedBathrooms();
+                DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
+                List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
+                loadBathrooms(bathrooms);
+                break;
+            case 3:
                 mTitle = getString(R.string.title_section3);
                 mFragment = new FeedbackFormFragment();
                 break;
@@ -1181,8 +1212,10 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.title_section2);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.saved_bathrooms);
                 break;
+            case 4:
+                mTitle = getString(R.string.title_section3);
         }
     }
 
