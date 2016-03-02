@@ -6,7 +6,12 @@ import org.refugerestrooms.database.model.DaoSession;
 import org.refugerestrooms.models.Bathroom;
 
 public  class SaveBathroomPropertyHandler {
-
+    /**
+     * Save property will take the bathroom object and convert it into a BathroomEntity Object
+     * and insert it into the doasession.
+     * @param doaSession
+     * @param bathroom
+     */
     public static void saveProperty(DaoSession doaSession, Bathroom bathroom){
         BathroomEntity entity = new BathroomEntity();
         entity.setId(bathroom.getmId());
