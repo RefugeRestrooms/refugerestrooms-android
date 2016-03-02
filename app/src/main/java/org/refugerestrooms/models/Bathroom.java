@@ -15,6 +15,17 @@ import java.io.UnsupportedEncodingException;
 public class Bathroom {
 
     //TODO Other fields
+    @SerializedName("id")
+    private Long mId;
+
+    public Long getmId() {
+        return mId;
+    }
+
+    public void setmId(Long mId) {
+        this.mId = mId;
+    }
+
     @SerializedName("name")
     private String mName;
     @SerializedName("street")
@@ -58,6 +69,105 @@ public class Bathroom {
     // Needed to create separate variable for InfoViewFragment
     public String getName() {
         return mName;
+    }
+
+
+
+
+    public String getmStreet() {
+        return mStreet;
+    }
+
+    public void setmStreet(String mStreet) {
+        this.mStreet = mStreet;
+    }
+
+    public String getmCity() {
+        return mCity;
+    }
+
+    public void setmCity(String mCity) {
+        this.mCity = mCity;
+    }
+
+    public String getmState() {
+        return mState;
+    }
+
+    public void setmState(String mState) {
+        this.mState = mState;
+    }
+
+    public String getmCountry() {
+        return mCountry;
+    }
+
+    public void setmCountry(String mCountry) {
+        this.mCountry = mCountry;
+    }
+
+    public boolean ismAccessible() {
+        return mAccessible;
+    }
+
+    public void setmAccessible(boolean mAccessible) {
+        this.mAccessible = mAccessible;
+    }
+
+    public boolean ismUnisex() {
+        return mUnisex;
+    }
+
+    public void setmUnisex(boolean mUnisex) {
+        this.mUnisex = mUnisex;
+    }
+
+    public String getmDirections() {
+        return mDirections;
+    }
+
+    public void setmDirections(String mDirections) {
+        this.mDirections = mDirections;
+    }
+
+    public String getmComments() {
+        return mComments;
+    }
+
+    public void setmComments(String mComments) {
+        this.mComments = mComments;
+    }
+
+    public int getmDownvote() {
+        return mDownvote;
+    }
+
+    public void setmDownvote(int mDownvote) {
+        this.mDownvote = mDownvote;
+    }
+
+    public int getmUpvote() {
+        return mUpvote;
+    }
+
+    public void setmUpvote(int mUpvote) {
+        this.mUpvote = mUpvote;
+    }
+
+    public double getmLatitude() {
+        return mLatitude;
+    }
+
+    public void setmLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
+    }
+
+    public double getmLongitude() {
+        return mLongitude;
+    }
+
+    public void setmLongitude(double mLongitude) {
+        this.mLongitude = mLongitude;
     }
 
     public String getAddress() {

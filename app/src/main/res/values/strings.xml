@@ -9,8 +9,18 @@
     <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
     <string name="never_show_again">Never show this again</string>
 
+    <string-array name="menu_titles_array">
+
+        <item>@string/title_section1</item>
+        <item>@string/title_section2</item>
+        <item>@string/saved_bathrooms</item>
+        <item>@string/title_section3</item>
+        <item>@string/email</item>
+    </string-array>
+
+    <string name="saved_bathrooms">Recent Bathrooms</string>
     <string name="title_section1">Map</string>
-    <string name="title_section2">Add a Bathroom</string>
+    <string name="title_section2">Add Bathrooms</string>
     <string name="title_section3">Feedback</string>
     <string name="email">refugerestroomsapp@gmail.com</string>
 
