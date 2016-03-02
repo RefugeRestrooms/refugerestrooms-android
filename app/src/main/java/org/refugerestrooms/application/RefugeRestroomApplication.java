@@ -8,15 +8,17 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.analytics.Tracker;
 
 import org.refugerestrooms.database.model.DaoSession;
 import org.refugerestrooms.database.model.DatabaseInitHandler;
 
 public class RefugeRestroomApplication extends Application {
     private static RefugeRestroomApplication instance;
+    /**
+     * To be used as a static request queue accross the application it will improve
+     * the application efficiency way better.
+     */
     private static RequestQueue mRequestQueue;
 
     private static Context context;
@@ -55,8 +57,6 @@ public class RefugeRestroomApplication extends Application {
 
     public static RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
             mRequestQueue = Volley.newRequestQueue(context);
         } else if (mRequestQueue != null) {
             return mRequestQueue;

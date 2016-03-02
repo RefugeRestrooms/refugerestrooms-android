@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.refugerestrooms.database.model.DaoMaster.DevOpenHelper;
 /**
  * Created by Ahmed Fahmy on 3/2/16.
+ * Database Init Handler will initialize the Doa database and set the entities
  */
 public class DatabaseInitHandler {
 
@@ -58,7 +59,10 @@ public class DatabaseInitHandler {
         this.db = db;
     }
 
-
+    /**
+     * Initalize the data base.
+     * @param context
+     */
     public void initDataBase(Context context){
         DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, BATHROOMS_DATABASE_NAME, null);
         db = helper.getWritableDatabase();

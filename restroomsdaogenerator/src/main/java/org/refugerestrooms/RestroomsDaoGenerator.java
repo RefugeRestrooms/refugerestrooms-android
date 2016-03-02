@@ -7,6 +7,19 @@ import de.greenrobot.daogenerator.Schema;
 
 /**
  * Created by Ahmed Fahmy on 3/2/16.
+ *
+ * RestroomsDaoGenerator is only used one time to generate the DAO so it can
+ * handle the SQLite code.
+ *
+ * To run, simply run gradle restroomsdaogenerator>task>run
+ * in AndroidStudio.
+ *
+ * @output
+ * org.refugerestrooms.database.model
+ *
+ * @resources
+ * https://github.com/greenrobot/greenDAO
+ * http://www.devteam83.com/en/tutorial-greendao-from-scratch-part-1/
  */
 public class RestroomsDaoGenerator {
 

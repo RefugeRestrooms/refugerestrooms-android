@@ -11,6 +11,9 @@ import org.json.JSONObject;
 
 /**
  * Created by Ahmed Fahmy on 3/1/16.
+ *
+ * To minimize volley requests  this handler is made to only take the url and
+ * the success listener and the error listener.
  */
 public class RequestHandler {
 
