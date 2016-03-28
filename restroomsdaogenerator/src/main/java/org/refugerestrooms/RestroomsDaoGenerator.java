@@ -39,6 +39,7 @@ public class RestroomsDaoGenerator {
     private static final String UP_VOTE = "upvote";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
+    private static final String TIMESTAMP = "timestamp";
     private static final String GENERATE_IN_PATH = "../app/src/main/java";
     private static final String DATABASE_PACKAGE = "org.refugerestrooms.database.model";
 
@@ -73,6 +74,7 @@ public class RestroomsDaoGenerator {
         entity.addIntProperty(DOWN_VOTE);
         entity.addDoubleProperty(LATITUDE);
         entity.addDoubleProperty(LONGITUDE);
+        entity.addLongProperty(TIMESTAMP);
     }
 
 

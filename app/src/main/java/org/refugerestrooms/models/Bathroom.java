@@ -1,12 +1,15 @@
 package org.refugerestrooms.models;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Placeholder
@@ -52,6 +55,8 @@ public class Bathroom {
     private double mLatitude;
     @SerializedName("longitude")
     private double mLongitude;
+    @SerializedName("timestamp")
+    private long mTimestamp;
 
     public String getNameDecoded() {
         /******************************************************************************************
@@ -170,6 +175,10 @@ public class Bathroom {
         this.mLongitude = mLongitude;
     }
 
+    public long getmTimestamp () { return mTimestamp; }
+
+    public void setmTimestamp(long mTimestamp) { this.mTimestamp = mTimestamp; }
+
     public String getAddress() {
         String address = "";
         if (!TextUtils.isEmpty(mStreet)) {
@@ -223,6 +232,11 @@ public class Bathroom {
     }
 
     public void setName(String name) { this.mName = name; }
+
+    public long getTimestamp() {
+        long mTimestamp = new Date().getTime();
+        return mTimestamp;
+    }
 
     @Override
     public String toString() { return mName; }

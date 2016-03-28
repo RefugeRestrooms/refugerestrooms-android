@@ -20,6 +20,7 @@ public class BathroomEntity {
     private Integer downvote;
     private Double latitude;
     private Double longitude;
+    private Long timestamp;
 
     public BathroomEntity() {
     }
@@ -28,7 +29,7 @@ public class BathroomEntity {
         this.id = id;
     }
 
-    public BathroomEntity(Long id, String name, String street, String city, String state, String country, Boolean accessible, Boolean unisex, String directions, String comment, Integer upvote, Integer downvote, Double latitude, Double longitude) {
+    public BathroomEntity(Long id, String name, String street, String city, String state, String country, Boolean accessible, Boolean unisex, String directions, String comment, Integer upvote, Integer downvote, Double latitude, Double longitude, Long timestamp) {
         this.id = id;
         this.name = name;
         this.street = street;
@@ -43,6 +44,7 @@ public class BathroomEntity {
         this.downvote = downvote;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.timestamp = timestamp;
     }
 
     public Long getId() {
@@ -155,6 +157,14 @@ public class BathroomEntity {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
 }

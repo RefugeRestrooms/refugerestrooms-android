@@ -27,6 +27,7 @@ public class DatabaseEntityConverter {
             int downVote = bathroom.getDownvote();
             Double latitude = bathroom.getLatitude();
             Double longitude = bathroom.getLongitude();
+            Long timestamp = bathroom.getTimestamp();
 
 
             Bathroom bathroomObject = new Bathroom();
@@ -44,6 +45,7 @@ public class DatabaseEntityConverter {
             bathroomObject.setmLatitude(latitude);
             bathroomObject.setmLongitude(longitude);
             bathroomObject.setmStreet(street);
+            bathroomObject.setmTimestamp(timestamp);
               convertedBathrooms.add(bathroomObject);
         }
         return  convertedBathrooms;

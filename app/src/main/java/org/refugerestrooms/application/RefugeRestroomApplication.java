@@ -16,8 +16,8 @@ import org.refugerestrooms.database.model.DatabaseInitHandler;
 public class RefugeRestroomApplication extends Application {
     private static RefugeRestroomApplication instance;
     /**
-     * To be used as a static request queue accross the application it will improve
-     * the application efficiency way better.
+     * To be used as a static request queue across the application, this improves
+     * the application efficiency.
      */
     private static RequestQueue mRequestQueue;
 

@@ -60,7 +60,7 @@ public class DatabaseInitHandler {
     }
 
     /**
-     * Initalize the data base.
+     * Initialize the database.
      * @param context
      */
     public void initDataBase(Context context){
