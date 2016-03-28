@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Refuge Restrooms</string>
+
+    <string name="location_settings_title">Improve location accuracy</string>
+    <string name="location_settings">Settings</string>
+    <string name="location_skip">skip</string>
+    <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
+    <string name="never_show_again">Never show this again</string>
+
+    <string-array name="menu_titles_array">
+        <item>@string/map_title_section</item>
+        <item>@string/saved_bathrooms</item>
+        <item>@string/add_title_section</item>
+        <item>@string/feedback_title_section</item>
+    </string-array>
+
+    <string name="saved_bathrooms">Recent Bathrooms</string>
+    <string name="map_title_section">Map</string>
+    <string name="add_title_section">Add Bathrooms</string>
+    <string name="feedback_title_section">Feedback</string>
+    <string name="email">refugerestroomsapp@gmail.com</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="location_not_enabled">Location not enabled</string>
+    <string name="no_nearby_locations">No nearby restrooms found</string>
+    <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
+    <string name="no_search_locations">No restrooms found in %1$s</string>
+    <string name="no_search_locations_initial">No restrooms found with Search</string>
+    <string name="no_recent_locations">You don\'t have any recent restrooms</string>
+    <string name="no_marker_selected">Select a map pin to view its info</string>
+    <string name="action_directions">Text</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="search_button">Find a Restroom</string>
+    <string name="search_location_button">Restrooms Near You</string>
+    <string name="about_button">About</string>
+    <string name="submit_button">Submit</string>
+    <string name="add_activity_title">Add a Restroom</string>
+    <string name="list_activity_title">Search Results</string>
+    <string name="action_search">Search Address</string>
+    <string name="search_hint">Minneapolis, MN</string>
+    <string name="restrooms_found">Restrooms found!</string>
+    <string name="success_toast">Restroom successfully submitted</string>
+    <string name="fail_toast">There was an error submitting the restroom</string>
+    <string name="accessible">Accessible</string>
+    <string name="unisex">Unisex</string>
+    <string name="score">Score:  </string>
+    <string name="unknown">No Ratings</string>
+    <string name="no_results">No results have been found.</string>
+</resources>
