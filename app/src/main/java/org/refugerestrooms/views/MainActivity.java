@@ -71,6 +71,7 @@ import org.refugerestrooms.servers.Server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 //TODO ActionBarActivity has been depreciated... use toolbar instead
 public class MainActivity extends ActionBarActivity
@@ -1002,10 +1003,17 @@ public class MainActivity extends ActionBarActivity
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
             }
             else {
-                // Concatenate no_search_locations from strings.xml with search term
-                String text = String.format(getResources().getString(R.string.no_search_locations), query);
-                Toast.makeText(this, text,
-                        Toast.LENGTH_SHORT).show();
+                // Concatenates no_search_locations from strings.xml with search term
+                if (query != null) {
+                    String text = String.format(getResources().getString(R.string.no_search_locations), query);
+                    Toast.makeText(this, text,
+                            Toast.LENGTH_SHORT).show();
+                }
+                // No query here indicates that user selected Recent Bathrooms and there were none in Dao
+                else {
+                    Toast.makeText(this, R.string.no_recent_locations,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
         // Create info Button and set initial onclicklistener to return toast
@@ -1120,7 +1128,9 @@ public class MainActivity extends ActionBarActivity
     private List loadSavedBathrooms(){
         DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
         BathroomEntityDao leaseDao = daoSession.getBathroomEntityDao();
-        List restroomsList = leaseDao.loadAll();
+        // Loads the last 150 bathrooms added to the database
+        List restroomsList = leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
+        //List restroomsList = leaseDao.loadAll();
     return  restroomsList;
     }
     @Override
@@ -1173,18 +1183,19 @@ public class MainActivity extends ActionBarActivity
             case 0:
                 break;
             case 1:
-                mTitle = getString(R.string.title_section2);
-                mFragment = new AddBathroomFragment();
-                break;
-            case 2:
                 mTitle = getString(R.string.saved_bathrooms);
                 List bathroomsList = loadSavedBathrooms();
                 DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
                 List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
                 loadBathrooms(bathrooms);
+                onSearchAction = true;
+                break;
+            case 2:
+                mTitle = getString(R.string.add_title_section);
+                mFragment = new AddBathroomFragment();
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.feedback_title_section);
                 mFragment = new FeedbackFormFragment();
                 break;
         }
@@ -1204,16 +1215,16 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.map_title_section);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
                 mTitle = getString(R.string.saved_bathrooms);
                 break;
+            case 3:
+                mTitle = getString(R.string.add_title_section);
+                break;
             case 4:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.feedback_title_section);
         }
     }
 

@@ -8,11 +8,11 @@ import org.refugerestrooms.models.Bathroom;
 public  class SaveBathroomPropertyHandler {
     /**
      * Save property will take the bathroom object and convert it into a BathroomEntity Object
-     * and insert it into the doasession.
-     * @param doaSession
+     * and then insert it into the daosession.
+     * @param daoSession
      * @param bathroom
      */
-    public static void saveProperty(DaoSession doaSession, Bathroom bathroom){
+    public static void saveProperty(DaoSession daoSession, Bathroom bathroom){
         BathroomEntity entity = new BathroomEntity();
         entity.setId(bathroom.getmId());
         entity.setName(bathroom.getName());
@@ -28,7 +28,8 @@ public  class SaveBathroomPropertyHandler {
         entity.setState(bathroom.getmState());
         entity.setUnisex(bathroom.isUnisex());
         entity.setComment(bathroom.getComments());
-        doaSession.insertOrReplace(entity);
+        entity.setTimestamp(bathroom.getTimestamp());
+        daoSession.insertOrReplace(entity);
     }
 
 }

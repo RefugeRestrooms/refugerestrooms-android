@@ -21,7 +21,7 @@ import java.util.List;
  * @author Refuge Restrooms
  *
  * @edited @Sifrazooy
- *   Old HTTP requests is now removed and volley is used instead but the same listeners is still
+ *   Old HTTP requests is now removed and volley is used instead but the same listener is still
  *   used.
  */
 

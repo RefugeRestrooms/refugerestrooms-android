@@ -37,6 +37,7 @@ public class BathroomEntityDao extends AbstractDao<BathroomEntity, Long> {
         public final static Property Downvote = new Property(11, Integer.class, "downvote", false, "DOWNVOTE");
         public final static Property Latitude = new Property(12, Double.class, "latitude", false, "LATITUDE");
         public final static Property Longitude = new Property(13, Double.class, "longitude", false, "LONGITUDE");
+        public final static Property Timestamp = new Property(14, Long.class, "timestamp", false, "TIMESTAMP");
     };
 
 
@@ -65,7 +66,8 @@ public class BathroomEntityDao extends AbstractDao<BathroomEntity, Long> {
                 "\"UPVOTE\" INTEGER," + // 10: upvote
                 "\"DOWNVOTE\" INTEGER," + // 11: downvote
                 "\"LATITUDE\" REAL," + // 12: latitude
-                "\"LONGITUDE\" REAL);"); // 13: longitude
+                "\"LONGITUDE\" REAL," + // 13: longitude
+                "\"TIMESTAMP\" INTEGER);"); // 14: timestamp
     }
 
     /** Drops the underlying database table. */
@@ -148,6 +150,11 @@ public class BathroomEntityDao extends AbstractDao<BathroomEntity, Long> {
         if (longitude != null) {
             stmt.bindDouble(14, longitude);
         }
+ 
+        Long timestamp = entity.getTimestamp();
+        if (timestamp != null) {
+            stmt.bindLong(15, timestamp);
+        }
     }
 
     /** @inheritdoc */
@@ -173,7 +180,8 @@ public class BathroomEntityDao extends AbstractDao<BathroomEntity, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getInt(offset + 10), // upvote
             cursor.isNull(offset + 11) ? null : cursor.getInt(offset + 11), // downvote
             cursor.isNull(offset + 12) ? null : cursor.getDouble(offset + 12), // latitude
-            cursor.isNull(offset + 13) ? null : cursor.getDouble(offset + 13) // longitude
+            cursor.isNull(offset + 13) ? null : cursor.getDouble(offset + 13), // longitude
+            cursor.isNull(offset + 14) ? null : cursor.getLong(offset + 14) // timestamp
         );
         return entity;
     }
@@ -195,6 +203,7 @@ public class BathroomEntityDao extends AbstractDao<BathroomEntity, Long> {
         entity.setDownvote(cursor.isNull(offset + 11) ? null : cursor.getInt(offset + 11));
         entity.setLatitude(cursor.isNull(offset + 12) ? null : cursor.getDouble(offset + 12));
         entity.setLongitude(cursor.isNull(offset + 13) ? null : cursor.getDouble(offset + 13));
+        entity.setTimestamp(cursor.isNull(offset + 14) ? null : cursor.getLong(offset + 14));
      }
     
     /** @inheritdoc */
