@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="match_parent"
+    android:background="#e9e9e9"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewSubject"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="15dp"
+        android:textColor="#8377AF"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:text="Subject "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editTextSubject"
+        android:hint="Bug.."
+        android:layout_margin="15dp"
+        android:background="@drawable/back"
+        android:padding="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_marginLeft="15dp"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:textColor="#8377AF"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Message"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editTextMessage"
+        android:hint="Write a detailed description here..."
+        android:layout_margin="15dp"
+        android:layout_width="fill_parent"
+        android:background="@drawable/back"
+        android:padding="20dp"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:lines="5" />
+
+    <Button
+        android:id="@+id/buttonSend"
+        android:textColor="#8377AF"
+        android:background="#b4adcf"
+        android:padding="20dp"
+
+        android:layout_margin="15dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="Send" />
+
+</LinearLayout>
