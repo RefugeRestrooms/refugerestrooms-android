@@ -51,9 +51,8 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn off navigation so that the blue line doesn't appear on map.
-  - [ ] Change navigation line colors
-  - [ ] Change bathroom pin colors (accessible vs non-accessible)
-  - [ ] Select number of bathrooms to show 1-99 (separate settings for search, gps)
+  - [ ] Change colors of navigation line, map markers (accessible vs non-accessible)
+  - [ ] Select number of bathrooms to show 1-99 (increase default)
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
@@ -69,9 +68,10 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
+- [ ] Screen rotation removes add a bathroom text
+- [ ] Map reinstantiates every time a search occurs
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
 - [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
-- [ ] Map reinstantiates every time a search occurs
 - [x] Going back from text directions removes polyline
 - [x] GPS not enabled message shows after every search
 - [x] Searching a second time doesn't remove first search pins
