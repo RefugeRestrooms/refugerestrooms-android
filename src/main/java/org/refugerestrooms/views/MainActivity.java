@@ -148,6 +148,34 @@ public class MainActivity extends ActionBarActivity
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
+    Polyline poly1;
+    Polyline poly2;
+
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
+    private String mLocationTitle;
+
+    String query;
+
+    private Server mServer;
+
+    // Adds bathrooms from json query
+    double[] distances;
+    int closestLoc = -1;
+    LatLng[] locations;
+    String[] names;
+    // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
+    int currentLoc[];
+    // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
+    int lastLoc[];
+    int location_count = 0;
+    // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
+    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
@@ -470,14 +498,6 @@ public class MainActivity extends ActionBarActivity
                 CONNECTION_FAILURE_RESOLUTION_REQUEST).show();
     }
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-    private String mLocationTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -624,7 +644,7 @@ public class MainActivity extends ActionBarActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
-    String query;
+
     @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
@@ -656,8 +676,6 @@ public class MainActivity extends ActionBarActivity
         // The Routing Request starts
     }
 
-    Polyline poly1;
-    Polyline poly2;
     @Override
     public void onRoutingSuccess(PolylineOptions mPolyOptions, Route route) {
         //removes polyline on update to create new one
@@ -848,7 +866,6 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    private Server mServer;
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -928,18 +945,6 @@ public class MainActivity extends ActionBarActivity
             }
         }
     }
-    // Adds bathrooms from json query
-    double[] distances;
-    int closestLoc = -1;
-    LatLng[] locations;
-    String[] names;
-    // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
-    int currentLoc[];
-    // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
-    int lastLoc[];
-    int location_count = 0;
-    // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
-    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
     public void onSearchResults(final List<Bathroom> results) {
@@ -1307,6 +1312,9 @@ public class MainActivity extends ActionBarActivity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        public PlaceholderFragment() {
+        }
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -1317,9 +1325,6 @@ public class MainActivity extends ActionBarActivity
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
-        }
-
-        public PlaceholderFragment() {
         }
 
         @Override
