@@ -17,6 +17,11 @@ import org.refugerestrooms.database.model.BathroomEntityDao;
 public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = 1000;
 
+    public DaoMaster(SQLiteDatabase db) {
+        super(db, SCHEMA_VERSION);
+        registerDaoClass(BathroomEntityDao.class);
+    }
+
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
         BathroomEntityDao.createTable(db, ifNotExists);
@@ -54,11 +59,6 @@ public class DaoMaster extends AbstractDaoMaster {
         }
     }
 
-    public DaoMaster(SQLiteDatabase db) {
-        super(db, SCHEMA_VERSION);
-        registerDaoClass(BathroomEntityDao.class);
-    }
-    
     public DaoSession newSession() {
         return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
     }

@@ -21,14 +21,6 @@ public class Bathroom {
     @SerializedName("id")
     private Long mId;
 
-    public Long getmId() {
-        return mId;
-    }
-
-    public void setmId(Long mId) {
-        this.mId = mId;
-    }
-
     @SerializedName("name")
     private String mName;
     @SerializedName("street")
@@ -57,6 +49,14 @@ public class Bathroom {
     private double mLongitude;
     @SerializedName("timestamp")
     private long mTimestamp;
+
+    public Long getmId() {
+        return mId;
+    }
+
+    public void setmId(Long mId) {
+        this.mId = mId;
+    }
 
     public String getNameDecoded() {
         /******************************************************************************************
