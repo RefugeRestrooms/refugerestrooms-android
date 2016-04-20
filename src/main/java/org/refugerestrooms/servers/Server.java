@@ -32,6 +32,31 @@ public class Server {
 
     private ServerListener mListener;
 
+    private Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            mListener.onError(error.getMessage());
+        }
+    };
+    private Response.Listener<JSONArray> onSuccessResponseListener = new Response.Listener<JSONArray>() {
+        @Override
+        public void onResponse(JSONArray response) {
+            try {
+                String responseStr = response.toString();
+                Gson gson = new Gson();
+                ListOfBathrooms list = gson.fromJson(responseStr, ListOfBathrooms.class);
+
+                if (mListener != null) {
+                    mListener.onSearchResults(list);
+                }
+            } catch (JsonSyntaxException jse) {
+                String msg = "JSON Error: " + jse.getMessage();
+                //Log.e(TAG, msg);
+                reportError(msg);
+            }
+        }
+    };
+
     public Server(ServerListener mListener) {
         super();
         this.mListener = mListener;
@@ -81,29 +106,5 @@ public class Server {
 
         public void onError(String errorMessage);
     }
-    private Response.ErrorListener errorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-                mListener.onError(error.getMessage());
-        }
-    };
-    private Response.Listener<JSONArray> onSuccessResponseListener = new Response.Listener<JSONArray>() {
-        @Override
-        public void onResponse(JSONArray response) {
-            try {
-                String responseStr = response.toString();
-                Gson gson = new Gson();
-                ListOfBathrooms list = gson.fromJson(responseStr, ListOfBathrooms.class);
-
-                if (mListener != null) {
-                    mListener.onSearchResults(list);
-                }
-            } catch (JsonSyntaxException jse) {
-                String msg = "JSON Error: " + jse.getMessage();
-                //Log.e(TAG, msg);
-                reportError(msg);
-            }
-        }
-    };
 
 }

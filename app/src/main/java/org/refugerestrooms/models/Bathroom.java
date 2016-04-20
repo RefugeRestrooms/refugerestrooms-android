@@ -17,18 +17,6 @@ import java.util.Date;
  */
 public class Bathroom {
 
-    //TODO Other fields
-    @SerializedName("id")
-    private Long mId;
-
-    public Long getmId() {
-        return mId;
-    }
-
-    public void setmId(Long mId) {
-        this.mId = mId;
-    }
-
     @SerializedName("name")
     private String mName;
     @SerializedName("street")
@@ -57,6 +45,18 @@ public class Bathroom {
     private double mLongitude;
     @SerializedName("timestamp")
     private long mTimestamp;
+
+    //TODO Other fields
+    @SerializedName("id")
+    private Long mId;
+
+    public Long getmId() {
+        return mId;
+    }
+
+    public void setmId(Long mId) {
+        this.mId = mId;
+    }
 
     public String getNameDecoded() {
         /******************************************************************************************

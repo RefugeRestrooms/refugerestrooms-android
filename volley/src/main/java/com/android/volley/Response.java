@@ -23,6 +23,30 @@ package com.android.volley;
  */
 public class Response<T> {
 
+    /** Parsed response, or null in the case of error. */
+    public final T result;
+
+    /** Cache metadata for this response, or null in the case of error. */
+    public final Cache.Entry cacheEntry;
+
+    /** Detailed error information if <code>errorCode != OK</code>. */
+    public final VolleyError error;
+
+    /** True if this response was a soft-expired one and a second one MAY be coming. */
+    public boolean intermediate = false;
+
+    private Response(T result, Cache.Entry cacheEntry) {
+        this.result = result;
+        this.cacheEntry = cacheEntry;
+        this.error = null;
+    }
+
+    private Response(VolleyError error) {
+        this.result = null;
+        this.cacheEntry = null;
+        this.error = error;
+    }
+
     /** Callback interface for delivering parsed responses. */
     public interface Listener<T> {
         /** Called when a response is received. */
@@ -51,18 +75,6 @@ public class Response<T> {
         return new Response<T>(error);
     }
 
-    /** Parsed response, or null in the case of error. */
-    public final T result;
-
-    /** Cache metadata for this response, or null in the case of error. */
-    public final Cache.Entry cacheEntry;
-
-    /** Detailed error information if <code>errorCode != OK</code>. */
-    public final VolleyError error;
-
-    /** True if this response was a soft-expired one and a second one MAY be coming. */
-    public boolean intermediate = false;
-
     /**
      * Returns whether this response is considered successful.
      */
@@ -70,16 +82,4 @@ public class Response<T> {
         return error == null;
     }
 
-
-    private Response(T result, Cache.Entry cacheEntry) {
-        this.result = result;
-        this.cacheEntry = cacheEntry;
-        this.error = null;
-    }
-
-    private Response(VolleyError error) {
-        this.result = null;
-        this.cacheEntry = null;
-        this.error = error;
-    }
 }
