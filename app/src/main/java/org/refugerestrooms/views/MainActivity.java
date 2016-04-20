@@ -88,23 +88,23 @@ public class MainActivity extends ActionBarActivity
     private Boolean initial = true;
     private Boolean searchPerformed = false;
 
-    Location mCurrentLocation;
-    Location mLastLocation;
-    Location mCurrentLocationNoGps;
-    LocationManager locationManager;
-    LatLng currentPosition;
-    boolean mUpdatesRequested;
+    private Location mCurrentLocation;
+    private Location mLastLocation;
+    private Location mCurrentLocationNoGps;
+    private LocationManager locationManager;
+    private LatLng currentPosition;
+    private boolean mUpdatesRequested;
     private boolean mInProgress;
     public boolean doNotDisplayDialog = false;
     public boolean onSearchAction = false;
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
-    static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
+    private static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
 
     private int numLocations;
-    SharedPreferences mPrefs;
-    SharedPreferences.Editor mEditor;
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor mEditor;
 
     public enum REQUEST_TYPE {START, STOP}
 
@@ -156,23 +156,23 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
     private String mLocationTitle;
 
-    String query;
+    private String query;
 
-    Polyline poly1;
-    Polyline poly2;
+    private Polyline poly1;
+    private Polyline poly2;
 
     private Server mServer;
 
     // Adds bathrooms from json query
-    double[] distances;
-    int closestLoc = -1;
-    LatLng[] locations;
-    String[] names;
+    private double[] distances;
+    private int closestLoc = -1;
+    private LatLng[] locations;
+    private String[] names;
     // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
-    int currentLoc[];
+    private int currentLoc[];
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
-    int lastLoc[];
-    int location_count = 0;
+    private int lastLoc[];
+    private int location_count = 0;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
