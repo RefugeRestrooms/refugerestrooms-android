@@ -76,9 +76,6 @@ public class Bathroom {
         return mName;
     }
 
-
-
-
     public String getmStreet() {
         return mStreet;
     }
