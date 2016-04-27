@@ -76,6 +76,4 @@ public class RestroomsDaoGenerator {
         entity.addDoubleProperty(LONGITUDE);
         entity.addLongProperty(TIMESTAMP);
     }
-
-
 }

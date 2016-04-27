@@ -30,9 +30,7 @@ public class RefugeRestroomApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-
         init(getApplicationContext());
-
     }
 
     public DaoSession getDaoSession() {
