@@ -22,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -75,6 +76,7 @@ public class MainActivity extends ActionBarActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         OnMapReadyCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback,
         LocationListener, // TODO change this to geo LocationListener
         RoutingListener, Server.ServerListener {
 
@@ -140,6 +142,8 @@ public class MainActivity extends ActionBarActivity
 
     // Check for Google Play Services
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
+    private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 123;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -723,23 +727,40 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        // Connect the client.
-        mGoogleApiClient.connect();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_ACCESS_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
+                } else {
+                    // TODO something
+                }
+                return;
+        }
+    }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
         mMap.getUiSettings().setZoomControlsEnabled(false);
-
-        // Custom info window
         mMap.setInfoWindowAdapter(new BathroomInfoWindow(this));
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        } else {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            // Connect the client.
+            mGoogleApiClient.connect();
+            mMap.setMyLocationEnabled(true);
+        }
     }
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
@@ -995,17 +1016,13 @@ public class MainActivity extends ActionBarActivity
                 break;
         }
         if (mFragment != null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, mFragment)
-                    .commit();
+            fragmentManager.beginTransaction().replace(R.id.container, mFragment).commit();
         }
     }
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // The following line is now deprecated
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setTitle(mTitle);
         }
@@ -1020,12 +1037,9 @@ public class MainActivity extends ActionBarActivity
             getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             // Associate searchable configuration with the SearchView
-            SearchManager searchManager =
-                    (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView =
-                    (SearchView) menu.findItem(R.id.action_search).getActionView();
-            searchView.setSearchableInfo(
-                    searchManager.getSearchableInfo(getComponentName()));
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -1033,10 +1047,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_directions:
                 Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
@@ -1063,7 +1073,7 @@ public class MainActivity extends ActionBarActivity
                     Toast.makeText(this, R.string.location_not_enabled, Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                else if (end == null) {
+                else {
                     Toast.makeText(this, R.string.no_nearby_locations, Toast.LENGTH_SHORT).show();
                     return false;
                 }
