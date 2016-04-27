@@ -31,5 +31,4 @@ public  class SaveBathroomPropertyHandler {
         entity.setTimestamp(bathroom.getTimestamp());
         daoSession.insertOrReplace(entity);
     }
-
 }

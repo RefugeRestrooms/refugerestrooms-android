@@ -26,9 +26,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Gravity;
+import android.support.v7.app.MediaRouteChooserDialogFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,9 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.Route;
@@ -52,9 +48,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -75,28 +69,26 @@ import org.refugerestrooms.servers.Server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         OnMapReadyCallback,
-        LocationListener,
+        LocationListener, // TODO change this to geo LocationListener
         RoutingListener, Server.ServerListener {
 
     private MapView mMapView;
     private GoogleMap mMap = null;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private final String TAG = "Refuge Restrooms";
     private Boolean initial = true;
     private Boolean searchPerformed = false;
 
     private Location mCurrentLocation;
     private Location mLastLocation;
     private Location mCurrentLocationNoGps;
-    private LocationManager locationManager;
+
     private LatLng currentPosition;
     private boolean mUpdatesRequested;
     private boolean mInProgress;
@@ -140,9 +132,6 @@ public class MainActivity extends ActionBarActivity
     private PendingIntent mActivityRecognitionPendingIntent;
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
-    private static Context mContext = null;
-
-    //LocationRequest mLocationRequest;
 
 	/*
      * Define a request code to send to Google Play services
@@ -150,8 +139,7 @@ public class MainActivity extends ActionBarActivity
      */
 
     // Check for Google Play Services
-    private final static int
-            CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -209,8 +197,7 @@ public class MainActivity extends ActionBarActivity
      * by Google Play services
      */
     @Override
-    protected void onActivityResult(
-            int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Decide what to do based on the original request code
         switch (requestCode) {
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
@@ -230,47 +217,33 @@ public class MainActivity extends ActionBarActivity
 
     private boolean servicesConnected() {
         // Check that Google Play services is available
-        int resultCode =
-                GooglePlayServicesUtil.
-                        isGooglePlayServicesAvailable(this);
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            //  Log.d("Location Updates",
-            //          "Google Play services is available.");
-            // Continue
             return true;
-            // Google Play services was not available for some reason
-        } else {
-            // Get the error code
+        } else { // Google Play services was not available for some reason
             // Get the error dialog from Google Play services
             Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    resultCode,
-                    this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                    resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
             // If Google Play services can provide an error dialog
             if (errorDialog != null) {
                 // Create a new DialogFragment for the error dialog
-                ErrorDialogFragment errorFragment =
-                        new ErrorDialogFragment();
+                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
                 // Set the dialog in the DialogFragment
                 errorFragment.setDialog(errorDialog);
                 // Show the error dialog in the DialogFragment
-                errorFragment.show(getSupportFragmentManager(),
-                        "Location Updates");
+                errorFragment.show(getSupportFragmentManager(), "Location Updates");
             }
             return false;
         }
     }
 
-    // Location services callback
     /*
      * Called by Location Services when the request to connect the
      * client finishes successfully. At this point, you can
      * request the current location or start periodic updates
      */
-
     @Override
     public void onConnected(Bundle dataBundle) {
         if (servicesConnected()) {
@@ -288,24 +261,7 @@ public class MainActivity extends ActionBarActivity
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
             if (mCurrentLocation == null) {
-                //Log.d("","provider : "+ provider);
-                // String provider = LocationManager.GPS_PROVIDER;
-                LocationListener locationListener = new LocationListener() {
-                    public void onLocationChanged(Location location) {
-                        // Called when a new location is found by the network location provider.
-                        mCurrentLocationNoGps = location;
-                    }
-
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    public void onProviderDisabled(String provider) {
-                    }
-                };
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -325,7 +281,6 @@ public class MainActivity extends ActionBarActivity
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
             }
 
             /*******************************************************************
@@ -466,26 +421,6 @@ public class MainActivity extends ActionBarActivity
 	         * user with the error.
 	         */
             showErrorDialog(connectionResult.getErrorCode());
-            /**
-             //Get the error code
-             int errorCode = connectionResult.getErrorCode();
-             // Get the error dialog from Google Play services
-             Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-             errorCode,
-             this,
-             CONNECTION_FAILURE_RESOLUTION_REQUEST);
-             // If Google Play services can provide an error dialog
-             if (errorDialog != null) {
-             // Create a new DialogFragment for the error dialog
-             ErrorDialogFragment errorFragment =
-             new ErrorDialogFragment();
-             // Set the dialog in the DialogFragment
-             errorFragment.setDialog(errorDialog);
-             // Show the error dialog in the DialogFragment
-             errorFragment.show(
-             getSupportFragmentManager(),
-             "Activity Recognition");
-             */
         }
     }
 
@@ -509,14 +444,12 @@ public class MainActivity extends ActionBarActivity
         mTitle = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-
             /**
              * Called when a drawer has settled in a completely closed state.
              */
@@ -540,68 +473,9 @@ public class MainActivity extends ActionBarActivity
 
         // For search results
         handleIntent(getIntent());
+
+        // TODO is this automatically handled by Google?
         // Checks if gps is enabled, kicks out message to turn on if not.
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        android.location.LocationListener locationListener = new android.location.LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
-                    mCurrentLocation = location;
-                }
-            }
-
-            public void onProviderDisabled(String provider) { /* Do nothing */ }
-
-            public void onProviderEnabled(String provider) { /* Do nothing */ }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {/* Do nothing */ }
-        };
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-            network_enabled = true;
-        }
-        if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
-            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }
-
-        if (!gps_enabled) {
-            // Added if statement to prevent dialog box from re-showing on search
-            if (!doNotDisplayDialog) {
-                Dialog dialog = createDialog();
-                dialog.show();
-            }
-
-            // Tries to get data from network otherwise
-            if (network_enabled) {
-                try {
-                    network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                } catch (Exception ex) {
-                    //  Log.e("MainActivity", ex.getMessage());
-                }
-            }
-        }
-
-		/*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
 
         if (servicesConnected()) {
             // Disables the get directions from google maps icons (this would open the Maps app)
@@ -629,9 +503,15 @@ public class MainActivity extends ActionBarActivity
 
             // Start with updates turned off
             mUpdatesRequested = false;
-            mContext = getApplicationContext();
 
-            getSupportActionBar().setTitle("Refuge Restrooms");
+            setActionBarTitle("Refuge Restrooms");
+        }
+    }
+
+    private void setActionBarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
         }
     }
 
@@ -639,6 +519,7 @@ public class MainActivity extends ActionBarActivity
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
+
     // For search activity in action bar
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -652,8 +533,6 @@ public class MainActivity extends ActionBarActivity
             mServer.performSearch(query, false);
         }
     }
-
-    /** Swaps fragments in the main content view */
 
     @Override
     public void onRoutingFailure() {
@@ -733,8 +612,7 @@ public class MainActivity extends ActionBarActivity
         mMapView.onResume();
         if (mPrefs != null) {
             if (mPrefs.contains("KEY_UPDATES_ON")) {
-                mUpdatesRequested =
-                        mPrefs.getBoolean("KEY_UPDATES_ON", false);
+                mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
 
                 // Otherwise, turn off location updates
             } else {
@@ -762,7 +640,6 @@ public class MainActivity extends ActionBarActivity
         super.onStop();
     }
 
-    // Define the callback method that receives location updates
     @Override
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
@@ -773,9 +650,6 @@ public class MainActivity extends ActionBarActivity
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             mCurrentLocation = location;
         }
-        //have to convert from location to LatLng
-        //LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
-        //pos_marker.setPosition(pos);
     }
 
     @Override
@@ -848,14 +722,6 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    public class BathroomListAdapter extends ArrayAdapter<Bathroom> {
-
-        public BathroomListAdapter(Context applicationContext, int listEntry,
-                                   int listItemText, List<Bathroom> results) {
-            super(applicationContext, listEntry, listItemText, results);
-        }
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -882,9 +748,9 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void loadBathrooms(List<Bathroom> results) {
-        locations = new LatLng[results.size()];
-        names = new String[results.size()];
         numLocations = results.size();
+        locations = new LatLng[numLocations];
+        names = new String[numLocations];
         currentLoc = new int[numLocations];
         lastLoc = new int[numLocations];
         if (onSearchAction) {
@@ -893,12 +759,10 @@ public class MainActivity extends ActionBarActivity
             onSearchAction = false;
         }
 
-        for (int i = 0; i < numLocations; i++)
-        {
+        for (int i = 0; i < numLocations; i++) {
             Bathroom bathroom = results.get(i);
             DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
             SaveBathroomPropertyHandler.saveProperty(daoSession, bathroom);
-
 
             LatLng temp = bathroom.getLocation();
             String name = bathroom.getNameDecoded();
@@ -985,6 +849,7 @@ public class MainActivity extends ActionBarActivity
                 return true;
             }
         });
+
         // On info window click
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -992,8 +857,9 @@ public class MainActivity extends ActionBarActivity
                 Bathroom bathroom = null;
                 // Get bathroom from hashmap using marker's location
                 bathroom = allBathroomsMap.get(marker.getPosition());
-                if (bathroom != null)
+                if (bathroom != null) {
                     launchDetails(bathroom);
+                }
             }
         });
 
@@ -1004,7 +870,7 @@ public class MainActivity extends ActionBarActivity
         double myLng = 0;
         // Checks initial boolean value because otherwise after coming back from text directions
         // the closest value is reset to it's initial value, not what was selected to navigate to
-        if (mCurrentLocation != null && numLocations > 0 && initial == true) {
+        if (mCurrentLocation != null && numLocations > 0 && initial) {
             myLat = mCurrentLocation.getLatitude();
             myLng = mCurrentLocation.getLongitude();
 
@@ -1031,7 +897,7 @@ public class MainActivity extends ActionBarActivity
         if (mCurrentLocation != null && initial == true) {
             if (numLocations > 0) {
                 end = locations[closestLoc];
-                getSupportActionBar().setTitle(names[closestLoc]);
+                setActionBarTitle(names[closestLoc]);
 
                 Routing routing = new Routing(Routing.TravelMode.WALKING);
                 routing.registerListener(this);
@@ -1077,7 +943,7 @@ public class MainActivity extends ActionBarActivity
     public void navigateToMarker(Marker marker) {
         if (mCurrentLocation != null) {
             end = marker.getPosition();
-            getSupportActionBar().setTitle(marker.getTitle());
+            setActionBarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
 
             Routing routing = new Routing(Routing.TravelMode.WALKING);
@@ -1086,7 +952,7 @@ public class MainActivity extends ActionBarActivity
         }
         else if (mLastLocation != null) {
             end = marker.getPosition();
-            getSupportActionBar().setTitle(marker.getTitle());
+            setActionBarTitle(marker.getTitle());
 
             double myLat = mLastLocation.getLatitude();
             double myLng = mLastLocation.getLongitude();
@@ -1099,7 +965,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    //TODO Possibly fix navigation drawer to be a smoother switch between the map and fragments -- also redundant onSectionAttached
+    //TODO Possibly fix navigation drawer to be a smoother switch between the map and add bathroom fragment
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // Update the main content by replacing fragments
@@ -1108,6 +974,8 @@ public class MainActivity extends ActionBarActivity
         switch(position) {
             default:
             case 0:
+                mTitle = getString(R.string.map_title_section);
+                mFragment = new MapFragment();
                 break;
             case 1:
                 mTitle = getString(R.string.saved_bathrooms);
@@ -1131,59 +999,34 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container, mFragment)
                     .commit();
         }
-        // Added this part because Google Map is not a fragment that can be switched to.
-        else {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                    .commit();
-        }
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.map_title_section);
-                break;
-            case 2:
-                mTitle = getString(R.string.saved_bathrooms);
-                break;
-            case 3:
-                mTitle = getString(R.string.add_title_section);
-                break;
-            case 4:
-                mTitle = getString(R.string.feedback_title_section);
-        }
     }
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        // The following line is now deprecated
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(mTitle);
+        if (actionBar != null) {
+            // The following line is now deprecated
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.wtf("TEST", "Creating options menu");
-        if (mNavigationDrawerFragment != null) {
-            if (!mNavigationDrawerFragment.isDrawerOpen()) {
-                Log.wtf("TEST", "Really creating the options menu");
-                // Only show items in the action bar relevant to this screen
-                // if the drawer is not showing. Otherwise, let the drawer
-                // decide what to show in the action bar.
-                getMenuInflater().inflate(R.menu.main, menu);
-                restoreActionBar();
-                // Associate searchable configuration with the SearchView
-                SearchManager searchManager =
-                        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-                SearchView searchView =
-                        (SearchView) menu.findItem(R.id.action_search).getActionView();
-                searchView.setSearchableInfo(
-                        searchManager.getSearchableInfo(getComponentName()));
-                return true;
-            }
+        if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
+            // decide what to show in the action bar.
+            getMenuInflater().inflate(R.menu.main, menu);
+            restoreActionBar();
+            // Associate searchable configuration with the SearchView
+            SearchManager searchManager =
+                    (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView =
+                    (SearchView) menu.findItem(R.id.action_search).getActionView();
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+            return true;
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -1228,45 +1071,4 @@ public class MainActivity extends ActionBarActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-    }
-
 }
