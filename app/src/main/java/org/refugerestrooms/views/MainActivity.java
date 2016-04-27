@@ -14,8 +14,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -44,6 +42,7 @@ import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -77,8 +76,9 @@ public class MainActivity extends ActionBarActivity
         GoogleApiClient.OnConnectionFailedListener,
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        LocationListener, // TODO change this to geo LocationListener
-        RoutingListener, Server.ServerListener {
+        LocationListener,
+        RoutingListener,
+        Server.ServerListener {
 
     private MapView mMapView;
     private GoogleMap mMap = null;
@@ -265,7 +265,7 @@ public class MainActivity extends ActionBarActivity
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
             if (mCurrentLocation == null) {
-                                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -656,15 +656,6 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) { /* Do nothing */ }
-
-    @Override
-    public void onProviderEnabled(String provider) { /* Do nothing */ }
-
-    @Override
-    public void onProviderDisabled(String provider) { /* Do nothing */ }
-
     /*
      * Request activity recognition updates based on the current detection interval.
      */
@@ -796,10 +787,10 @@ public class MainActivity extends ActionBarActivity
             int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
             Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(temp.latitude, temp.longitude))
-                        .title(name)
-                        .snippet(bathroom.getAddress() + "*" + isAccessible + isUnisex)
-                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                    .position(new LatLng(temp.latitude, temp.longitude))
+                    .title(name)
+                    .snippet(bathroom.getAddress() + "*" + isAccessible + isUnisex)
+                    .icon(BitmapDescriptorFactory.defaultMarker(hue)));
             // Put bathrooms in hashmap for use later in info window
             allBathroomsMap.put(bathroom.getLocation(), bathroom);
 
@@ -831,10 +822,10 @@ public class MainActivity extends ActionBarActivity
         // (before map pin is selected)
         final Button infoButton = (Button) findViewById(R.id.info_button);
         infoButton.setOnClickListener(new View.OnClickListener() {
-              public void onClick(View v) {
-                  Toast.makeText(MainActivity.this, R.string.no_marker_selected,
-                          Toast.LENGTH_SHORT).show();
-              }
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, R.string.no_marker_selected,
+                        Toast.LENGTH_SHORT).show();
+            }
         });
 
         // New marker onclicklistener to navigate to selected marker
@@ -944,7 +935,7 @@ public class MainActivity extends ActionBarActivity
         // Loads the last 150 bathrooms added to the database
         List restroomsList = leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
         //List restroomsList = leaseDao.loadAll();
-    return  restroomsList;
+        return  restroomsList;
     }
     @Override
     public void onSubmission(boolean success) {
