@@ -181,7 +181,6 @@ public class MainActivity extends ActionBarActivity
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
-
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
@@ -214,17 +213,16 @@ public class MainActivity extends ActionBarActivity
             int requestCode, int resultCode, Intent data) {
         // Decide what to do based on the original request code
         switch (requestCode) {
-
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-            /*
-             * If the result code is Activity.RESULT_OK, try
-             * to connect again
-             */
+                /*
+                 * If the result code is Activity.RESULT_OK, try
+                 * to connect again
+                 */
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                    /*
-                     * Try the request again
-                     */
+                        /*
+                         * Try the request again
+                         */
                         break;
                 }
         }
@@ -332,13 +330,11 @@ public class MainActivity extends ActionBarActivity
 
             /*******************************************************************
              * API call to Refuge Restrooms here
-             *
              **************************************************************/
 
             // Gets bathroom data from RefugeRestrooms.org (20 closest entries -- defined in Server.java)
             String curLatLng;
             if (mCurrentLocation != null) {
-
                 double tmpLat = mCurrentLocation.getLatitude();
                 double tmpLng = mCurrentLocation.getLongitude();
 
@@ -359,12 +355,8 @@ public class MainActivity extends ActionBarActivity
 
             /*******************************************************************
              * End of API call to Refuge Restrooms
-             *
              **************************************************************/
 
-            /**
-             * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-             */
             if (mCurrentLocation != null) {
                 double myLat = mCurrentLocation.getLatitude();
                 double myLng = mCurrentLocation.getLongitude();
@@ -413,7 +405,6 @@ public class MainActivity extends ActionBarActivity
                 .setNegativeButton(R.string.location_skip, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
-
                     }
                 });
         // Create the AlertDialog object and return it
@@ -523,7 +514,8 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             /**
              * Called when a drawer has settled in a completely closed state.
@@ -555,27 +547,24 @@ public class MainActivity extends ActionBarActivity
             public void onLocationChanged(Location location) {
                 if (location != null) {
                     //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    //  Log.i("latitude,longitude", ""+latitude+","+longitude);
                     mCurrentLocation = location;
                 }
             }
 
-            public void onProviderDisabled(String provider) {
-            }
+            public void onProviderDisabled(String provider) { /* Do nothing */ }
 
-            public void onProviderEnabled(String provider) {
-            }
+            public void onProviderEnabled(String provider) { /* Do nothing */ }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) {/* Do nothing */ }
         };
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -609,7 +598,6 @@ public class MainActivity extends ActionBarActivity
             }
         }
 
-        //setUpMapIfNeeded();
 		/*
          * Create a new location client, using the enclosing class to
          * handle callbacks.
@@ -643,7 +631,6 @@ public class MainActivity extends ActionBarActivity
             mUpdatesRequested = false;
             mContext = getApplicationContext();
 
-            final Context context = this;
             getSupportActionBar().setTitle("Refuge Restrooms");
         }
     }
@@ -654,7 +641,6 @@ public class MainActivity extends ActionBarActivity
     }
     // For search activity in action bar
     private void handleIntent(Intent intent) {
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
             // Use the query to search
@@ -713,13 +699,6 @@ public class MainActivity extends ActionBarActivity
 	  mMap.addMarker(options);
 	*/
     }
-    /*
-     * Called when the Activity becomes visible.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 
     @Override
     protected void onPause() {
@@ -766,6 +745,7 @@ public class MainActivity extends ActionBarActivity
             }
         }
     }
+
     /*
      * Called when the Activity is no longer visible.
      */
@@ -781,6 +761,7 @@ public class MainActivity extends ActionBarActivity
         }
         super.onStop();
     }
+
     // Define the callback method that receives location updates
     @Override
     public void onLocationChanged(Location location) {
@@ -798,24 +779,16 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) { /* Do nothing */ }
 
     @Override
-    public void onProviderEnabled(String provider) {
-
-    }
+    public void onProviderEnabled(String provider) { /* Do nothing */ }
 
     @Override
-    public void onProviderDisabled(String provider) {
-
-    }
+    public void onProviderDisabled(String provider) { /* Do nothing */ }
 
     /*
-     * Request activity recognition updates based on the current
-     * detection interval.
-     *
+     * Request activity recognition updates based on the current detection interval.
      */
     public void startUpdates() {
         // Set the request type to START
@@ -845,6 +818,7 @@ public class MainActivity extends ActionBarActivity
             startUpdates();
         }
     }
+
     public void stopUpdates() {
         // Set the request type to STOP
         mRequestType = REQUEST_TYPE.STOP;
@@ -873,6 +847,7 @@ public class MainActivity extends ActionBarActivity
              */
         }
     }
+
     public class BathroomListAdapter extends ArrayAdapter<Bathroom> {
 
         public BathroomListAdapter(Context applicationContext, int listEntry,
@@ -892,72 +867,13 @@ public class MainActivity extends ActionBarActivity
         mGoogleApiClient.connect();
 
         mMap = googleMap;
-
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
         // Custom info window
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            // Defines the contents of the InfoWindow
-            //title, picture, snippet, score, accessible
-            @Override
-            public View getInfoContents(Marker arg0) {
-
-                // Getting view from the layout file
-                View v = getLayoutInflater().inflate(R.layout.custom_info_window, null);
-
-                // Getting the position from the marker
-                String title = arg0.getTitle();
-                String snippet = arg0.getSnippet();
-
-                // Getting references to the TextViews to set title and address snippet
-                TextView windowTitle = (TextView) v.findViewById(R.id.window_title);
-                TextView windowSnippet = (TextView) v.findViewById(R.id.window_snippet);
-
-                // Getting references to the ImageViews to set unisex and accessibility
-                ImageView windowAccessible = (ImageView) v.findViewById(R.id.accessible);
-                ImageView windowUnisex = (ImageView) v.findViewById(R.id.unisex);
-
-                // Setting the title
-                windowTitle.setText(title);
-                windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-
-                // Setting the directions snippet
-                windowSnippet.setText(snippet);
-
-                // Hide accessible, unisex logos by default
-                windowAccessible.setVisibility(View.INVISIBLE);
-                windowUnisex.setVisibility(View.INVISIBLE);
-
-                // Get bathroom from info marker and set accessible, unisex logos respectively
-                Bathroom bathroom = allBathroomsMap.get(arg0.getPosition());
-                if (bathroom.isAccessible()) {
-                    windowAccessible.setVisibility(View.VISIBLE);
-                }
-                if (bathroom.isUnisex()) {
-                    windowUnisex.setVisibility(View.VISIBLE);
-                    // Moves unisex logo to the accessible logo's positioning if bathroom is not accessible
-                    if(!bathroom.isAccessible()) {
-                        final float scale = getResources().getDisplayMetrics().density;
-                        // Convert pixels to dp
-                        int paddingLeft = (int) (3 * scale + 0.5f);
-                        int paddingTop = (int) (10 * scale + 0.5f);
-                        windowUnisex.setPadding(paddingLeft,paddingTop,0,0);
-                    }
-                }
-
-                // Returning the view containing InfoWindow contents
-                return v;
-            }
-        });
+        mMap.setInfoWindowAdapter(new BathroomInfoWindow(this));
     }
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
@@ -987,25 +903,18 @@ public class MainActivity extends ActionBarActivity
             LatLng temp = bathroom.getLocation();
             String name = bathroom.getNameDecoded();
 
+            // Used to encode additional information in the Marker object for displaying the info window
+            int isAccessible = bathroom.isAccessible() ? 1 : 0;
+            int isUnisex = bathroom.isUnisex() ? 1 : 0;
+            float hue = (isAccessible == 1) ? BitmapDescriptorFactory.HUE_AZURE : BitmapDescriptorFactory.HUE_RED;
+
             int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
-            Marker marker;
-            if (bathroom.isAccessible() == true)
-            {
-                 marker = mMap.addMarker(new MarkerOptions()
+            Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(temp.latitude, temp.longitude))
                         .title(name)
-                        .snippet(bathroom.getAddress())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            }
-            else
-            {
-                 marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(temp.latitude,temp.longitude))
-                        .title(name)
-                        .snippet(bathroom.getAddress())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            }
+                        .snippet(bathroom.getAddress() + "*" + isAccessible + isUnisex)
+                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
             // Put bathrooms in hashmap for use later in info window
             allBathroomsMap.put(bathroom.getLocation(), bathroom);
 
