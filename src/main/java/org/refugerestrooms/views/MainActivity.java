@@ -511,8 +511,6 @@ public class MainActivity extends ActionBarActivity
             public void onLocationChanged(Location location) {
                 if (location != null) {
                     //  Log.i("SuperMap", "Location changed : Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
                     //  Log.i("latitude,longitude", ""+latitude+","+longitude);
                     mCurrentLocation = location;
                 }
@@ -607,7 +605,6 @@ public class MainActivity extends ActionBarActivity
             mUpdatesRequested = false;
             mContext = getApplicationContext();
 
-            final Context context = this;
             getSupportActionBar().setTitle("Refuge Restrooms");
         }
         /** Swaps fragments in the main content view */
@@ -975,7 +972,6 @@ public class MainActivity extends ActionBarActivity
             LatLng temp = bathroom.getLocation();
             String name = bathroom.getNameDecoded();
 
-            int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
             Marker marker;
             if (bathroom.isAccessible() == true)
@@ -1044,7 +1040,7 @@ public class MainActivity extends ActionBarActivity
                 infoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bathroom bathroom = null;
+                        Bathroom bathroom;
                         // Get bathroom from hashmap using marker's location
                         bathroom = allBathroomsMap.get(markerLatLng);
                         if (bathroom != null)
@@ -1068,7 +1064,7 @@ public class MainActivity extends ActionBarActivity
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Bathroom bathroom = null;
+                Bathroom bathroom;
                 // Get bathroom from hashmap using marker's location
                 bathroom = allBathroomsMap.get(marker.getPosition());
                 if (bathroom != null)
@@ -1079,8 +1075,8 @@ public class MainActivity extends ActionBarActivity
         // Find closest location
         double posLat;
         double posLng;
-        double myLat = 0;
-        double myLng = 0;
+        double myLat;
+        double myLng;
         // Checks initial boolean value because otherwise after coming back from text directions
         // the closest value is reset to it's initial value, not what was selected to navigate to
         if (mCurrentLocation != null && numLocations > 0 && initial == true) {
@@ -1266,7 +1262,6 @@ public class MainActivity extends ActionBarActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_directions:
                 Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
