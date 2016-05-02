@@ -32,7 +32,9 @@
         android:src="@drawable/accessible"
         android:layout_below="@id/window_title"
         android:layout_marginLeft="3dp"
-        android:layout_marginStart="3dp" />
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="-24dp"
+        android:layout_marginTop="-16dp" />
 
     <ImageView
         android:id="@+id/unisex"
