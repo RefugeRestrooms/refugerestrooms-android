@@ -12,6 +12,8 @@ import com.google.android.gms.maps.model.Marker;
 
 import org.refugerestrooms.R;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * @author David Mascharka (davidmascharka@gmail.com)
  */
@@ -49,12 +51,11 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         windowAccessible.setVisibility(View.GONE);
         windowUnisex.setVisibility(View.GONE);
 
-        // et accessible, unisex logos
+        // get accessible, unisex logos
         // Encoded in the snippet
         int idx = snippet.indexOf("*");
         int isAccessible = Integer.parseInt(snippet.substring(idx+1, idx+2));
         int isUnisex = Integer.parseInt(snippet.substring(idx+2, idx+3));
-        Log.wtf("TEST", isAccessible + " " + isUnisex);
         snippet = snippet.substring(0, idx);
 
         if (isAccessible == 1) {
@@ -65,6 +66,11 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         }
 
         // Setting the title
+        try {
+            title = new String(title.getBytes("ISO-8859-1"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         windowTitle.setText(title);
         windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
