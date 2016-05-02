@@ -756,7 +756,7 @@ public class MainActivity extends ActionBarActivity
             SaveBathroomPropertyHandler.saveProperty(daoSession, bathroom);
 
             LatLng temp = bathroom.getLocation();
-            String name = bathroom.getNameDecoded();
+            String name = bathroom.getName();
 
             // Used to encode additional information in the Marker object for displaying the info window
             int isAccessible = bathroom.isAccessible() ? 1 : 0;
