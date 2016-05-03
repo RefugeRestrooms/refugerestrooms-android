@@ -95,7 +95,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
             /* Had to re-decode bathroom name here for some reason... wouldn't work with same string used
              * in the customInfoWindow. Created a separate string variable in Bathroom.java
              * to hold off on decoding for the InfoViewFragment */
-            name = decodeString(name);
+            //name = decodeString(name);
             text += name;
         }
         return text;
@@ -106,6 +106,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         if (!TextUtils.isEmpty(address)) {
             text += address;
         }
+        text = getStringInBytes(text);
         return text;
     }
     private CharSequence getBathroomComments() {
@@ -127,12 +128,13 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         else {
             text += "No comments at this time.<br><br>";
         }
-
+        text = getStringInBytes(text);
         return text;
     }
-    private String decodeString(String string) {
+    // This is used to fix encoding errors from the API
+    private String getStringInBytes(String string) {
         try {
-            string = new String(string.getBytes("ISO-8859-1"),"UTF-8");
+            string = new String(string.getBytes("UTF-8"),"UTF-8");
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();
         }
