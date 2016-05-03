@@ -40,18 +40,16 @@ artifacts {
     archives sourcesJar
 }
 
-publishing {
-    publications {
-        library(MavenPublication) {
-            groupId project.ext.group
-            artifactId project.ext.archivesBaseName
-            version project.ext.version
+publishing.publications {
+    library(MavenPublication) {
+        groupId project.ext.group
+        artifactId project.ext.archivesBaseName
+        version project.ext.version
 
-            // Release AAR, Sources, and JavaDoc
-            artifact "$buildDir/outputs/aar/volley-release.aar"
-            artifact sourcesJar
-            artifact javadocJar
-        }
+        // Release AAR, Sources, and JavaDoc
+        artifact "$buildDir/outputs/aar/volley-release.aar"
+        artifact sourcesJar
+        artifact javadocJar
     }
 }
 
