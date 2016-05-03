@@ -42,16 +42,11 @@ public class HttpHeaderParser {
         Map<String, String> headers = response.headers;
 
         long serverDate = 0;
-        long lastModified = 0;
-        long serverExpires = 0;
-        long softExpire = 0;
-        long finalExpire = 0;
         long maxAge = 0;
         long staleWhileRevalidate = 0;
         boolean hasCacheControl = false;
         boolean mustRevalidate = false;
 
-        String serverEtag;
         String headerValue;
 
         headerValue = headers.get("Date");
@@ -83,17 +78,21 @@ public class HttpHeaderParser {
             }
         }
 
+        long serverExpires = 0;
         headerValue = headers.get("Expires");
         if (headerValue != null) {
             serverExpires = parseDateAsEpoch(headerValue);
         }
 
+        long lastModified = 0;
         headerValue = headers.get("Last-Modified");
         if (headerValue != null) {
             lastModified = parseDateAsEpoch(headerValue);
         }
 
-        serverEtag = headers.get("ETag");
+        long softExpire = 0;
+        long finalExpire = 0;
+        String serverEtag = headers.get("ETag");
 
         // Cache-Control takes precedence over an Expires header, even if both exist and Expires
         // is more restrictive.

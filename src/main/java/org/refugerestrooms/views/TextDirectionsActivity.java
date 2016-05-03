@@ -20,7 +20,7 @@ import org.refugerestrooms.servers.JavaScriptInterface;
 
 public class TextDirectionsActivity extends ActionBarActivity {
     private WebView webView;
-    final MyWebViewClient myWebViewClient = new MyWebViewClient();
+    private final MyWebViewClient myWebViewClient = new MyWebViewClient();
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.text_directions);

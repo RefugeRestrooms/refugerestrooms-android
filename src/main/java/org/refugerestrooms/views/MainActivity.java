@@ -88,23 +88,23 @@ public class MainActivity extends ActionBarActivity
     private Boolean initial = true;
     private Boolean searchPerformed = false;
 
-    Location mCurrentLocation;
-    Location mLastLocation;
-    Location mCurrentLocationNoGps;
-    LocationManager locationManager;
-    LatLng currentPosition;
-    boolean mUpdatesRequested;
+    private Location mCurrentLocation;
+    private Location mLastLocation;
+    private Location mCurrentLocationNoGps;
+    private LocationManager locationManager;
+    private LatLng currentPosition;
+    private boolean mUpdatesRequested;
     private boolean mInProgress;
     public boolean doNotDisplayDialog = false;
     public boolean onSearchAction = false;
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
-    static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
+    private static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
 
     private int numLocations;
-    SharedPreferences mPrefs;
-    SharedPreferences.Editor mEditor;
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor mEditor;
 
     public enum REQUEST_TYPE {START, STOP}
 
@@ -148,8 +148,8 @@ public class MainActivity extends ActionBarActivity
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    Polyline poly1;
-    Polyline poly2;
+    private Polyline poly1;
+    private Polyline poly2;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -159,20 +159,20 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
     private String mLocationTitle;
 
-    String query;
+    private String query;
 
     private Server mServer;
 
     // Adds bathrooms from json query
-    double[] distances;
-    int closestLoc = -1;
-    LatLng[] locations;
-    String[] names;
+    private double[] distances;
+    private int closestLoc = -1;
+    private LatLng[] locations;
+    private String[] names;
     // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
-    int currentLoc[];
+    private int currentLoc[];
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
-    int lastLoc[];
-    int location_count = 0;
+    private int lastLoc[];
+    private int location_count = 0;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
 
@@ -287,6 +287,26 @@ public class MainActivity extends ActionBarActivity
             if (mCurrentLocation == null) {
                 //Log.d("","provider : "+ provider);
                 // String provider = LocationManager.GPS_PROVIDER;
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 LocationListener locationListener = new LocationListener() {
                     public void onLocationChanged(Location location) {
                         // Called when a new location is found by the network location provider.
@@ -302,26 +322,6 @@ public class MainActivity extends ActionBarActivity
                     public void onProviderDisabled(String provider) {
                     }
                 };
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
             }
 
@@ -525,7 +525,6 @@ public class MainActivity extends ActionBarActivity
             public void onStatusChanged(String provider, int status, Bundle extras) {
             }
         };
-        boolean gps_enabled = false;
         boolean network_enabled = false;
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
@@ -542,6 +541,8 @@ public class MainActivity extends ActionBarActivity
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
             network_enabled = true;
         }
+
+        boolean gps_enabled = false;
         if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
