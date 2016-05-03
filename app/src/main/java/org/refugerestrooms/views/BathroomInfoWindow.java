@@ -66,11 +66,7 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         }
 
         // Setting the title
-        try {
-            title = new String(title.getBytes("ISO-8859-1"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        title= getStringInBytes(title);
         windowTitle.setText(title);
         windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
@@ -79,5 +75,14 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
         // Returning the view containing InfoWindow contents
         return mInfoWindowView;
+    }
+    // This is used to fix encoding errors from the API
+    private String getStringInBytes(String string) {
+        try {
+            string = new String(string.getBytes("UTF-8"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //e.printStackTrace();
+        }
+        return string;
     }
 }
