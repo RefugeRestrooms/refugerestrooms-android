@@ -36,7 +36,9 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-
+    dexOptions {
+        dexInProcess = false
+    }
 }
 
 dependencies {
