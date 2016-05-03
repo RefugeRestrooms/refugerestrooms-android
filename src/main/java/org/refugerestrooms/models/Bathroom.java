@@ -17,10 +17,6 @@ import java.util.Date;
  */
 public class Bathroom {
 
-    //TODO Other fields
-    @SerializedName("id")
-    private Long mId;
-
     @SerializedName("name")
     private String mName;
     @SerializedName("street")
@@ -50,6 +46,10 @@ public class Bathroom {
     @SerializedName("timestamp")
     private long mTimestamp;
 
+    //TODO Other fields
+    @SerializedName("id")
+    private Long mId;
+
     public Long getmId() {
         return mId;
     }
@@ -75,9 +75,6 @@ public class Bathroom {
     public String getName() {
         return mName;
     }
-
-
-
 
     public String getmStreet() {
         return mStreet;
@@ -193,11 +190,7 @@ public class Bathroom {
         if (!TextUtils.isEmpty(mCountry)) {
             address += mCountry + "\n";
         }
-        try {
-            address = new String(address.getBytes("ISO-8859-1"),"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            //e.printStackTrace();
-        }
+        //address = decodeString(address);
         return address;
     }
 
@@ -210,9 +203,9 @@ public class Bathroom {
     }
 
     public String getDirections() {
-        if (mDirections != null) {
+        /*if (mDirections != null) {
             mDirections = decodeString(mDirections);
-        }
+        }*/
         return mDirections;
     }
 
@@ -225,9 +218,9 @@ public class Bathroom {
 
     public String getComments() {
         // Same encoding fix as getDirections above
-        if (mComments != null) {
+        /*if (mComments != null) {
             mComments = decodeString(mComments);
-        }
+        }*/
         return mComments;
     }
 
