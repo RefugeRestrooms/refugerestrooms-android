@@ -190,11 +190,6 @@ public class Bathroom {
         if (!TextUtils.isEmpty(mCountry)) {
             address += mCountry + "\n";
         }
-        try {
-            address = new String(address.getBytes("ISO-8859-1"),"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            //e.printStackTrace();
-        }
         return address;
     }
 
@@ -207,9 +202,9 @@ public class Bathroom {
     }
 
     public String getDirections() {
-        if (mDirections != null) {
+        /*if (mDirections != null) {
             mDirections = decodeString(mDirections);
-        }
+        }*/
         return mDirections;
     }
 
@@ -222,9 +217,9 @@ public class Bathroom {
 
     public String getComments() {
         // Same encoding fix as getDirections above
-        if (mComments != null) {
+        /*if (mComments != null) {
             mComments = decodeString(mComments);
-        }
+        }*/
         return mComments;
     }
 
