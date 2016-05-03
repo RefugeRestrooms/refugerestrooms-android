@@ -46,7 +46,7 @@ public class CacheDispatcher extends Thread {
     private final ResponseDelivery mDelivery;
 
     /** Used for telling us to die. */
-    private volatile boolean mQuit = false;
+    private volatile boolean mQuit;
 
     /**
      * Creates a new cache triage dispatcher thread.  You must call {@link #start()}

@@ -78,11 +78,11 @@ public class MainActivity extends ActionBarActivity
         Server.ServerListener {
 
     private MapView mMapView;
-    private GoogleMap mMap = null;
+    private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Boolean initial = true;
-    private Boolean searchPerformed = false;
+    private Boolean searchPerformed;
 
     private Location mCurrentLocation;
     private Location mLastLocation;
@@ -91,8 +91,8 @@ public class MainActivity extends ActionBarActivity
     private LatLng currentPosition;
     private boolean mUpdatesRequested;
     private boolean mInProgress;
-    public boolean doNotDisplayDialog = false;
-    public boolean onSearchAction = false;
+    public boolean doNotDisplayDialog;
+    public boolean onSearchAction;
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
@@ -166,9 +166,9 @@ public class MainActivity extends ActionBarActivity
     private int currentLoc[];
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     private int lastLoc[];
-    private int location_count = 0;
+    private int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
-    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
+    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
