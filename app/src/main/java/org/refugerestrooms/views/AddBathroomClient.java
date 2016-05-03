@@ -24,7 +24,8 @@ public class AddBathroomClient extends WebViewClient {
          Bathrooms are submitted correctly, but should probably do this without a text_directions. Note: the
          restroom submitted successfully message is from the refuge restrooms site, not the app.
          */
-        view.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+        // Setting the render thread priority is deprecated and will not be supported
+        // view.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         if(url.equals(currentUrl)) {
             view.loadUrl(url);
