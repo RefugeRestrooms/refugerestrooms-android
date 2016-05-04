@@ -54,14 +54,14 @@ import java.util.concurrent.TimeoutException;
 public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
        Response.ErrorListener {
     private Request<?> mRequest;
-    private boolean mResultReceived = false;
+    private boolean mResultReceived;
     private T mResult;
     private VolleyError mException;
 
     private RequestFuture() {}
     
     public static <E> RequestFuture<E> newFuture() {
-        return new RequestFuture<E>();
+        return new RequestFuture<>();
     }
 
     public void setRequest(Request<?> request) {

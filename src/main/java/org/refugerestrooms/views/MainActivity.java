@@ -81,12 +81,12 @@ public class MainActivity extends ActionBarActivity
         LocationListener,
         RoutingListener, Server.ServerListener {
 
-    private GoogleMap mMap = null;
+    private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private final String TAG = "Refuge Restrooms";
     private Boolean initial = true;
-    private Boolean searchPerformed = false;
+    private Boolean searchPerformed;
 
     Location mCurrentLocation;
     Location mLastLocation;
@@ -95,8 +95,8 @@ public class MainActivity extends ActionBarActivity
     LatLng currentPosition;
     boolean mUpdatesRequested;
     private boolean mInProgress;
-    public boolean doNotDisplayDialog = false;
-    public boolean onSearchAction = false;
+    public boolean doNotDisplayDialog;
+    public boolean onSearchAction;
     protected LatLng start;
     protected LatLng end;
     // temp lat/lng for setting up initial map
@@ -135,7 +135,7 @@ public class MainActivity extends ActionBarActivity
     private PendingIntent mActivityRecognitionPendingIntent;
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
-    private static Context mContext = null;
+    private static Context mContext;
 
     //LocationRequest mLocationRequest;
 
@@ -172,9 +172,9 @@ public class MainActivity extends ActionBarActivity
     int currentLoc[];
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     int lastLoc[];
-    int location_count = 0;
+    int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
-    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<LatLng, Bathroom>();
+    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {

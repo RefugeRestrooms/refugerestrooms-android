@@ -85,10 +85,10 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private boolean mShouldCache = true;
 
     /** Whether or not this request has been canceled. */
-    private boolean mCanceled = false;
+    private boolean mCanceled;
 
     /** Whether or not a response has been delivered for this request yet. */
-    private boolean mResponseDelivered = false;
+    private boolean mResponseDelivered;
 
     /** The retry policy for this request. */
     private RetryPolicy mRetryPolicy;
@@ -98,7 +98,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * the network, the cache entry will be stored here so that in the event of
      * a "Not Modified" response, we can be sure it hasn't been evicted from cache.
      */
-    private Cache.Entry mCacheEntry = null;
+    private Cache.Entry mCacheEntry;
 
     /** An opaque token tagging this request; used for bulk cancellation. */
     private Object mTag;

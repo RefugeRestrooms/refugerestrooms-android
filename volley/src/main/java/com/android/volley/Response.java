@@ -33,7 +33,7 @@ public class Response<T> {
     public final VolleyError error;
 
     /** True if this response was a soft-expired one and a second one MAY be coming. */
-    public boolean intermediate = false;
+    public boolean intermediate;
 
     private Response(T result, Cache.Entry cacheEntry) {
         this.result = result;
@@ -64,7 +64,7 @@ public class Response<T> {
 
     /** Returns a successful response containing the parsed result. */
     public static <T> Response<T> success(T result, Cache.Entry cacheEntry) {
-        return new Response<T>(result, cacheEntry);
+        return new Response<>(result, cacheEntry);
     }
 
     /**
@@ -72,7 +72,7 @@ public class Response<T> {
      * localized message displayed to the user.
      */
     public static <T> Response<T> error(VolleyError error) {
-        return new Response<T>(error);
+        return new Response<>(error);
     }
 
     /**
