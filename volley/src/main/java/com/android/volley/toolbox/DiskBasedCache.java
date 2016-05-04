@@ -386,12 +386,12 @@ public class DiskBasedCache implements Cache {
          * @throws IOException
          */
         public static CacheHeader readHeader(InputStream is) throws IOException {
-            CacheHeader entry = new CacheHeader();
             int magic = readInt(is);
             if (magic != CACHE_MAGIC) {
                 // don't bother deleting, it'll get pruned eventually
                 throw new IOException();
             }
+            CacheHeader entry = new CacheHeader();
             entry.key = readString(is);
             entry.etag = readString(is);
             if (entry.etag.equals("")) {
