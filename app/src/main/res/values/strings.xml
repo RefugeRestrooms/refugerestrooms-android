@@ -16,7 +16,7 @@
 
     <string name="saved_bathrooms">Recent Bathrooms</string>
     <string name="map_title_section">Map</string>
-    <string name="add_title_section">Add Bathrooms</string>
+    <string name="add_title_section">Add Bathroom</string>
     <string name="feedback_title_section">Feedback</string>
     <string name="email">refugerestroomsapp@gmail.com</string>
 
@@ -48,4 +48,19 @@
     <string name="score">Score:  </string>
     <string name="unknown">No Ratings</string>
     <string name="no_results">No results have been found.</string>
+
+    <!-- Strings for the Add Bathroom fragment -->
+    <string name="add_bathroom_title">Submit a restroom to our database</string>
+    <string name="add_bathroom_place">* Location/Place/Business Name</string>
+    <string name="add_bathroom_address">* Street Address</string>
+    <string name="add_bathroom_city">* City</string>
+    <string name="add_bathroom_state">* State/Province</string>
+    <string name="add_bathroom_country">* Country</string>
+    <string name="add_bathroom_accessible">Accessible</string>
+    <string name="add_bathroom_unisex">Unisex</string>
+    <string name="add_bathroom_directions">Directions</string>
+    <string name="add_bathroom_direction_hint">(e.g.: third floor in the back, by the dressing rooms)</string>
+    <string name="add_bathroom_comment">Comment</string>
+    <string name="add_bathroom_comment_hint">(e.g.: you have to be a "paying customer," just act like you are browsing for a bit)</string>
+    <string name="add_bathroom_save">Save Restroom</string>
 </resources>
