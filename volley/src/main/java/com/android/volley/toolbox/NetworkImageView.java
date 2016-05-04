@@ -103,7 +103,6 @@ public class NetworkImageView extends ImageView {
     void loadImageIfNecessary(final boolean isInLayoutPass) {
         int width = getWidth();
         int height = getHeight();
-        ScaleType scaleType = getScaleType();
 
         boolean wrapWidth = false, wrapHeight = false;
         if (getLayoutParams() != null) {
@@ -144,7 +143,7 @@ public class NetworkImageView extends ImageView {
         // Calculate the max image width / height to use while ignoring WRAP_CONTENT dimens.
         int maxWidth = wrapWidth ? 0 : width;
         int maxHeight = wrapHeight ? 0 : height;
-
+        ScaleType scaleType = getScaleType();
         // The pre-existing content of this view didn't match the current URL. Load the new image
         // from the network.
         ImageContainer newContainer = mImageLoader.get(mUrl,
