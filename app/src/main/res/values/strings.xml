@@ -48,4 +48,6 @@
     <string name="score">Score:  </string>
     <string name="unknown">No Ratings</string>
     <string name="no_results">No results have been found.</string>
+
+    <string name="open_in_maps">Open in Google Maps</string>
 </resources>
