@@ -45,10 +45,10 @@ public class DiskBasedCache implements Cache {
 
     /** Map of the Key, CacheHeader pairs */
     private final Map<String, CacheHeader> mEntries =
-            new LinkedHashMap<String, CacheHeader>(16, .75f, true);
+            new LinkedHashMap<>(16, .75f, true);
 
     /** Total amount of space currently used by the cache in bytes. */
-    private long mTotalSize = 0;
+    private long mTotalSize;
 
     /** The root directory to use for the cache. */
     private final File mRootDirectory;
@@ -386,12 +386,12 @@ public class DiskBasedCache implements Cache {
          * @throws IOException
          */
         public static CacheHeader readHeader(InputStream is) throws IOException {
-            CacheHeader entry = new CacheHeader();
             int magic = readInt(is);
             if (magic != CACHE_MAGIC) {
                 // don't bother deleting, it'll get pruned eventually
                 throw new IOException();
             }
+            CacheHeader entry = new CacheHeader();
             entry.key = readString(is);
             entry.etag = readString(is);
             if (entry.etag.equals("")) {
@@ -446,7 +446,7 @@ public class DiskBasedCache implements Cache {
     }
 
     private static class CountingInputStream extends FilterInputStream {
-        private int bytesRead = 0;
+        private int bytesRead;
 
         private CountingInputStream(InputStream in) {
             super(in);
