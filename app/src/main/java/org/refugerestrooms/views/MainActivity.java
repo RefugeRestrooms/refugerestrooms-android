@@ -929,6 +929,7 @@ public class MainActivity extends ActionBarActivity
             }
         });
     }
+
     // Navigates to Maps Marker when selected
     public void navigateToMarker(Marker marker) {
         if (mCurrentLocation != null) {
