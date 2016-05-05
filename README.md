@@ -68,7 +68,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
-- [ ] Screen rotation removes add a bathroom text
+- [X] Screen rotation removes add a bathroom text
 - [ ] Map reinstantiates every time a search occurs
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
 - [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
