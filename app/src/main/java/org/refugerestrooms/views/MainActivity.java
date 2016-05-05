@@ -763,7 +763,6 @@ public class MainActivity extends ActionBarActivity
             int isUnisex = bathroom.isUnisex() ? 1 : 0;
             float hue = (isAccessible == 1) ? BitmapDescriptorFactory.HUE_AZURE : BitmapDescriptorFactory.HUE_RED;
 
-            int score = bathroom.getScore();
             // Adds bathroom markers, blue for accessible, red for not
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(temp.latitude, temp.longitude))
@@ -820,7 +819,7 @@ public class MainActivity extends ActionBarActivity
                 infoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bathroom bathroom = null;
+                        Bathroom bathroom;
                         // Get bathroom from hashmap using marker's location
                         bathroom = allBathroomsMap.get(markerLatLng);
                         if (bathroom != null)
@@ -845,7 +844,7 @@ public class MainActivity extends ActionBarActivity
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Bathroom bathroom = null;
+                Bathroom bathroom;
                 // Get bathroom from hashmap using marker's location
                 bathroom = allBathroomsMap.get(marker.getPosition());
                 if (bathroom != null) {
@@ -857,8 +856,8 @@ public class MainActivity extends ActionBarActivity
         // Find closest location
         double posLat;
         double posLng;
-        double myLat = 0;
-        double myLng = 0;
+        double myLat;
+        double myLng;
         // Checks initial boolean value because otherwise after coming back from text directions
         // the closest value is reset to it's initial value, not what was selected to navigate to
         if (mCurrentLocation != null && numLocations > 0 && initial) {
