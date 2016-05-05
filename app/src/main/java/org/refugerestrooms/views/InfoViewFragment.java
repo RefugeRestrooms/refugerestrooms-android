@@ -16,7 +16,9 @@ package org.refugerestrooms.views;
         import org.refugerestrooms.R;
 
         import android.app.Fragment;
+        import android.content.Intent;
         import android.graphics.Typeface;
+        import android.net.Uri;
         import android.os.Bundle;
         import android.support.v4.app.FragmentActivity;
         import android.support.v4.app.NavUtils;
@@ -65,6 +67,14 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+
+        ((Button) view.findViewById(R.id.button_maps)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openInGoogleMaps();
+            }
+        });
+
         updateView();
         return view;
 
@@ -141,5 +151,15 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         return string;
     }
 
-
+    private void openInGoogleMaps() {
+        double lat = mBathroom.getmLatitude();
+        double lon = mBathroom.getmLongitude();
+        // Names need to be escaped, so a space should be replaced by either a + or by %20
+        String addressEscaped = mBathroom.getAddress().replace(' ', '+');
+        String uri = "geo:" + lat + "," + lon + "?q=" + addressEscaped;
+        Uri intentUri = Uri.parse(uri);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
+    }
 }
