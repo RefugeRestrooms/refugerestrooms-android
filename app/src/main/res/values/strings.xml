@@ -49,8 +49,6 @@
     <string name="unknown">No Ratings</string>
     <string name="no_results">No results have been found.</string>
 
-<<<<<<< HEAD
-=======
     <!-- Strings for the Add Bathroom fragment -->
     <string name="add_bathroom_title">Submit a restroom to our database</string>
     <string name="add_bathroom_place">* Location/Place/Business Name</string>
@@ -66,6 +64,5 @@
     <string name="add_bathroom_comment_hint">(e.g.: you have to be a "paying customer," just act like you are browsing for a bit)</string>
     <string name="add_bathroom_save">Save Restroom</string>
 
->>>>>>> 0357dca74f5f170002af5589f265918837971763
     <string name="open_in_maps">Open in Google Maps</string>
 </resources>
