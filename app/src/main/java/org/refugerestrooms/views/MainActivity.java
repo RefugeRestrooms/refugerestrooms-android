@@ -81,8 +81,8 @@ public class MainActivity extends ActionBarActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private Boolean initial = true;
-    private Boolean searchPerformed;
+    private boolean initial = true;
+    private boolean searchPerformed;
 
     private Location mCurrentLocation;
     private Location mLastLocation;
