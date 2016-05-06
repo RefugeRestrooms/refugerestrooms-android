@@ -46,7 +46,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
   - [ ] Google Maps button
-  - [ ] Allow text to be highlighted/copied
+  - [X] Allow text to be highlighted/copied
 - [ ] Re-style map pin custom info window
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
