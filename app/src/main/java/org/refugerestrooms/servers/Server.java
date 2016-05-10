@@ -30,16 +30,16 @@ public class Server {
     protected static final String TAG = null;
     private static final String SERVER_URL = "http://www.refugerestrooms.org:80/api/v1/";
 
-    private ServerListener mListener;
+    private final ServerListener mListener;
 
-    private Response.ErrorListener errorListener = new Response.ErrorListener() {
+    private final Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             mListener.onError(error.getMessage());
         }
     };
 
-    private Response.Listener<JSONArray> onSuccessResponseListener = new Response.Listener<JSONArray>() {
+    private final Response.Listener<JSONArray> onSuccessResponseListener = new Response.Listener<JSONArray>() {
         @Override
         public void onResponse(JSONArray response) {
             try {

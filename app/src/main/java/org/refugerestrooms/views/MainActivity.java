@@ -168,7 +168,7 @@ public class MainActivity extends ActionBarActivity
     private int lastLoc[];
     private int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
-    private Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
+    private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
