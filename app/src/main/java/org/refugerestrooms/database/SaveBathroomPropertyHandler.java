@@ -5,7 +5,10 @@ import org.refugerestrooms.database.model.BathroomEntity;
 import org.refugerestrooms.database.model.DaoSession;
 import org.refugerestrooms.models.Bathroom;
 
-public  class SaveBathroomPropertyHandler {
+public final class SaveBathroomPropertyHandler {
+
+    private SaveBathroomPropertyHandler() {}
+
     /**
      * Save property will take the bathroom object and convert it into a BathroomEntity Object
      * and then insert it into the daosession.

@@ -4,8 +4,11 @@ package org.refugerestrooms.models;
  * Created by Refuge Restrooms on 7/13/2015.
  */
 //Haversine formula to compute shortest distance between two points on a sphere
-public class Haversine {
+public final class Haversine {
     public static final double R = 6372.8; // Radius of Earth in Kilometers
+
+    private Haversine () {}
+
     public static double formula(double lat1, double lng1, double lat2, double lng2) {
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);

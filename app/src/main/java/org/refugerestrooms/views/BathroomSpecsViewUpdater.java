@@ -16,7 +16,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class BathroomSpecsViewUpdater {
+public final class BathroomSpecsViewUpdater {
+
+    private BathroomSpecsViewUpdater() {}
 
     public static void update(View view, Bathroom bathroom, Context context) {
         TextView scoreTv = (TextView) view.findViewById(R.id.score);

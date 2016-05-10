@@ -27,10 +27,12 @@ import com.android.volley.RequestQueue;
 
 import java.io.File;
 
-public class Volley {
+public final class Volley {
 
     /** Default on-disk cache directory. */
     private static final String DEFAULT_CACHE_DIR = "volley";
+
+    private Volley() {}
 
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
