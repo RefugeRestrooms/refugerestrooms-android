@@ -29,10 +29,12 @@ import java.util.Locale;
  * to see Volley logs call:<br/>
  * {@code <android-sdk>/platform-tools/adb shell setprop log.tag.Volley VERBOSE}
  */
-public class VolleyLog {
+public final class VolleyLog {
     public static String TAG = "Volley";
 
     public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
+
+    private VolleyLog() {}
 
     /**
      * Customize the log tag for your application, so that other apps
