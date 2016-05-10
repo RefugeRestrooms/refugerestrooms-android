@@ -15,9 +15,9 @@ import org.json.JSONObject;
  * To minimize volley requests  this handler is made to only take the url and
  * the success listener and the error listener.
  */
-public class RequestHandler {
+public final class RequestHandler {
 
-
+    private RequestHandler() {}
 
     /**
      * @param onSuccessListener Response.Listener<JSONObject>  on success listener
