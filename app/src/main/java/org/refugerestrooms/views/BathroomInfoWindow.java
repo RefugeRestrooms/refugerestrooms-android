@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
-    private View mInfoWindowView;
+    private final View mInfoWindowView;
 
     // TODO change this - ActionBarActivity is deprecated
     public BathroomInfoWindow(ActionBarActivity activity) {

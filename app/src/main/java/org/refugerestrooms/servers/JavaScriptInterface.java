@@ -8,7 +8,7 @@ import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 public class JavaScriptInterface {
-    private Context mContext;
+    private final Context mContext;
 
     /** Instantiate the interface and set the context */
     public JavaScriptInterface(Context c) {

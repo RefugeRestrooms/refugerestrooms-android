@@ -46,7 +46,7 @@ public class RequestQueue {
     }
 
     /** Used for generating monotonically-increasing sequence numbers for requests. */
-    private AtomicInteger mSequenceGenerator = new AtomicInteger();
+    private final AtomicInteger mSequenceGenerator = new AtomicInteger();
 
     /**
      * Staging area for requests that already have a duplicate request in flight.
@@ -94,7 +94,7 @@ public class RequestQueue {
     /** The cache dispatcher. */
     private CacheDispatcher mCacheDispatcher;
 
-    private List<RequestFinishedListener> mFinishedListeners =
+    private final List<RequestFinishedListener> mFinishedListeners =
             new ArrayList<>();
 
     /**
