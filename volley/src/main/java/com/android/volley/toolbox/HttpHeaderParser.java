@@ -28,7 +28,9 @@ import java.util.Map;
 /**
  * Utility methods for parsing HTTP headers.
  */
-public class HttpHeaderParser {
+public final class HttpHeaderParser {
+
+    private HttpHeaderParser() {}
 
     /**
      * Extracts a {@link Cache.Entry} from a {@link NetworkResponse}.

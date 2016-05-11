@@ -2,16 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="8dp"
-    android:layout_height="match_parent" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal" >
+    android:layout_height="match_parent"
+    android:background="#fff" >
 
         <LinearLayout
+            android:id="@+id/layout_title_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#EEDBF7"
@@ -30,46 +25,52 @@
                 android:textSize="20sp"
                 android:textColor="#372766"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true" />
+
             <TextView
                 android:id="@+id/text_address"
                 android:textSize="16sp"
                 android:layout_marginTop="12dp"
                 android:textColor="#372766"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true" />
             </LinearLayout>
 
 
-        <include layout="@layout/bathroom_specs_view"
-            android:id="@+id/specs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#fff"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="8dp">
+    <include layout="@layout/bathroom_specs_view"
+        android:id="@+id/specs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_title_row"
+        android:layout_margin="8dp" />
+
+    <Button
+        android:id="@+id/button_maps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/open_in_maps"
+        android:background="@color/light_purple"
+        android:textColor="@color/light_gray"
+        android:layout_alignParentBottom="true" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/specs"
+        android:layout_above="@id/button_maps"
+        android:background="#fff"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp" >
         <TextView
             android:id="@+id/text_comments"
             android:textSize="16sp"
             android:textColor="#544C73"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
-        </ScrollView>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/button_maps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:text="@string/open_in_maps"
-        android:background="@color/light_purple"
-        android:textColor="@color/light_gray"/>
+            android:layout_gravity="center_horizontal" />
+    </ScrollView>
 
 </RelativeLayout>

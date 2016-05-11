@@ -21,7 +21,7 @@ import de.greenrobot.daogenerator.Schema;
  * https://github.com/greenrobot/greenDAO
  * http://www.devteam83.com/en/tutorial-greendao-from-scratch-part-1/
  */
-public class RestroomsDaoGenerator {
+public final class RestroomsDaoGenerator {
 
 
     private static final String BATHROOM_ENTITY = "BathroomEntity";
@@ -42,6 +42,8 @@ public class RestroomsDaoGenerator {
     private static final String TIMESTAMP = "timestamp";
     private static final String GENERATE_IN_PATH = "../app/src/main/java";
     private static final String DATABASE_PACKAGE = "org.refugerestrooms.database.model";
+
+    private RestroomsDaoGenerator() {}
 
     public static void main(String args[]) throws Exception {
         initModel();
