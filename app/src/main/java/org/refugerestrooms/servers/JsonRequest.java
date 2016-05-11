@@ -28,7 +28,7 @@ import java.util.List;
 public class JsonRequest {
 
     protected static final String TAG = null;
-    private ServerListener mListener;
+    private final ServerListener mListener;
 
     public JsonRequest(ServerListener mListener) {
         super();
