@@ -77,7 +77,7 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         return mInfoWindowView;
     }
     // This is used to fix encoding errors from the API
-    private String getStringInBytes(String string) {
+    private static String getStringInBytes(String string) {
         try {
             string = new String(string.getBytes("UTF-8"),"UTF-8");
         } catch (UnsupportedEncodingException e) {
