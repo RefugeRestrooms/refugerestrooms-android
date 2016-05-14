@@ -33,6 +33,7 @@ package org.refugerestrooms.views;
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.Button;
+        import android.widget.ImageView;
         import android.widget.TextView;
 
         import java.io.UnsupportedEncodingException;
@@ -68,7 +69,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        ((Button) view.findViewById(R.id.button_maps)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) view.findViewById(R.id.button_maps)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openInGoogleMaps();
