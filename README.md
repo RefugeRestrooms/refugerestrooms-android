@@ -45,10 +45,8 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
-  - [X] Google Maps button
-  - [X] Allow text to be highlighted/copied
->>>>>>> e93aef014424e572266fde32b7f3eed388aca9a1
-- [ ] Re-style map pin custom info window
+  - [x] Google Maps button
+  - [x] Allow text to be highlighted/copied
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
   - [ ] Add option to turn off navigation so that the blue line doesn't appear on map
@@ -57,19 +55,20 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Style
   - [x] Style Feedback Form better
   - [ ] Navigation drawer icons
-  - [ ] Style text directions section -- directions.html
+  - [ ] Style text directions section (directions.html)
 - [ ] Better add bathroom section, currently just a webview
   - [x] Style webview in the meantime
   - [ ] Start webview on app startup, then just switch content views
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
-- [ ] Actionbar activity depreciated (HttpClient as well)
-- [ ] App when no cellular data?
+- [ ] Actionbar activity depreciated
+- [ ] Add bathroom styling when no cellular data?
 - [ ] Add different locales in strings.xml file
+- [ ] Optimize for responsive layouts: tablet, landscape on mobile
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
-- [X] Screen rotation removes add a bathroom text
+- [x] Screen rotation removes add a bathroom text
 - [ ] Map reinstantiates every time a search occurs
 - [ ] Turning location off after it's been on doesn't grab last known location on app reopen
 - [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
