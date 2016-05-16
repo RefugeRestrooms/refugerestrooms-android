@@ -45,8 +45,9 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
-  - [ ] Google Maps button
+  - [X] Google Maps button
   - [X] Allow text to be highlighted/copied
+>>>>>>> e93aef014424e572266fde32b7f3eed388aca9a1
 - [ ] Re-style map pin custom info window
 - [ ] Indicate red markers vs blue markers for accessibility
 - [ ] Settings Menu
