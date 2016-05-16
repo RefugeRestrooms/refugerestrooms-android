@@ -1,29 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="8dp"
-    android:layout_height="match_parent" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal" >
+    android:layout_height="match_parent"
+    android:background="#fff" >
 
         <LinearLayout
+            android:id="@+id/layout_title_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#EEDBF7"
             android:layout_gravity="center_horizontal"
             android:orientation="vertical">
-            <Button
-                android:id="@+id/close_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="top|end"
-                android:background="@drawable/ic_close_white_24dp"
-                android:backgroundTint="#41326B" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                <Button
+                    android:id="@+id/close_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_close_white_24dp"
+                    android:backgroundTint="#41326B" />
+
+                <ImageView
+                    android:id="@+id/button_maps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/map_icon"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:contentDescription="@string/open_in_maps" />
+            </RelativeLayout>
             <TextView
                 android:id="@+id/text_title"
                 android:textStyle="bold"
@@ -44,17 +55,21 @@
             </LinearLayout>
 
 
-        <include layout="@layout/bathroom_specs_view"
-            android:id="@+id/specs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <include layout="@layout/bathroom_specs_view"
+        android:id="@+id/specs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_title_row"
+        android:layout_margin="8dp" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#fff"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="8dp" >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/specs"
+        android:layout_above="@id/button_maps"
+        android:background="#fff"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp" >
         <TextView
             android:id="@+id/text_comments"
             android:textSize="16sp"
@@ -62,7 +77,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
-        </ScrollView>
-    </LinearLayout>
+    </ScrollView>
 
-</FrameLayout>
+</RelativeLayout>

@@ -63,4 +63,6 @@
     <string name="add_bathroom_comment">Comment</string>
     <string name="add_bathroom_comment_hint">(e.g.: you have to be a "paying customer," just act like you are browsing for a bit)</string>
     <string name="add_bathroom_save">Save Restroom</string>
+
+    <string name="open_in_maps">Open in Google Maps</string>
 </resources>
