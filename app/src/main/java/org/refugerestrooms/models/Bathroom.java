@@ -247,7 +247,7 @@ public class Bathroom {
         return new LatLng(mLatitude, mLongitude);
     }
 
-    private String decodeString(String string) {
+    private static String decodeString(String string) {
         try {
             string = new String(string.getBytes("ISO-8859-1"),"UTF-8");
         } catch (UnsupportedEncodingException e) {
