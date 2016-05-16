@@ -103,6 +103,8 @@ public class TextDirectionsActivity extends ActionBarActivity {
                 this.finish();
                 //NavUtils.navigateUpFromSameTask(this);
                 return true;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
 

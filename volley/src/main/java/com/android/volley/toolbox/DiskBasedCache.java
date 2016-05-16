@@ -235,7 +235,7 @@ public class DiskBasedCache implements Cache {
      * @param key The key to generate a file name for.
      * @return A pseudo-unique filename.
      */
-    private String getFilenameForKey(String key) {
+    private static String getFilenameForKey(String key) {
         int firstHalfLength = key.length() / 2;
         String localFilename = String.valueOf(key.substring(0, firstHalfLength).hashCode());
         localFilename += String.valueOf(key.substring(firstHalfLength).hashCode());

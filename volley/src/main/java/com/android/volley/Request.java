@@ -441,7 +441,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /**
      * Converts <code>params</code> into an application/x-www-form-urlencoded encoded string.
      */
-    private byte[] encodeParameters(Map<String, String> params, String paramsEncoding) {
+    private static byte[] encodeParameters(Map<String, String> params, String paramsEncoding) {
         StringBuilder encodedParams = new StringBuilder();
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {

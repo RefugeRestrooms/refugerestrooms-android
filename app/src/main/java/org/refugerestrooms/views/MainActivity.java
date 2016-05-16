@@ -212,7 +212,11 @@ public class MainActivity extends ActionBarActivity
                          * Try the request again
                          */
                         break;
+                    default:
+                        break;
                 }
+                default:
+                    break;
         }
     }
 
@@ -706,7 +710,8 @@ public class MainActivity extends ActionBarActivity
                 } else {
                     // TODO something
                 }
-                return;
+            default:
+                break;
         }
     }
 
@@ -963,7 +968,6 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment mFragment = null;
         switch(position) {
-            default:
             case 0:
                 mTitle = getString(R.string.map_title_section);
                 mFragment = new MapFragment();
@@ -983,6 +987,8 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 mTitle = getString(R.string.feedback_title_section);
                 mFragment = new FeedbackFormFragment();
+                break;
+            default:
                 break;
         }
         if (mFragment != null) {
