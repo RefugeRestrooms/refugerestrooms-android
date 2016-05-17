@@ -45,7 +45,7 @@ public final class RestroomsDaoGenerator {
 
     private RestroomsDaoGenerator() {}
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         initModel();
     }
 
