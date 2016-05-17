@@ -86,7 +86,6 @@ public class MainActivity extends ActionBarActivity
 
     private Location mCurrentLocation;
     private Location mLastLocation;
-    private Location mCurrentLocationNoGps;
 
     private LatLng currentPosition;
     private boolean mUpdatesRequested;
@@ -124,11 +123,6 @@ public class MainActivity extends ActionBarActivity
     public static final int ACTIVITY_INTERVAL_SECONDS = 20;
     public static final int ACTIVITY_INTERVAL_MILLISECONDS =
             MILLISECONDS_PER_SECOND * ACTIVITY_INTERVAL_SECONDS;
-    /*
-     * Store the PendingIntent used to send activity recognition events
-     * back to the app
-     */
-    private PendingIntent mActivityRecognitionPendingIntent;
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
 
@@ -163,9 +157,9 @@ public class MainActivity extends ActionBarActivity
     private LatLng[] locations;
     private String[] names;
     // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
-    private int currentLoc[];
+    private int[] currentLoc;
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
-    private int lastLoc[];
+    private int[] lastLoc;
     private int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
