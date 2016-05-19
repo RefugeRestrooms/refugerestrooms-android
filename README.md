@@ -26,15 +26,17 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Selecting location marker shows bathroom info and changes navigation to that location
 - Navigation icon in the top right gives text directions
 - Blue marker = accessible, red marker = not accessible
+- Recent Bathrooms tab displays 150 most recently searched restrooms. Works without cell service!
+- Open location in Google Maps available in each restrooms info window
+- If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
+- Max locations shown initially: gps = 20, search = 75
 - When GPS isn't enabled
   - Popup box will recommend turning it on initial app start
   - Navigation icon gives a toast to enable location
   - Selecting marker doesn't give location
   - Currently location defaults to Minneapolis (Fix this!)
   - Only really useful to use search
-- If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
-- Max locations shown initially: gps = 20, search = 75
-- Searching with no GPS will move camera to first location found, and shows a toast saying locations were found
+  - Searching with no GPS will move camera to first location found, and shows a toast saying locations were foun
 
 ## TODO
 - [x] Search bar
