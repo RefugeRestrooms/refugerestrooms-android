@@ -26,8 +26,8 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - Selecting location marker shows bathroom info and changes navigation to that location
 - Navigation icon in the top right gives text directions
 - Blue marker = accessible, red marker = not accessible
-- Recent Bathrooms tab displays 150 most recently searched restrooms. Works without cell service!
-- Open location in Google Maps available in each restrooms info window
+- Recent Bathrooms tab displays 150 most recent restrooms. Works without cell service!
+- Open location in Google Maps available in each restroom's info window
 - If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
 - Max locations shown initially: gps = 20, search = 75
 - When GPS isn't enabled
