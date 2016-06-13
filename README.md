@@ -42,6 +42,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
   - [ ] Auto-complete search (google places api)
+  - [ ] Have filter options for only returning accessible, unisex restrooms
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
@@ -60,6 +61,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Better add bathroom section, currently just a webview
   - [x] Style webview in the meantime
   - [ ] Start webview on app startup, then just switch content views (currently reloads everytime)
+  - [ ] Use current location option
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
 - [ ] Actionbar activity depreciated
