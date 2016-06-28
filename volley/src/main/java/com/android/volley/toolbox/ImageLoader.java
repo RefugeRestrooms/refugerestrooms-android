@@ -361,7 +361,7 @@ public class ImageLoader {
                 request = mBatchedResponses.get(mCacheKey);
                 if (request != null) {
                     request.removeContainerAndCancelIfNecessary(this);
-                    if (request.mContainers.size() == 0) {
+                    if (request.mContainers.isEmpty()) {
                         mBatchedResponses.remove(mCacheKey);
                     }
                 }
@@ -440,7 +440,7 @@ public class ImageLoader {
          */
         public boolean removeContainerAndCancelIfNecessary(ImageContainer container) {
             mContainers.remove(container);
-            if (mContainers.size() == 0) {
+            if (mContainers.isEmpty()) {
                 mRequest.cancel();
                 return true;
             }
