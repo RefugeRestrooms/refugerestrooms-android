@@ -68,6 +68,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add bathroom styling when no cellular data?
 - [ ] Add different locales in strings.xml file
 - [ ] Optimize for responsive layouts: tablet, landscape on mobile
+- [ ] Remove unnecessary permissions (accounts, contacts)
 
 ## Bugs
 - [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
