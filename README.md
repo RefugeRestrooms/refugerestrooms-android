@@ -3,7 +3,7 @@
 ![Android](https://img.shields.io/badge/platform-android-lightgrey.svg)
 [![Travis](https://travis-ci.org/RefugeRestrooms/refugerestrooms-android.svg?branch=master)](https://travis-ci.org/RefugeRestrooms/refugerestrooms-android)
 
-[![App Store Badge](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms/e1b38c4018a25484d2a47befd6800ebf8b97b5bf/app/assets/images/play-store.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
+[![App Store Badge](https://cloud.githubusercontent.com/assets/16610908/18124896/7be337b6-6f74-11e6-9814-79b9c2d53961.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
 
 Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 
