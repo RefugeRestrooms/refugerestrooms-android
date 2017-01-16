@@ -24,7 +24,7 @@
             android:value="@integer/google_play_services_version" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAXq1BNeI-JLcxZc_eiMUF_SRVL-Qrw88U"/>
+            android:value="@string/map_api_key" />
 
         <activity
             android:name=".views.TextDirectionsActivity"
