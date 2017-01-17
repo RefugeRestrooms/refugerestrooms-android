@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,74 +65,15 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
     private void updateView() {
         if (mBathroom != null) {
             TextView tv = (TextView) view.findViewById(R.id.text_title);
-            tv.setText(getBathroomTitle());
+            tv.setText(mBathroom.getNameFormatted());
             TextView tv2 = (TextView) view.findViewById(R.id.text_address);
-            tv2.setText(getBathroomAddress());
+            tv2.setText(mBathroom.getAddressFormatted() + "\n");
             TextView tv3 = (TextView) view.findViewById(R.id.text_comments);
-            tv3.setText(Html.fromHtml((String) getBathroomComments()));
-            tv.setGravity(Gravity.CENTER);
-            tv2.setGravity(Gravity.CENTER);
-            tv3.setGravity(Gravity.CENTER);
+            tv3.setText(Html.fromHtml(mBathroom.getCommentsFormatted()));
             // Gets specs such as bathroom rating, accessibility, and unisex properties
             View specsView = view.findViewById(R.id.specs);
             BathroomSpecsViewUpdater.update(specsView, mBathroom, getActivity());
         }
-    }
-
-    // Functions to retrieve info from bathroom object
-    private CharSequence getBathroomTitle() {
-        String text = "";
-        String name = mBathroom.getName();
-        if (!TextUtils.isEmpty(name)) {
-
-            /* Had to re-decode bathroom name here for some reason... wouldn't work with same string used
-             * in the customInfoWindow. Created a separate string variable in Bathroom.java
-             * to hold off on decoding for the InfoViewFragment */
-            //name = decodeString(name);
-            text += name;
-        }
-        return text;
-    }
-
-    private CharSequence getBathroomAddress() {
-        String text = "";
-        String address = mBathroom.getAddress();
-        if (!TextUtils.isEmpty(address)) {
-            text += address;
-        }
-        text = getStringInBytes(text);
-        return text;
-    }
-
-    private CharSequence getBathroomComments() {
-        String text = "";
-        String directions = mBathroom.getDirections();
-        String comments = mBathroom.getComments();
-
-        text += "<br><b>Directions</b><br><br>";
-        if (!TextUtils.isEmpty(directions)) {
-            text += directions + "<br><br>";
-        } else {
-            text += "No directions at this time.<br><br>";
-        }
-        text += "<br><b>Comments</b><br><br>";
-        if (!TextUtils.isEmpty(comments)) {
-            text += comments;
-        } else {
-            text += "No comments at this time.<br><br>";
-        }
-        text = getStringInBytes(text);
-        return text;
-    }
-
-    // This is used to fix encoding errors from the API
-    private static String getStringInBytes(String string) {
-        try {
-            string = new String(string.getBytes("UTF-8"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            //e.printStackTrace();
-        }
-        return string;
     }
 
     private void openInGoogleMaps() {

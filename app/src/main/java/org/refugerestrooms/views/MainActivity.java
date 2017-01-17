@@ -13,8 +13,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -28,11 +30,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.directions.route.Route;
 import com.directions.route.Routing;
@@ -355,6 +359,37 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack("infoView")
                 .commit();
         mFab.setVisibility(View.INVISIBLE);
+    }
+
+    // Updates the bottom sheet with the latest selected item
+    private void setBottomSheet(final Bathroom bathroom) {
+        if (bathroom == null) {
+            findViewById(R.id.bottom_sheet).setVisibility(View.GONE);
+            return;
+        }
+        findViewById(R.id.bottom_sheet).setVisibility(View.VISIBLE);
+        TextView title = (TextView) findViewById(R.id.text_title);
+        TextView address = (TextView) findViewById(R.id.text_address);
+        TextView comments = (TextView) findViewById(R.id.text_comments);
+        title.setText(bathroom.getNameFormatted());
+        address.setText(bathroom.getAddressFormatted());
+        comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
+        View specsView = findViewById(R.id.specs);
+        BathroomSpecsViewUpdater.update(specsView, bathroom, this);
+        findViewById(R.id.button_maps).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                double lat = bathroom.getmLatitude();
+                double lon = bathroom.getmLongitude();
+                // Names need to be escaped, so a space should be replaced by either a + or by %20
+                String addressEscaped = bathroom.getAddress().replace(' ', '+');
+                String uri = "geo:" + lat + "," + lon + "?q=" + addressEscaped;
+                Uri intentUri = Uri.parse(uri);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            }
+        });
     }
 
     public void onConnectionSuspended(int i) {
@@ -792,15 +827,20 @@ public class MainActivity extends AppCompatActivity
                 marker.showInfoWindow();
 
                 final LatLng markerLatLng = marker.getPosition();
+                setBottomSheet(allBathroomsMap.get(markerLatLng));
                 // Set onclicklistener for info button -- override snackbar message
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        /*
                         Bathroom bathroom;
                         // Get bathroom from hashmap using marker's location
                         bathroom = allBathroomsMap.get(markerLatLng);
-                        if (bathroom != null)
+                        if (bathroom != null) {
                             launchDetails(bathroom);
+                        }
+                        */
+                        launchTextDirections();
                     }
                 });
                 //mMap.getUiSettings().setMapToolbarEnabled(true);
@@ -867,14 +907,19 @@ public class MainActivity extends AppCompatActivity
                 setToolbarTitle(names[closestLoc]);
                 mLocationTitle = names[closestLoc];
                 final LatLng defaultLocation = new LatLng(end.latitude, end.longitude);
+                setBottomSheet(allBathroomsMap.get(defaultLocation));
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        /*
                         Bathroom bathroom;
                         // Get bathroom from hashmap using marker's location
                         bathroom = allBathroomsMap.get(defaultLocation);
-                        if (bathroom != null)
+                        if (bathroom != null) {
                             launchDetails(bathroom);
+                        }
+                        */
+                        launchTextDirections();
                     }
                 });
 
@@ -945,8 +990,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        View bottomSheet = findViewById(R.id.bottom_sheet);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             super.onBackPressed();
         }
@@ -962,38 +1011,32 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_directions:
-                Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
-                //passes in current location to TextDirectionsActivity
-                if (mCurrentLocation != null && end != null) {
-                    double tmpLat = mCurrentLocation.getLatitude();
-                    double tmpLng = mCurrentLocation.getLongitude();
-                    // string manipulation here to get in the right format for API call
-                    String start = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
-                    //LatLng object
-                    tmpLat = end.latitude;
-                    tmpLng = end.longitude;
-                    String end = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
+    private boolean launchTextDirections() {
+        Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
+        //passes in current location to TextDirectionsActivity
+        if (mCurrentLocation != null && end != null) {
+            double tmpLat = mCurrentLocation.getLatitude();
+            double tmpLng = mCurrentLocation.getLongitude();
+            // string manipulation here to get in the right format for API call
+            String start = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
+            //LatLng object
+            tmpLat = end.latitude;
+            tmpLng = end.longitude;
+            String end = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
 
-                    Bundle extras = new Bundle();
-                    extras.putString("START_LOC", start);
-                    extras.putString("END_LOC", end);
-                    extras.putString("TITLE", mLocationTitle);
-                    intent.putExtras(extras);
-                    startActivity(intent);
-                    return true;
-                } else if (mCurrentLocation == null) {
-                    Snackbar.make(mFab, R.string.location_not_enabled, Snackbar.LENGTH_SHORT).show();
-                    return false;
-                } else {
-                    Snackbar.make(mFab, R.string.no_nearby_locations, Snackbar.LENGTH_SHORT).show();
-                    return false;
-                }
-            default:
-                return super.onOptionsItemSelected(item);
+            Bundle extras = new Bundle();
+            extras.putString("START_LOC", start);
+            extras.putString("END_LOC", end);
+            extras.putString("TITLE", mLocationTitle);
+            intent.putExtras(extras);
+            startActivity(intent);
+            return true;
+        } else if (mCurrentLocation == null) {
+            Snackbar.make(mFab, R.string.location_not_enabled, Snackbar.LENGTH_SHORT).show();
+            return false;
+        } else {
+            Snackbar.make(mFab, R.string.no_nearby_locations, Snackbar.LENGTH_SHORT).show();
+            return false;
         }
     }
 

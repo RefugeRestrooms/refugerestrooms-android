@@ -30,13 +30,17 @@ public final class BathroomSpecsViewUpdater {
         scoreTv.setBackgroundColor(getScoreColour(score));
 
         // Checks if bathroom is accessible, unisex
+        ImageView accessibleImage = (ImageView) view.findViewById(R.id.accessible);
         if (bathroom.isAccessible()) {
-            ImageView iv = (ImageView) view.findViewById(R.id.accessible);
-            iv.setVisibility(View.VISIBLE);
+            accessibleImage.setVisibility(View.VISIBLE);
+        } else {
+            accessibleImage.setVisibility(View.GONE);
         }
+        ImageView unisexImage = (ImageView) view.findViewById(R.id.unisex);
         if (bathroom.isUnisex()) {
-            ImageView iv = (ImageView) view.findViewById(R.id.unisex);
-            iv.setVisibility(View.VISIBLE);
+            unisexImage.setVisibility(View.VISIBLE);
+        } else {
+            unisexImage.setVisibility(View.GONE);
         }
     }
 
