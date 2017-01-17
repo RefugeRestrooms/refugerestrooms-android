@@ -1,31 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
-
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="0"
-        android:textColor="@color/dark_purple"
-        android:gravity="center"
-        android:padding="4dp"
-        tools:text="No Ratings" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" />
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/unisex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/unisex"
         android:src="@drawable/unisex"
         android:visibility="gone"
@@ -35,10 +19,20 @@
         android:id="@+id/accessible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/accessible"
         android:src="@drawable/accessible"
         android:visibility="gone"
         tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:padding="4dp"
+        android:textColor="@color/dark_purple"
+        tools:text="No Ratings" />
 
 </LinearLayout>

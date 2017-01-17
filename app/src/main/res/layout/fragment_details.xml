@@ -1,62 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="8dp"
     android:layout_height="match_parent"
-    android:background="#fff" >
+    android:background="@android:color/white"
+    android:padding="8dp">
 
-        <LinearLayout
-            android:id="@+id/layout_title_row"
+    <LinearLayout
+        android:id="@+id/layout_title_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/pale_purple"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/close_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_close_white_24dp"
+                android:backgroundTint="@color/ColorPrimary" />
+
+            <ImageView
+                android:id="@+id/button_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@string/open_in_maps"
+                android:src="@drawable/map_icon" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#EEDBF7"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-                <Button
-                    android:id="@+id/close_button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/ic_close_white_24dp"
-                    android:backgroundTint="#41326B" />
+            android:gravity="center"
+            android:textColor="@color/ColorHeader"
+            android:textIsSelectable="true"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Modern Times Cafe" />
 
-                <ImageView
-                    android:id="@+id/button_maps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/map_icon"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:contentDescription="@string/open_in_maps" />
-            </RelativeLayout>
-            <TextView
-                android:id="@+id/text_title"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="#372766"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textIsSelectable="true" />
-
-            <TextView
-                android:id="@+id/text_address"
-                android:textSize="16sp"
-                android:layout_marginTop="12dp"
-                android:textColor="#372766"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textIsSelectable="true" />
-            </LinearLayout>
+        <TextView
+            android:id="@+id/text_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="@color/ColorHeader"
+            android:textIsSelectable="true"
+            android:textSize="16sp"
+            tools:text="3200 Chicago Ave\nMinneapolis, MN, US\n" />
+    </LinearLayout>
 
 
-    <include layout="@layout/bathroom_specs_view"
+    <include
         android:id="@+id/specs"
+        layout="@layout/bathroom_specs_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_title_row"
@@ -66,17 +75,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/specs"
-        android:background="#fff"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp" >
+        android:layout_margin="8dp"
+        android:background="@android:color/white">
+
         <TextView
             android:id="@+id/text_comments"
-            android:textSize="16sp"
-            android:textColor="#544C73"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textIsSelectable="true" />
+            android:gravity="center"
+            android:textColor="@color/ColorComments"
+            android:textIsSelectable="true"
+            android:textSize="16sp"
+            tools:text="\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n\n" />
     </ScrollView>
 
 </RelativeLayout>
