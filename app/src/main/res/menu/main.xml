@@ -4,7 +4,7 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_directions"
-        android:icon="@drawable/ic_navigation_white_24dp"
+        android:icon="@drawable/ic_directions_white_24dp"
         android:orderInCategory="1"
         android:title="@string/action_directions"
         app:showAsAction="withText|ifRoom" />
