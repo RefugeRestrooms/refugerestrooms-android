@@ -11,12 +11,15 @@ import android.webkit.WebViewClient;
 
 public class AddBathroomClient extends WebViewClient {
     private String currentUrl;
+
     public AddBathroomClient() {
         super();
     }
-    public AddBathroomClient(String currentUrl){
+
+    public AddBathroomClient(String currentUrl) {
         this.currentUrl = currentUrl;
     }
+
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         /* Check to see if url equals the add a restroom page, otherwise reloads page and shows message
@@ -27,7 +30,7 @@ public class AddBathroomClient extends WebViewClient {
         // Setting the render thread priority is deprecated and will not be supported
         // view.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        if(url.equals(currentUrl)) {
+        if (url.equals(currentUrl)) {
             view.loadUrl(url);
         }
         view.loadUrl("http://www.refugerestrooms.org/restrooms/new?");

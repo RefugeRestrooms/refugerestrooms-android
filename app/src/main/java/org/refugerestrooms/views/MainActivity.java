@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,20 +15,23 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -67,8 +69,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         OnMapReadyCallback,
@@ -77,6 +79,8 @@ public class MainActivity extends ActionBarActivity
         RoutingListener,
         Server.ServerListener {
 
+    private FloatingActionButton mFab;
+    private Toolbar mToolbar;
     private MapView mMapView;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -136,12 +140,6 @@ public class MainActivity extends ActionBarActivity
 
     private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 123;
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
     private String mLocationTitle;
 
     private String query;
@@ -209,8 +207,8 @@ public class MainActivity extends ActionBarActivity
                     default:
                         break;
                 }
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -301,7 +299,7 @@ public class MainActivity extends ActionBarActivity
     }
 
 	/*
-	 * Called by Location Services if the connection to the
+     * Called by Location Services if the connection to the
 	 * location client drops because of an error.
 	 */
 	/*
@@ -408,44 +406,32 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, R.string.no_marker_selected, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        /** Swaps fragments in the main content view */
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            /**
-             * Called when a drawer has settled in a completely closed state.
-             */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /**
-             * Called when a drawer has settled in a completely open state.
-             */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         // For search results
         handleIntent(getIntent());
@@ -480,15 +466,12 @@ public class MainActivity extends ActionBarActivity
             // Start with updates turned off
             mUpdatesRequested = false;
 
-            setActionBarTitle("Refuge Restrooms");
+            setToolbarTitle("Refuge Restrooms");
         }
     }
 
-    private void setActionBarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
+    private void setToolbarTitle(String title) {
+        mToolbar.setTitle(title);
     }
 
     @Override
@@ -523,10 +506,10 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onRoutingSuccess(PolylineOptions mPolyOptions, Route route) {
         //removes polyline on update to create new one
-        if (poly1 != null){
+        if (poly1 != null) {
             poly1.remove();
         }
-        if (poly2 != null){
+        if (poly2 != null) {
             poly2.remove();
         }
         PolylineOptions polyline_outline = new PolylineOptions();
@@ -678,8 +661,7 @@ public class MainActivity extends ActionBarActivity
             // Request a connection to Location Services
             //   mActivityRecognitionClient.connect();
             //
-        }
-        else {
+        } else {
             /*
              * A request is already underway. Can handle
              * this situation by disconnecting the client,
@@ -780,8 +762,7 @@ public class MainActivity extends ActionBarActivity
                 Toast.makeText(this, R.string.restrooms_found,
                         Toast.LENGTH_SHORT).show();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
-            }
-            else {
+            } else {
                 // Concatenates no_search_locations from strings.xml with search term
                 if (query != null) {
                     String text = String.format(getResources().getString(R.string.no_search_locations), query);
@@ -797,8 +778,7 @@ public class MainActivity extends ActionBarActivity
         }
         // Create info Button and set initial onclicklistener to return toast
         // (before map pin is selected)
-        final Button infoButton = (Button) findViewById(R.id.info_button);
-        infoButton.setOnClickListener(new View.OnClickListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, R.string.no_marker_selected,
                         Toast.LENGTH_SHORT).show();
@@ -815,7 +795,7 @@ public class MainActivity extends ActionBarActivity
 
                 final LatLng markerLatLng = marker.getPosition();
                 // Set onclicklistener for info button -- override toast message
-                infoButton.setOnClickListener(new View.OnClickListener() {
+                mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Bathroom bathroom;
@@ -867,7 +847,7 @@ public class MainActivity extends ActionBarActivity
             // int closestLoc = -1;
             distances = new double[numLocations];
             // For loop to find the nearest bathroom
-            for(int i=0; i < numLocations; i++){
+            for (int i = 0; i < numLocations; i++) {
                 // Gets i'th array locations latlng
                 posLat = locations[i].latitude;
                 posLng = locations[i].longitude;
@@ -875,7 +855,7 @@ public class MainActivity extends ActionBarActivity
                 // Haversine formula which computes shortest distance between two points on a sphere
                 distances[i] = Haversine.formula(myLat, myLng, posLat, posLng);
 
-                if ( closestLoc == -1 || distances[i] < distances[closestLoc] ) {
+                if (closestLoc == -1 || distances[i] < distances[closestLoc]) {
                     closestLoc = i;
                 }
             }
@@ -883,17 +863,28 @@ public class MainActivity extends ActionBarActivity
             lastLoc[location_count] = closestLoc;
         }
         // Make sure end location doesn't change
-        if (mCurrentLocation != null && initial == true) {
+        if (mCurrentLocation != null && initial) {
             if (numLocations > 0) {
                 end = locations[closestLoc];
-                setActionBarTitle(names[closestLoc]);
+                setToolbarTitle(names[closestLoc]);
+                mLocationTitle = names[closestLoc];
+                final LatLng defaultLocation = new LatLng(end.latitude, end.longitude);
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bathroom bathroom;
+                        // Get bathroom from hashmap using marker's location
+                        bathroom = allBathroomsMap.get(defaultLocation);
+                        if (bathroom != null)
+                            launchDetails(bathroom);
+                    }
+                });
 
                 Routing routing = new Routing(Routing.TravelMode.WALKING);
                 routing.registerListener(this);
                 routing.execute(start, end);
                 initial = false;
-            }
-            else {
+            } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
                 // display appropriate toast
                 if (!searchPerformed)
@@ -906,14 +897,15 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    private List loadSavedBathrooms(){
+    private List loadSavedBathrooms() {
         DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
         BathroomEntityDao leaseDao = daoSession.getBathroomEntityDao();
         // Loads the last 150 bathrooms added to the database
         List restroomsList = leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
         //List restroomsList = leaseDao.loadAll();
-        return  restroomsList;
+        return restroomsList;
     }
+
     @Override
     public void onSubmission(boolean success) {
         //nothing
@@ -933,20 +925,19 @@ public class MainActivity extends ActionBarActivity
     public void navigateToMarker(Marker marker) {
         if (mCurrentLocation != null) {
             end = marker.getPosition();
-            setActionBarTitle(marker.getTitle());
+            setToolbarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
 
             Routing routing = new Routing(Routing.TravelMode.WALKING);
             routing.registerListener(this);
             routing.execute(start, end);
-        }
-        else if (mLastLocation != null) {
+        } else if (mLastLocation != null) {
             end = marker.getPosition();
-            setActionBarTitle(marker.getTitle());
+            setToolbarTitle(marker.getTitle());
 
             double myLat = mLastLocation.getLatitude();
             double myLng = mLastLocation.getLongitude();
-            start = new LatLng(myLat,myLng);
+            start = new LatLng(myLat, myLng);
             mLocationTitle = marker.getTitle();
 
             Routing routing = new Routing(Routing.TravelMode.WALKING);
@@ -955,64 +946,24 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    //TODO Possibly fix navigation drawer to be a smoother switch between the map and add bathroom fragment
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // Update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment mFragment = null;
-        switch(position) {
-            case 0:
-                mTitle = getString(R.string.map_title_section);
-                mFragment = new MapFragment();
-                break;
-            case 1:
-                mTitle = getString(R.string.saved_bathrooms);
-                List bathroomsList = loadSavedBathrooms();
-                DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
-                List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
-                loadBathrooms(bathrooms);
-                onSearchAction = true;
-                break;
-            case 2:
-                mTitle = getString(R.string.add_title_section);
-                mFragment = new AddBathroomFragment();
-                break;
-            case 3:
-                mTitle = getString(R.string.feedback_title_section);
-                mFragment = new FeedbackFormFragment();
-                break;
-            default:
-                break;
-        }
-        if (mFragment != null) {
-            fragmentManager.beginTransaction().replace(R.id.container, mFragment).commit();
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setTitle(mTitle);
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            // Associate searchable configuration with the SearchView
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        return true;
     }
 
     @Override
@@ -1051,4 +1002,43 @@ public class MainActivity extends ActionBarActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = null;
+        String title = null;
+
+        if (id == R.id.nav_map) {
+            title = getString(R.string.map_title_section);
+            fragment = new MapFragment();
+        } else if (id == R.id.nav_bathrooms) {
+            title = getString(R.string.saved_bathrooms);
+            List bathroomsList = loadSavedBathrooms();
+            DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
+            List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
+            loadBathrooms(bathrooms);
+            onSearchAction = true;
+        } else if (id == R.id.nav_add) {
+            title = getString(R.string.add_title_section);
+            fragment = new AddBathroomFragment();
+        } else if (id == R.id.nav_feedback) {
+            title = getString(R.string.feedback_title_section);
+            fragment = new FeedbackFormFragment();
+        }
+
+        if (fragment != null) {
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            setToolbarTitle(title);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 }

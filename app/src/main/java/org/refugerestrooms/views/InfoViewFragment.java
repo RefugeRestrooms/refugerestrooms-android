@@ -2,60 +2,41 @@ package org.refugerestrooms.views;
 
 /**
  * Created by Refuge Restrooms on 9/26/15.
- *
+ * <p>
  * This is the detailed info view fragment which appears upon selecting the info icon, or by clicking on
  * the custom info window.
  */
-        import org.refugerestrooms.models.Bathroom;
 
-        import com.google.android.gms.maps.CameraUpdateFactory;
-        import com.google.android.gms.maps.GoogleMap;
-        import com.google.android.gms.maps.MapFragment;
-        import com.google.android.gms.maps.model.LatLng;
-        import com.google.android.gms.maps.model.MarkerOptions;
-        import org.refugerestrooms.R;
+import org.refugerestrooms.models.Bathroom;
 
-        import android.app.Fragment;
-        import android.content.Intent;
-        import android.graphics.Typeface;
-        import android.net.Uri;
-        import android.os.Bundle;
-        import android.support.v4.app.FragmentActivity;
-        import android.support.v4.app.NavUtils;
-        import android.support.v7.app.ActionBar;
-        import android.support.v7.app.ActionBarActivity;
-        import android.text.Html;
-        import android.text.TextUtils;
-        import android.util.Log;
-        import android.view.Gravity;
-        import android.view.LayoutInflater;
-        import android.view.MenuItem;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.Button;
-        import android.widget.ImageView;
-        import android.widget.TextView;
+import org.refugerestrooms.R;
 
-        import java.io.UnsupportedEncodingException;
-        import java.net.URLDecoder;
-        import java.net.URLEncoder;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Html;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.io.UnsupportedEncodingException;
 
 public class InfoViewFragment extends android.support.v4.app.Fragment {
 
     public static final String EXTRA_BATHROOM = "bathroom";
-    protected static final String TAG =  InfoViewFragment.class.getSimpleName();
+    protected static final String TAG = InfoViewFragment.class.getSimpleName();
     private Bathroom mBathroom;
     public View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_details, container, false);
-
-        // Cast MainActivity to getSupportActionBar
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        view = inflater.inflate(R.layout.fragment_details, container, false);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -80,6 +61,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         return view;
 
     }
+
     // Sets the TextView to display bathroom info within the fragment
     private void updateView() {
         if (mBathroom != null) {
@@ -97,6 +79,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
             BathroomSpecsViewUpdater.update(specsView, mBathroom, getActivity());
         }
     }
+
     // Functions to retrieve info from bathroom object
     private CharSequence getBathroomTitle() {
         String text = "";
@@ -111,6 +94,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         }
         return text;
     }
+
     private CharSequence getBathroomAddress() {
         String text = "";
         String address = mBathroom.getAddress();
@@ -120,6 +104,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         text = getStringInBytes(text);
         return text;
     }
+
     private CharSequence getBathroomComments() {
         String text = "";
         String directions = mBathroom.getDirections();
@@ -128,24 +113,23 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
         text += "<br><b>Directions</b><br><br>";
         if (!TextUtils.isEmpty(directions)) {
             text += directions + "<br><br>";
-        }
-        else {
+        } else {
             text += "No directions at this time.<br><br>";
         }
         text += "<br><b>Comments</b><br><br>";
         if (!TextUtils.isEmpty(comments)) {
             text += comments;
-        }
-        else {
+        } else {
             text += "No comments at this time.<br><br>";
         }
         text = getStringInBytes(text);
         return text;
     }
+
     // This is used to fix encoding errors from the API
     private static String getStringInBytes(String string) {
         try {
-            string = new String(string.getBytes("UTF-8"),"UTF-8");
+            string = new String(string.getBytes("UTF-8"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();
         }
