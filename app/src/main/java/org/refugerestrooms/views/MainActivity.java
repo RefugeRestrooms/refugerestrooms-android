@@ -33,7 +33,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.directions.route.Route;
 import com.directions.route.Routing;
@@ -245,7 +244,7 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Bundle dataBundle) {
         if (servicesConnected()) {
             // Display the connection status
-            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
             // If already requested, start periodic updates
             // 3rd parameter just (this)?
             if (mUpdatesRequested) {
@@ -306,8 +305,8 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onDisconnected() {
 	    // Display the connection status
-	    Toast.makeText(this, "Disconnected. Please re-connect.",
-	            Toast.LENGTH_SHORT).show();
+	    Snackbar.make(mFab, "Disconnected. Please re-connect.",
+	            Snackbar.LENGTH_SHORT).show();
 	    // Turn off the request flag
         mInProgress = false;
         // Delete the client
@@ -355,6 +354,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, infoView)
                 .addToBackStack("infoView")
                 .commit();
+        mFab.setVisibility(View.INVISIBLE);
     }
 
     public void onConnectionSuspended(int i) {
@@ -606,7 +606,7 @@ public class MainActivity extends AppCompatActivity
             String msg = "Updated Location: " +
                     Double.toString(location.getLatitude()) + "," +
                     Double.toString(location.getLongitude());
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
         }
     }
@@ -759,29 +759,27 @@ public class MainActivity extends AppCompatActivity
         // If no location, navigate to first marker that was found on search
         if (mCurrentLocation == null) {
             if (numLocations != 0) {
-                Toast.makeText(this, R.string.restrooms_found,
-                        Toast.LENGTH_SHORT).show();
+                Snackbar.make(mFab, R.string.restrooms_found, Snackbar.LENGTH_SHORT).show();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], 13));
             } else {
                 // Concatenates no_search_locations from strings.xml with search term
                 if (query != null) {
                     String text = String.format(getResources().getString(R.string.no_search_locations), query);
-                    Toast.makeText(this, text,
-                            Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mFab, text, Snackbar.LENGTH_SHORT).show();
                 }
                 // No query here indicates that user selected Recent Bathrooms and there were none in Dao
                 else {
-                    Toast.makeText(this, R.string.no_recent_locations,
-                            Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mFab, R.string.no_recent_locations, Snackbar.LENGTH_SHORT).show();
+
                 }
             }
         }
-        // Create info Button and set initial onclicklistener to return toast
+        // Create info Button and set initial onclicklistener to return snackbar message
         // (before map pin is selected)
         mFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.no_marker_selected,
-                        Toast.LENGTH_SHORT).show();
+                Snackbar.make(v, R.string.no_marker_selected, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
@@ -794,7 +792,7 @@ public class MainActivity extends AppCompatActivity
                 marker.showInfoWindow();
 
                 final LatLng markerLatLng = marker.getPosition();
-                // Set onclicklistener for info button -- override toast message
+                // Set onclicklistener for info button -- override snackbar message
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -886,13 +884,11 @@ public class MainActivity extends AppCompatActivity
                 initial = false;
             } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
-                // display appropriate toast
-                if (!searchPerformed)
-                    Toast.makeText(this,R.string.no_nearby_locations_initial,
-                            Toast.LENGTH_LONG).show();
-                else
-                    Toast.makeText(this,R.string.no_search_locations_initial,
-                            Toast.LENGTH_LONG).show();
+                // display appropriate message
+                int textRes = searchPerformed
+                        ? R.string.no_search_locations_initial
+                        : R.string.no_nearby_locations_initial;
+                Snackbar.make(mFab, textRes, Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -916,7 +912,7 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                Snackbar.make(mFab, errorMessage, Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -989,13 +985,11 @@ public class MainActivity extends AppCompatActivity
                     intent.putExtras(extras);
                     startActivity(intent);
                     return true;
-                }
-                else if (mCurrentLocation == null) {
-                    Toast.makeText(this, R.string.location_not_enabled, Toast.LENGTH_SHORT).show();
+                } else if (mCurrentLocation == null) {
+                    Snackbar.make(mFab, R.string.location_not_enabled, Snackbar.LENGTH_SHORT).show();
                     return false;
-                }
-                else {
-                    Toast.makeText(this, R.string.no_nearby_locations, Toast.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(mFab, R.string.no_nearby_locations, Snackbar.LENGTH_SHORT).show();
                     return false;
                 }
             default:
@@ -1012,10 +1006,13 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
         String title = null;
+        String fragmentTitle = null;
 
         if (id == R.id.nav_map) {
             title = getString(R.string.map_title_section);
             fragment = new MapFragment();
+            fragmentTitle = "maps";
+            mFab.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
             title = getString(R.string.saved_bathrooms);
             List bathroomsList = loadSavedBathrooms();
@@ -1026,13 +1023,20 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = new AddBathroomFragment();
+            fragmentTitle = "addBathroom";
+            mFab.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_feedback) {
             title = getString(R.string.feedback_title_section);
             fragment = new FeedbackFormFragment();
+            fragmentTitle = "feedback";
+            mFab.setVisibility(View.INVISIBLE);
         }
 
         if (fragment != null) {
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .addToBackStack(fragmentTitle)
+                    .commit();
             setToolbarTitle(title);
         }
 
