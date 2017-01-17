@@ -21,7 +21,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import org.refugerestrooms.R;
-import org.refugerestrooms.servers.JavaScriptInterface;
 
 public class TextDirectionsActivity extends AppCompatActivity {
     private WebView mWebView;
@@ -62,7 +61,6 @@ public class TextDirectionsActivity extends AppCompatActivity {
         });
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
