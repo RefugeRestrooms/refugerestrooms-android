@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private View bottomSheet;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
     private boolean initial = true;
     private boolean searchPerformed;
 
@@ -364,10 +367,10 @@ public class MainActivity extends AppCompatActivity
     // Updates the bottom sheet with the latest selected item
     private void setBottomSheet(final Bathroom bathroom) {
         if (bathroom == null) {
-            findViewById(R.id.bottom_sheet).setVisibility(View.GONE);
+            bottomSheet.setVisibility(View.GONE);
             return;
         }
-        findViewById(R.id.bottom_sheet).setVisibility(View.VISIBLE);
+        bottomSheet.setVisibility(View.VISIBLE);
         TextView title = (TextView) findViewById(R.id.text_title);
         TextView address = (TextView) findViewById(R.id.text_address);
         TextView comments = (TextView) findViewById(R.id.text_comments);
@@ -390,6 +393,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(mapIntent);
             }
         });
+    }
+
+    private void expandBottomSheet() {
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     public void onConnectionSuspended(int i) {
@@ -459,14 +467,16 @@ public class MainActivity extends AppCompatActivity
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        bottomSheet = findViewById(R.id.bottom_sheet);
 
         // For search results
         handleIntent(getIntent());
@@ -587,6 +597,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         mMapView.onDestroy();
+        drawer.removeDrawerListener(toggle);
         super.onDestroy();
     }
 
@@ -865,7 +876,9 @@ public class MainActivity extends AppCompatActivity
                 // Get bathroom from hashmap using marker's location
                 bathroom = allBathroomsMap.get(marker.getPosition());
                 if (bathroom != null) {
-                    launchDetails(bathroom);
+                    //launchDetails(bathroom);
+                    setBottomSheet(bathroom);
+                    expandBottomSheet();
                 }
             }
         });
@@ -990,7 +1003,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        View bottomSheet = findViewById(R.id.bottom_sheet);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
