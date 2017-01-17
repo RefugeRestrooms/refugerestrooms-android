@@ -56,7 +56,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Select number of bathrooms to show 1-99 (separate settings for search, gps)
 - [ ] Style
   - [x] Style Feedback Form better
-  - [ ] Navigation drawer icons
+  - [x] Navigation drawer icons
   - [ ] Style text directions section (directions.html)
 - [ ] Better add bathroom section, currently just a webview
   - [x] Style webview in the meantime
@@ -64,7 +64,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Use current location option
 - [ ] Contact form without email client
 - [ ] Update text directions while on tab
-- [ ] Actionbar activity depreciated
+- [x] Actionbar activity depreciated
 - [ ] Add bathroom styling when no cellular data?
 - [ ] Add different locales in strings.xml file
 - [ ] Optimize for responsive layouts: tablet, landscape on mobile

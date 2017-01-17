@@ -1,7 +1,6 @@
 package org.refugerestrooms.views;
 
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,8 +20,7 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
     private final View mInfoWindowView;
 
-    // TODO change this - ActionBarActivity is deprecated
-    public BathroomInfoWindow(ActionBarActivity activity) {
+    public BathroomInfoWindow(AppCompatActivity activity) {
         mInfoWindowView = activity.getLayoutInflater().inflate(R.layout.bathroom_info_window, null);
     }
 
@@ -54,8 +52,8 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         // get accessible, unisex logos
         // Encoded in the snippet
         int idx = snippet.indexOf("*");
-        int isAccessible = Integer.parseInt(snippet.substring(idx+1, idx+2));
-        int isUnisex = Integer.parseInt(snippet.substring(idx+2, idx+3));
+        int isAccessible = Integer.parseInt(snippet.substring(idx + 1, idx + 2));
+        int isUnisex = Integer.parseInt(snippet.substring(idx + 2, idx + 3));
         snippet = snippet.substring(0, idx);
 
         if (isAccessible == 1) {
@@ -66,7 +64,7 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         }
 
         // Setting the title
-        title= getStringInBytes(title);
+        title = getStringInBytes(title);
         windowTitle.setText(title);
         windowTitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
@@ -76,10 +74,11 @@ public class BathroomInfoWindow implements GoogleMap.InfoWindowAdapter {
         // Returning the view containing InfoWindow contents
         return mInfoWindowView;
     }
+
     // This is used to fix encoding errors from the API
     private static String getStringInBytes(String string) {
         try {
-            string = new String(string.getBytes("UTF-8"),"UTF-8");
+            string = new String(string.getBytes("UTF-8"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();
         }
