@@ -45,6 +45,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Have filter options for only returning accessible, unisex restrooms
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
+	- [ ] Implement 'Search Here' button when scrolling to a different location on map like in google maps
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
