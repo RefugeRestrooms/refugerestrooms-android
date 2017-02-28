@@ -828,13 +828,15 @@ public class MainActivity extends ActionBarActivity
                 //mMap.getUiSettings().setMapToolbarEnabled(true);
                 if (mCurrentLocation != null) {
                     navigateToMarker(marker);
-                } else {
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                            mGoogleApiClient);
-                    if (mLastLocation != null) {
-                        navigateToMarker(marker);
-                    }
                 }
+                // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
+//                else {
+//                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+//                            mGoogleApiClient);
+//                    if (mLastLocation != null) {
+//                        navigateToMarker(marker);
+//                    }
+//                }
                 return true;
             }
         });
@@ -940,19 +942,20 @@ public class MainActivity extends ActionBarActivity
             routing.registerListener(this);
             routing.execute(start, end);
         }
-        else if (mLastLocation != null) {
-            end = marker.getPosition();
-            setActionBarTitle(marker.getTitle());
-
-            double myLat = mLastLocation.getLatitude();
-            double myLng = mLastLocation.getLongitude();
-            start = new LatLng(myLat,myLng);
-            mLocationTitle = marker.getTitle();
-
-            Routing routing = new Routing(Routing.TravelMode.WALKING);
-            routing.registerListener(this);
-            routing.execute(start, end);
-        }
+        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
+//        else if (mLastLocation != null) {
+//            end = marker.getPosition();
+//            setActionBarTitle(marker.getTitle());
+//
+//            double myLat = mLastLocation.getLatitude();
+//            double myLng = mLastLocation.getLongitude();
+//            start = new LatLng(myLat,myLng);
+//            mLocationTitle = marker.getTitle();
+//
+//            Routing routing = new Routing(Routing.TravelMode.WALKING);
+//            routing.registerListener(this);
+//            routing.execute(start, end);
+//        }
     }
 
     //TODO Possibly fix navigation drawer to be a smoother switch between the map and add bathroom fragment
