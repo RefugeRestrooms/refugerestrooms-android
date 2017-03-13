@@ -5,6 +5,9 @@
     <color name="ColorAccent">#8377AF</color>
     <color name="purple">#41326B</color>
     <color name="light_purple">#8377af</color>
+    <color name="pale_purple">#EEDBF7</color>
     <color name="dark_purple">#0E0036</color>
     <color name="light_gray">#e9e9e9</color>
+    <color name="ColorHeader">#372766</color>
+    <color name="ColorComments">#544C73</color>
 </resources>

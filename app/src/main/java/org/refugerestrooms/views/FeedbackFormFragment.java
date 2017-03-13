@@ -17,12 +17,12 @@ import org.refugerestrooms.R;
 
 public class FeedbackFormFragment extends android.support.v4.app.Fragment {
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        final View rootView = inflater.inflate(R.layout.feedback_form, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_feedback_form, container, false);
 
         Button buttonSend = (Button) rootView.findViewById(R.id.buttonSend);
-       // final EditText textTo = (EditText) rootView.findViewById(R.id.editTextTo);
+        // final EditText textTo = (EditText) rootView.findViewById(R.id.editTextTo);
         final EditText textSubject = (EditText) rootView.findViewById(R.id.editTextSubject);
         final EditText textMessage = (EditText) rootView.findViewById(R.id.editTextMessage);
 
@@ -36,7 +36,7 @@ public class FeedbackFormFragment extends android.support.v4.app.Fragment {
                 String message = textMessage.getText().toString();
 
                 Intent email = new Intent(Intent.ACTION_SEND);
-                email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to});
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                 email.putExtra(Intent.EXTRA_SUBJECT, subject);
                 email.putExtra(Intent.EXTRA_TEXT, message);
 
