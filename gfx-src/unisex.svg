@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="320"
+   height="320"
+   viewBox="0 0 320 320"
+   sodipodi:docname="unisex.svg"
+   inkscape:export-filename="C:\home\projects\refugerestrooms-android\app\src\main\res\drawable-xxxhdpi\unisex.png"
+   inkscape:export-xdpi="54"
+   inkscape:export-ydpi="54">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#aaaaaa"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="2.085965"
+     inkscape:cx="130.8802"
+     inkscape:cy="147.44116"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect5918"
+     width="160"
+     height="160"
+     x="80"
+     y="80" />
+  <path
+     style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:0.44705882;fill-rule:nonzero;stroke:none;stroke-width:13;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     d="m 94.387698,90.5 0,45.5 c 7.463712,-7.43926 12.926742,-12.87684 18.517582,-18.44922 l 7.76562,7.76563 -13.7832,13.78515 8.89648,8.89844 13.78516,-13.78516 2.75586,2.75586 c -3.90286,5.44815 -6.21289,12.10561 -6.21289,19.2793 0,16.15082 11.67493,29.70172 27,32.64844 0,4.86719 0,9.73437 0,14.60156 l -13.75,0 0,12.5 13.75,0 0,13.5 12.5,0 0,-13.5 13.75,0 0,-12.5 c -4.58334,0 -9.16667,0 -13.75,0 l 0,-14.60156 c 15.32506,-2.94672 26.99999,-16.49762 26.99999,-32.64844 0,-6.84777 -2.10017,-13.22865 -5.68555,-18.5332 l 26.18555,-26.1836 0,24.4668 12.5,0 c 0,-15.16667 0,-30.33333 0,-45.5 -15.16667,0 -30.33333,0 -45.5,0 l 0,12.5 23.73828,0 -25.79687,25.79687 C 172.71769,125.14514 166.2791,123 159.36231,123 c -6.58801,0 -12.73881,1.95103 -17.91992,5.29102 L 138.46778,125.31641 151.8877,111.89648 142.98926,103 c -4.47278,4.47318 -8.94646,8.94546 -13.41992,13.41797 l -7.75781,-7.75781 C 127.22017,103.2509 132.81106,97.64234 139.8877,90.5 Z M 159.36231,136 c 11.26076,0 20.25,8.98924 20.25,20.25 0,11.26076 -8.98924,20.25 -20.25,20.25 -11.26076,0 -20.25,-8.98924 -20.25,-20.25 0,-11.26076 8.98924,-20.25 20.25,-20.25 z"
+     id="path5812"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccccccsccccccccccccscccccccccsccccccccsssss" />
+</svg>

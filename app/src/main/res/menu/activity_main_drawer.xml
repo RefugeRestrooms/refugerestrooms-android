@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/ic_map_white_24dp"
+        android:title="@string/map_title_section" />
+
+    <item
+        android:id="@+id/nav_bathrooms"
+        android:icon="@drawable/ic_navigation_white_24dp"
+        android:title="@string/saved_bathrooms" />
+
+    <item
+        android:id="@+id/nav_add"
+        android:icon="@drawable/ic_add_location_white_24dp"
+        android:title="@string/add_title_section" />
+
+    <item
+        android:id="@+id/nav_feedback"
+        android:icon="@drawable/ic_feedback_white_24dp"
+        android:title="@string/feedback_title_section" />
+
+</menu>
