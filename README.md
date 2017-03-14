@@ -10,7 +10,7 @@ Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 ## Getting started
 You can use Android Studio (http://developer.android.com/tools/studio/index.html) to build this project, and it should behave like any other android studio project.
 
-Clone the repo here and then in Android Studio go to File -> New -> Import Project and navigate to your clone.
+Clone the repo here and then in Android Studio go to File -> New -> Import Project and navigate to your clone. You may be prompted by Android Studio to install a few sdk dependencies.
 
 ## Contributing
 By all means contribute :) Areas which definitely need work are listed as TODOs below. Feel free to add more.
@@ -45,6 +45,7 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Have filter options for only returning accessible, unisex restrooms
 - [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
 	- [ ] Populate map with nearby pins like when gps is enabled
+	- [ ] Implement 'Search Here' button when scrolling to a different location on map like in google maps
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
@@ -69,12 +70,6 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Add different locales in strings.xml file
 - [ ] Optimize for responsive layouts: tablet, landscape on mobile
 - [ ] Remove unnecessary permissions (accounts, contacts)
-
-## Bugs
-- [ ] Screen rotation re-updates map to initial closest location (it re-initiates the map activity)
-- [ ] Map reinstantiates every time a search occurs
-- [ ] Turning location off after it's been on doesn't grab last known location on app reopen
-- [ ] Can select location button underneath detailed window view (hard to do, but moves map while fragment is displayed over)
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
