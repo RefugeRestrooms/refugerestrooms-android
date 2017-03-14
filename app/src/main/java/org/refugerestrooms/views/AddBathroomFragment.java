@@ -3,6 +3,7 @@ package org.refugerestrooms.views;
 /**
  * Created by Refuge Restrooms on 7/14/2015.
  */
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,9 +25,9 @@ public class AddBathroomFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.add_bathroom, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_bathroom, container, false);
         mWebView = (WebView) rootView.findViewById(R.id.addBathroom);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new AddBathroomClient("http://www.refugerestrooms.org/restrooms/new?"));

@@ -1,14 +1,12 @@
 package org.refugerestrooms.models;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -250,6 +248,61 @@ public class Bathroom {
     private static String decodeString(String string) {
         try {
             string = new String(string.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //e.printStackTrace();
+        }
+        return string;
+    }
+
+    public String getNameFormatted() {
+        String name = "";
+        if (!TextUtils.isEmpty(mName)) {
+            name += mName;
+        }
+        return name;
+    }
+
+    public String getAddressFormatted() {
+        String address = "";
+        if (!TextUtils.isEmpty(mStreet)) {
+            address += mStreet + "\n";
+        }
+        if (!TextUtils.isEmpty(mCity)) {
+            address += mCity + ", ";
+        }
+        if (!TextUtils.isEmpty(mState)) {
+            address += mState + ", ";
+        }
+        if (!TextUtils.isEmpty(mCountry)) {
+            address += mCountry;
+        }
+        return getStringInBytes(address);
+    }
+
+    public String getCommentsFormatted() {
+        String text = "";
+        String directions = getDirections();
+        String comments = getComments();
+
+        text += "<br><b>Directions</b><br><br>";
+        if (!TextUtils.isEmpty(directions)) {
+            text += directions + "<br><br>";
+        } else {
+            text += "No directions at this time.<br><br>";
+        }
+        text += "<br><b>Comments</b><br><br>";
+        if (!TextUtils.isEmpty(comments)) {
+            text += comments;
+        } else {
+            text += "No comments at this time.<br><br>";
+        }
+        text = getStringInBytes(text);
+        return text;
+    }
+
+    private static String getStringInBytes(String string) {
+        try {
+            string = new String(string.getBytes("UTF-8"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();
         }
