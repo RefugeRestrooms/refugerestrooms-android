@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:gravity="center"
+        android:textColor="@color/ColorHeader"
+        android:textIsSelectable="true"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="@string/bathroom_details_cafe" />
+
+    <include
+        android:id="@+id/specs"
+        layout="@layout/bathroom_specs_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/text_title" />
+
+    <TextView
+        android:id="@+id/text_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_title"
+        android:layout_marginTop="12dp"
+        android:layout_toStartOf="@+id/specs"
+        android:gravity="center_horizontal"
+        android:textColor="@color/ColorHeader"
+        android:textIsSelectable="true"
+        android:textSize="16sp"
+        tools:text="@string/bathroom_details_address"
+        android:layout_above="@+id/text_comments"
+        android:layout_toLeftOf="@+id/specs"
+        android:fitsSystemWindows="true"/>
+
+    <Button
+        android:id="@+id/button_maps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/open_in_maps"
+        android:textColor="@android:color/white"
+        android:background="@color/ColorPrimaryDark"
+        android:layout_below="@+id/text_comments"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/text_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/specs"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="@android:color/white"
+        android:gravity="center_horizontal"
+        android:textColor="@color/ColorComments"
+        android:textIsSelectable="true"
+        android:textSize="16sp"
+        android:paddingBottom="12dp"
+        tools:text="\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n" />
+</RelativeLayout>

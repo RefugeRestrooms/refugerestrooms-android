@@ -7,17 +7,11 @@
     <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
     <string name="never_show_again">Never show this again</string>
 
-    <string-array name="menu_titles_array">
-        <item>@string/map_title_section</item>
-        <item>@string/saved_bathrooms</item>
-        <item>@string/add_title_section</item>
-        <item>@string/feedback_title_section</item>
-    </string-array>
-
     <string name="saved_bathrooms">Recent Bathrooms</string>
     <string name="map_title_section">Map</string>
     <string name="add_title_section">Add Bathroom</string>
     <string name="feedback_title_section">Feedback</string>
+    <string name="title_directions">Directions</string>
     <string name="email">refugerestroomsapp@gmail.com</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -48,6 +42,7 @@
     <string name="score">Score:  </string>
     <string name="unknown">No Ratings</string>
     <string name="no_results">No results have been found.</string>
+    <string name="connected">Connected</string>
 
     <!-- Strings for the Add Bathroom fragment -->
     <string name="add_bathroom_title">Submit a restroom to our database</string>
@@ -65,4 +60,8 @@
     <string name="add_bathroom_save">Save Restroom</string>
 
     <string name="open_in_maps">Open in Google Maps</string>
+    <string name="bathroom_details_cafe">Modern Times Cafe</string>
+    <string name="bathroom_details_address">3200 Chicago Ave\nMinneapolis, MN, US</string>
+
+    <string name="map_api_key">AIzaSyAXq1BNeI-JLcxZc_eiMUF_SRVL-Qrw88U</string>
 </resources>
