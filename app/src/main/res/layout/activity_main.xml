@@ -41,15 +41,14 @@
         <include layout="@layout/content_main" />
 
         <android.support.v4.widget.NestedScrollView
-            android:id="@+id/bottom_sheet"
+            android:id="@+id/bottom_info_sheet"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:fitsSystemWindows="true"
             app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-            app:behavior_peekHeight="48dp">
+            app:behavior_peekHeight="72dp">
 
-            <include layout="@layout/sheet_details" />
+            <include layout="@layout/bottom_sheet_details" />
 
         </android.support.v4.widget.NestedScrollView>
 
@@ -61,7 +60,7 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_directions_white_24dp"
             app:fabSize="normal"
-            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchor="@id/bottom_info_sheet"
             app:layout_anchorGravity="top|right|end" />
 
     </android.support.design.widget.CoordinatorLayout>

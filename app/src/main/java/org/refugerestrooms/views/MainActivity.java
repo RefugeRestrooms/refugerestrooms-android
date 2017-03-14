@@ -476,12 +476,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        bottomSheet = findViewById(R.id.bottom_sheet);
+        bottomSheet = findViewById(R.id.bottom_info_sheet);
 
         // For search results
         handleIntent(getIntent());
 
-        // TODO is this automatically handled by Google?
+        // TODO
         // Checks if gps is enabled, kicks out message to turn on if not.
 
         if (servicesConnected()) {
@@ -1072,23 +1072,28 @@ public class MainActivity extends AppCompatActivity
             fragment = new MapFragment();
             fragmentTitle = "maps";
             mFab.setVisibility(View.VISIBLE);
+            bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
             title = getString(R.string.saved_bathrooms);
             List bathroomsList = loadSavedBathrooms();
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
             List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
             loadBathrooms(bathrooms);
+            mFab.setVisibility(View.VISIBLE);
+            bottomSheet.setVisibility(View.VISIBLE);
             onSearchAction = true;
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = new AddBathroomFragment();
             fragmentTitle = "addBathroom";
             mFab.setVisibility(View.INVISIBLE);
+            bottomSheet.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_feedback) {
             title = getString(R.string.feedback_title_section);
             fragment = new FeedbackFormFragment();
             fragmentTitle = "feedback";
             mFab.setVisibility(View.INVISIBLE);
+            bottomSheet.setVisibility(View.INVISIBLE);
         }
 
         if (fragment != null) {

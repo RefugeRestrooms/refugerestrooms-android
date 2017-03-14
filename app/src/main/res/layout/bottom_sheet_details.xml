@@ -2,24 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="48dp"
-    android:paddingEnd="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingStart="16dp"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:paddingBottom="12dp"
+        android:gravity="center"
         android:textColor="@color/ColorHeader"
         android:textIsSelectable="true"
         android:textSize="20sp"
         android:textStyle="bold"
-        tools:text="Modern Times Cafe" />
+        tools:text="@string/bathroom_details_cafe" />
 
     <include
         android:id="@+id/specs"
@@ -36,23 +31,25 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_title"
         android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@id/specs"
-        android:layout_toStartOf="@id/specs"
+        android:layout_toStartOf="@+id/specs"
         android:gravity="center_horizontal"
         android:textColor="@color/ColorHeader"
         android:textIsSelectable="true"
         android:textSize="16sp"
-        tools:text="3200 Chicago Ave\nMinneapolis, MN, US" />
+        tools:text="@string/bathroom_details_address"
+        android:layout_above="@+id/text_comments"
+        android:layout_toLeftOf="@+id/specs"
+        android:fitsSystemWindows="true"/>
 
     <Button
         android:id="@+id/button_maps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_address"
-        android:layout_toLeftOf="@id/specs"
-        android:layout_toStartOf="@id/specs"
         android:text="@string/open_in_maps"
-        android:textColor="@color/ColorPrimaryDark" />
+        android:textColor="@android:color/white"
+        android:background="@color/ColorPrimaryDark"
+        android:layout_below="@+id/text_comments"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/text_comments"
@@ -62,9 +59,10 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
         android:background="@android:color/white"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:textColor="@color/ColorComments"
         android:textIsSelectable="true"
         android:textSize="16sp"
+        android:paddingBottom="12dp"
         tools:text="\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n" />
 </RelativeLayout>
