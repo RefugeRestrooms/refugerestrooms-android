@@ -6,6 +6,7 @@
     <string name="location_skip">skip</string>
     <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
     <string name="never_show_again">Never show this again</string>
+    <string name="location_not_found">Location not found</string>
 
     <string name="saved_bathrooms">Recent Bathrooms</string>
     <string name="map_title_section">Map</string>

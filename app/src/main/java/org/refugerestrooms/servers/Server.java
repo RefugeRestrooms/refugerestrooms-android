@@ -27,7 +27,7 @@ import java.util.List;
 
 public class Server {
 
-    protected static final String TAG = null;
+    protected static final String TAG = Server.class.getSimpleName();
     private static final String SERVER_URL = "http://www.refugerestrooms.org:80/api/v1/";
 
     private final ServerListener mListener;
@@ -76,9 +76,11 @@ public class Server {
         }
     }
 
+    public static String getSearchTermFromLatLng(double latitude, double longitude) {
+        return "&lat=" + latitude + "&lng=" + longitude;
+    }
 
     public void performSearch( String searchTerm,  boolean location) {
-
 
         try {
             String url = buildUrl(searchTerm, location);
@@ -88,7 +90,6 @@ public class Server {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-
 
     }
 
