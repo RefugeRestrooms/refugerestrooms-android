@@ -12,9 +12,12 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.provider.Settings;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -31,12 +34,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.directions.route.Route;
 import com.directions.route.Routing;
@@ -67,6 +72,7 @@ import org.refugerestrooms.database.model.DatabaseEntityConverter;
 import org.refugerestrooms.models.Bathroom;
 import org.refugerestrooms.models.Haversine;
 import org.refugerestrooms.servers.Server;
+import org.refugerestrooms.services.GeocodeAddressIntentService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +87,10 @@ public class MainActivity extends AppCompatActivity
         LocationListener,
         RoutingListener,
         Server.ServerListener {
+
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String CURRENT_LOCATION_KEY = "current-location";
 
     private FloatingActionButton mFab;
     private Toolbar mToolbar;
@@ -97,13 +107,14 @@ public class MainActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private Location mLastLocation;
 
-    private LatLng currentPosition;
+    private LatLng mCurrentPosition;
     private boolean mUpdatesRequested;
     private boolean mInProgress;
     public boolean doNotDisplayDialog;
     public boolean onSearchAction;
-    protected LatLng start;
-    protected LatLng end;
+    protected LatLng mStart;
+    protected LatLng mEnd;
+    private ResultReceiver mResultReceiver;
     // temp lat/lng for setting up initial map
     private static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
 
@@ -245,14 +256,14 @@ public class MainActivity extends AppCompatActivity
     /*
      * Called by Location Services when the request to connect the
      * client finishes successfully. At this point, you can
-     * request the current location or start periodic updates
+     * request the current location or mStart periodic updates
      */
     @Override
     public void onConnected(Bundle dataBundle) {
         if (servicesConnected()) {
             // Display the connection status
             Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
-            // If already requested, start periodic updates
+            // If already requested, mStart periodic updates
             // 3rd parameter just (this)?
             if (mUpdatesRequested) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -275,8 +286,6 @@ public class MainActivity extends AppCompatActivity
 
                 // String manipulation here to get in the right format for API call
                 curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
-
-                mServer = new Server(this);
                 mServer.performSearch(curLatLng, true);
             } else {
                 //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
@@ -295,11 +304,31 @@ public class MainActivity extends AppCompatActivity
             if (mCurrentLocation != null) {
                 double myLat = mCurrentLocation.getLatitude();
                 double myLng = mCurrentLocation.getLongitude();
-                currentPosition = new LatLng(myLat, myLng);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentPosition));
+                mCurrentPosition = new LatLng(myLat, myLng);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(mCurrentPosition));
 
                 // Starts directions from location routing library
-                start = currentPosition;
+                mStart = mCurrentPosition;
+                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+                        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                        if (mCurrentLocation != null) {
+                            String searchTerm = Server.getSearchTermFromLatLng(
+                                    mCurrentLocation.getLatitude(),
+                                    mCurrentLocation.getLongitude()
+                            );
+                            double myLat = mCurrentLocation.getLatitude();
+                            double myLng = mCurrentLocation.getLongitude();
+                            mCurrentPosition = new LatLng(myLat, myLng);
+                            onLocationChanged(mCurrentLocation);
+                            mServer.performSearch(searchTerm, true);
+                            mStart = mCurrentPosition;
+                        }
+
+                        return false;
+                    }
+                });
             }
         }
     }
@@ -413,7 +442,7 @@ public class MainActivity extends AppCompatActivity
 	    /*
 	     * Google Play services can resolve some errors it detects.
 	     * If the error has a resolution, try sending an Intent to
-	     * start a Google Play services activity that can resolve
+	     * mStart a Google Play services activity that can resolve
 	     * error.
 	     */
         // Turn off the request flag
@@ -447,9 +476,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mCurrentLocation != null) {
+            outState.putParcelable(CURRENT_LOCATION_KEY, mCurrentLocation);
+        } else {
+            outState.putParcelable(CURRENT_LOCATION_KEY, null);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            mCurrentLocation = savedInstanceState.getParcelable(CURRENT_LOCATION_KEY);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -462,6 +505,8 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
+        mServer = new Server(MainActivity.this);
 
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
@@ -478,6 +523,7 @@ public class MainActivity extends AppCompatActivity
 
         bottomSheet = findViewById(R.id.bottom_info_sheet);
 
+        mResultReceiver = new AddressResultReceiver(null);
         // For search results
         handleIntent(getIntent());
 
@@ -528,13 +574,62 @@ public class MainActivity extends AppCompatActivity
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
-            // Use the query to search
-            Server mServer = new Server(this);
-            // Boolean to prevent "gps not enabled" dialog box from re-showing on search
-            doNotDisplayDialog = true;
-            onSearchAction = true;
-            searchPerformed = true;
-            mServer.performSearch(query, false);
+
+            Intent startGeocodeIntent = new Intent(this, GeocodeAddressIntentService.class);
+            startGeocodeIntent.putExtra(GeocodeAddressIntentService.RECEIVER, mResultReceiver);
+            startGeocodeIntent.putExtra(GeocodeAddressIntentService.LOCATION_NAME_DATA_EXTRA, query);
+            startService(startGeocodeIntent);
+        }
+    }
+
+    // Receiver for address search result
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, final Bundle resultData) {
+            if (resultCode == GeocodeAddressIntentService.SUCCESS_RESULT) {
+                final Address address = resultData.getParcelable(GeocodeAddressIntentService.RESULT_ADDRESS);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Get lat and long of searched address
+                        double latitude = address.getLatitude();
+                        double longitude = address.getLongitude();
+                        Log.d(TAG, latitude + " " + longitude);
+
+                        LatLng addressPosition = new LatLng(latitude, longitude);
+
+                        // Set current location and route starting point to searched address
+                        Location addressLocation = new Location("");
+                        addressLocation.setLatitude(latitude);
+                        addressLocation.setLongitude(longitude);
+                        onLocationChanged(addressLocation);
+                        mStart = addressPosition;
+
+                        // Move map to searched address
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(addressPosition));
+
+                        // Use the latitude and longitude to search for restrooms
+                        // Boolean to prevent "gps not enabled" dialog box from re-showing on search
+                        doNotDisplayDialog = true;
+                        String searchTerm = Server.getSearchTermFromLatLng(latitude, longitude);
+                        Log.e(TAG, searchTerm);
+                        mServer.performSearch(searchTerm, true);
+                    }
+                });
+            }
+            else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "Location not found.");
+                        Toast.makeText(MainActivity.this, R.string.location_not_found, Toast.LENGTH_SHORT);
+                    }
+                });
+            }
         }
     }
 
@@ -571,13 +666,13 @@ public class MainActivity extends AppCompatActivity
 
         // Start marker
         //MarkerOptions options = new MarkerOptions();
-	  /*options.position(start);
+	  /*options.position(mStart);
 	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
 	  mMap.addMarker(options);
 	*/
         // End marker
 	  /*options = new MarkerOptions();
-	  options.position(end);
+	  options.position(mEnd);
 	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 	  mMap.addMarker(options);
 	*/
@@ -656,6 +751,8 @@ public class MainActivity extends AppCompatActivity
             mCurrentLocation = location;
         }
     }
+
+
 
     /*
      * Request activity recognition updates based on the current detection interval.
@@ -771,11 +868,6 @@ public class MainActivity extends AppCompatActivity
         names = new String[numLocations];
         currentLoc = new int[numLocations];
         lastLoc = new int[numLocations];
-        if (onSearchAction) {
-            // clear map markers before new displaying additional search results
-            mMap.clear();
-            onSearchAction = false;
-        }
 
         for (int i = 0; i < numLocations; i++) {
             Bathroom bathroom = results.get(i);
@@ -915,13 +1007,13 @@ public class MainActivity extends AppCompatActivity
             currentLoc[closestLoc] = closestLoc;
             lastLoc[location_count] = closestLoc;
         }
-        // Make sure end location doesn't change
+        // Make sure mEnd location doesn't change
         if (mCurrentLocation != null && initial) {
             if (numLocations > 0) {
-                end = locations[closestLoc];
+                mEnd = locations[closestLoc];
                 setToolbarTitle(names[closestLoc]);
                 mLocationTitle = names[closestLoc];
-                final LatLng defaultLocation = new LatLng(end.latitude, end.longitude);
+                final LatLng defaultLocation = new LatLng(mEnd.latitude, mEnd.longitude);
                 setBottomSheet(allBathroomsMap.get(defaultLocation));
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -940,7 +1032,7 @@ public class MainActivity extends AppCompatActivity
 
                 Routing routing = new Routing(Routing.TravelMode.WALKING);
                 routing.registerListener(this);
-                routing.execute(start, end);
+                routing.execute(mStart, mEnd);
                 initial = false;
             } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
@@ -980,27 +1072,27 @@ public class MainActivity extends AppCompatActivity
     // Navigates to Maps Marker when selected
     public void navigateToMarker(Marker marker) {
         if (mCurrentLocation != null) {
-            end = marker.getPosition();
+            mEnd = marker.getPosition();
             setToolbarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
 
             Routing routing = new Routing(Routing.TravelMode.WALKING);
             routing.registerListener(this);
-            routing.execute(start, end);
+            routing.execute(mStart, mEnd);
         }
         // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
 //        else if (mLastLocation != null) {
-//            end = marker.getPosition();
+//            mEnd = marker.getPosition();
 //            setActionBarTitle(marker.getTitle());
 //
 //            double myLat = mLastLocation.getLatitude();
 //            double myLng = mLastLocation.getLongitude();
-//            start = new LatLng(myLat,myLng);
+//            mStart = new LatLng(myLat,myLng);
 //            mLocationTitle = marker.getTitle();
 //
 //            Routing routing = new Routing(Routing.TravelMode.WALKING);
 //            routing.registerListener(this);
-//            routing.execute(start, end);
+//            routing.execute(mStart, mEnd);
 //        }
     }
 
@@ -1030,14 +1122,14 @@ public class MainActivity extends AppCompatActivity
     private boolean launchTextDirections() {
         Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
         //passes in current location to TextDirectionsActivity
-        if (mCurrentLocation != null && end != null) {
+        if (mCurrentLocation != null && mEnd != null) {
             double tmpLat = mCurrentLocation.getLatitude();
             double tmpLng = mCurrentLocation.getLongitude();
             // string manipulation here to get in the right format for API call
             String start = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
             //LatLng object
-            tmpLat = end.latitude;
-            tmpLng = end.longitude;
+            tmpLat = mEnd.latitude;
+            tmpLng = mEnd.longitude;
             String end = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
 
             Bundle extras = new Bundle();
@@ -1081,7 +1173,6 @@ public class MainActivity extends AppCompatActivity
             loadBathrooms(bathrooms);
             mFab.setVisibility(View.VISIBLE);
             bottomSheet.setVisibility(View.VISIBLE);
-            onSearchAction = true;
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = new AddBathroomFragment();

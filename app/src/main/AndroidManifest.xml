@@ -28,12 +28,17 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_api_key" />
 
+        <service
+            android:name=".services.GeocodeAddressIntentService"
+            android:exported="false"/>
+
         <activity
             android:name=".views.TextDirectionsActivity"
             android:label="@string/title_directions"
             android:parentActivityName=".views.MainActivity" />
         <activity
             android:name=".views.MainActivity"
+            android:launchMode="singleTop"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">
             <intent-filter>
