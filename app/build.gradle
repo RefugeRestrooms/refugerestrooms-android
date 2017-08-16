@@ -17,7 +17,7 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId "org.refugerestrooms"
         minSdkVersion 14
