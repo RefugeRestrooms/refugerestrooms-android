@@ -105,13 +105,11 @@ public class MainActivity extends AppCompatActivity
     private boolean searchPerformed;
 
     private Location mCurrentLocation;
-    private Location mLastLocation;
 
     private LatLng mCurrentPosition;
     private boolean mUpdatesRequested;
     private boolean mInProgress;
     public boolean doNotDisplayDialog;
-    public boolean onSearchAction;
     protected LatLng mStart;
     protected LatLng mEnd;
     private ResultReceiver mResultReceiver;
