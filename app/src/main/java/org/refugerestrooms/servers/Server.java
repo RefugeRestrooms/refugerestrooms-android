@@ -28,7 +28,7 @@ import java.util.List;
 public class Server {
 
     protected static final String TAG = Server.class.getSimpleName();
-    private static final String SERVER_URL = "http://www.refugerestrooms.org:80/api/v1/";
+    private static final String SERVER_URL = "https://www.refugerestrooms.org/api/v1/";
 
     private final ServerListener mListener;
 

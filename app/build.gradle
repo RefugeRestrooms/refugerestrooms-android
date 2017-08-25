@@ -22,8 +22,8 @@ android {
         applicationId "org.refugerestrooms"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 13
-        versionName "1.4"
+        versionCode 14
+        versionName "1.4.1"
     }
     buildTypes {
         release {
