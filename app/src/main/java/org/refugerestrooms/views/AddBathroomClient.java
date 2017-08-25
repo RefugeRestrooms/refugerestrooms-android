@@ -33,7 +33,7 @@ public class AddBathroomClient extends WebViewClient {
         if (url.equals(currentUrl)) {
             view.loadUrl(url);
         }
-        view.loadUrl("http://www.refugerestrooms.org/restrooms/new?");
+        view.loadUrl("https://www.refugerestrooms.org/restrooms/new?");
         return true;
     }
 

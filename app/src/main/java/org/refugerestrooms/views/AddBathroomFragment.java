@@ -30,13 +30,13 @@ public class AddBathroomFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_add_bathroom, container, false);
         mWebView = (WebView) rootView.findViewById(R.id.addBathroom);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new AddBathroomClient("http://www.refugerestrooms.org/restrooms/new?"));
+        mWebView.setWebViewClient(new AddBathroomClient("https://www.refugerestrooms.org/restrooms/new?"));
 
         // If possible, restore the WebView state - otherwise load the new restroom page
         if (mWebViewBundle != null) {
             mWebView.restoreState(mWebViewBundle);
         } else {
-            mWebView.loadUrl("http://www.refugerestrooms.org/restrooms/new?");
+            mWebView.loadUrl("https://www.refugerestrooms.org/restrooms/new?");
         }
 
         // Inflate the layout for this fragment
