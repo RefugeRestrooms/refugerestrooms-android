@@ -12,6 +12,7 @@ android:
 
     # The SDK version used to compile your project
     - android-28
+    #- android-24
 
     # Additional components
     - extra-google-google_play_services
@@ -21,24 +22,24 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-28
+    #- sys-img-armeabi-v7a-android-24
 
 env:
   global:
    # install timeout in minutes (2 minutes by default)
-    - ADB_INSTALL_TIMEOUT=8
+    - ADB_INSTALL_TIMEOUT=5
 
 before_install:
  - chmod +x gradlew
 
 # Emulator Management: Create, Start and Wait
-before_script:
-  - echo no | android create avd --force -n test -t android-28 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+#before_script:
+#  - echo no | android create avd --force -n test -t android-24 --abi #armeabi-v7a
+#  - emulator -avd test -no-skin -no-window &
+#  - android-wait-for-emulator
+#  - adb shell input keyevent 82 &
 
-script:
-  - android list target
-  - ./gradlew connectedAndroidTest -PdisablePreDex
-dist: precise
+#script:
+#  - android list target
+#  - ./gradlew connectedAndroidTest -PdisablePreDex
+#dist: precise
