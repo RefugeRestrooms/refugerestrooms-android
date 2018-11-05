@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
@@ -44,13 +43,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.Route;
+import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -61,7 +64,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.refugerestrooms.R;
 import org.refugerestrooms.application.RefugeRestroomApplication;
@@ -76,6 +79,7 @@ import org.refugerestrooms.services.GeocodeAddressIntentService;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
@@ -145,7 +149,7 @@ public class MainActivity extends AppCompatActivity
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
 
-	/*
+    /*
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult
      */
@@ -200,6 +204,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //TODO: Do something
+    @Override
+    public void onRoutingCancelled() {
+        // Nothing yet
+    }
+
+    //TODO: Do something
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> foo, int bar) {
+        // Nothing yet
+    }
+
+    //TODO: Do something
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        // Nothing yet
+    }
+
     /*
      * Handle results returned to the FragmentActivity
      * by Google Play services
@@ -229,14 +251,14 @@ public class MainActivity extends AppCompatActivity
 
     private boolean servicesConnected() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             return true;
         } else { // Google Play services was not available for some reason
             // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(
+                    this, resultCode, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
             // If Google Play services can provide an error dialog
             if (errorDialog != null) {
@@ -258,83 +280,123 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onConnected(Bundle dataBundle) {
+        //TODO break up this method a bit, new Fused version takes more lines of code
+        // Create a single instance of the Fused Location Client for use through this method
+        final FusedLocationProviderClient fused = LocationServices
+                .getFusedLocationProviderClient(this);
         if (servicesConnected()) {
             // Display the connection status
             Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
             // If already requested, mStart periodic updates
             // 3rd parameter just (this)?
             if (mUpdatesRequested) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(
-                        mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                // Check if have access to location already, if not, prompt
+                if (ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // Ask for permissions
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                    return;
+                }
+                fused.requestLocationUpdates(mLocationRequest,
+                        new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                onLocationChanged(locationResult.getLastLocation());
+                            }
+                        },
+                        null);
             }
             //TODO debug this part when no wifi/gps/mobile
 
             // Get the current location and move camera to it
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            fused.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Gets bathroom data from RefugeRestrooms.org
+                    // (20 closest entries -- defined in Server.java)
+                    mCurrentLocation = location;
+                    String curLatLng;
+                    if (mCurrentLocation != null) {
+                        double tmpLat = mCurrentLocation.getLatitude();
+                        double tmpLng = mCurrentLocation.getLongitude();
 
-            /*******************************************************************
-             * API call to Refuge Restrooms here
-             **************************************************************/
-
-            // Gets bathroom data from RefugeRestrooms.org (20 closest entries -- defined in Server.java)
-            String curLatLng;
-            if (mCurrentLocation != null) {
-                double tmpLat = mCurrentLocation.getLatitude();
-                double tmpLng = mCurrentLocation.getLongitude();
-
-                // String manipulation here to get in the right format for API call
-                curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
-                mServer.performSearch(curLatLng, true);
-            } else {
-                //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
-                // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                //curLatLng = "lat=44.9727&lng=-93.2354";
-                /*
-                curLatLng = "Minneapolis, MN";
-                mServer = new Server(this);
-                mServer.performSearch(curLatLng, false); */
-            }
-
-            /*******************************************************************
-             * End of API call to Refuge Restrooms
-             **************************************************************/
-
-            if (mCurrentLocation != null) {
-                double myLat = mCurrentLocation.getLatitude();
-                double myLng = mCurrentLocation.getLongitude();
-                mCurrentPosition = new LatLng(myLat, myLng);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(mCurrentPosition));
-
-                // Starts directions from location routing library
-                mStart = mCurrentPosition;
-                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                        if (mCurrentLocation != null) {
-                            String searchTerm = Server.getSearchTermFromLatLng(
-                                    mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude()
-                            );
-                            double myLat = mCurrentLocation.getLatitude();
-                            double myLng = mCurrentLocation.getLongitude();
-                            mCurrentPosition = new LatLng(myLat, myLng);
-                            onLocationChanged(mCurrentLocation);
-                            mServer.performSearch(searchTerm, true);
-                            mStart = mCurrentPosition;
-                        }
-
-                        return false;
+                        // String manipulation here to get in the right format for API call
+                        curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                        mServer.performSearch(curLatLng, true);
+                    } else {
+                        //TODO get nearby location when GPS is disabled --
+                        //TODO currently crashing, so it's been set to Minnesota
+                        // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
+                        //curLatLng = "lat=44.9727&lng=-93.2354";
+                        /*
+                        curLatLng = "Minneapolis, MN";
+                        mServer = new Server(this);
+                        mServer.performSearch(curLatLng, false); */
                     }
-                });
-            }
+
+                    /*******************************************************************
+                     * End of API call to Refuge Restrooms
+                     **************************************************************/
+
+                    if (mCurrentLocation != null) {
+                        double myLat = mCurrentLocation.getLatitude();
+                        double myLng = mCurrentLocation.getLongitude();
+                        mCurrentPosition = new LatLng(myLat, myLng);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mCurrentPosition));
+
+                        // Starts directions from location routing library
+                        mStart = mCurrentPosition;
+                        mMap.setOnMyLocationButtonClickListener(new GoogleMap
+                                .OnMyLocationButtonClickListener() {
+                            @Override
+                            public boolean onMyLocationButtonClick() {
+                                // Check for location permissions, and prompt if unavailable
+                                if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                        ActivityCompat.checkSelfPermission(MainActivity.this,
+                                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    // Request location permissions
+                                    ActivityCompat.requestPermissions(MainActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                                    Manifest.permission.ACCESS_FINE_LOCATION},
+                                            MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                                }
+                                fused.getLastLocation().addOnSuccessListener(
+                                        new OnSuccessListener<Location>() {
+                                            @Override
+                                            public void onSuccess(Location location) {
+                                                mCurrentLocation = location;
+                                                if (mCurrentLocation != null) {
+                                                    String searchTerm = Server.getSearchTermFromLatLng(
+                                                            mCurrentLocation.getLatitude(),
+                                                            mCurrentLocation.getLongitude()
+                                                    );
+                                                    double myLat = mCurrentLocation.getLatitude();
+                                                    double myLng = mCurrentLocation.getLongitude();
+                                                    mCurrentPosition = new LatLng(myLat, myLng);
+                                                    onLocationChanged(mCurrentLocation);
+                                                    mServer.performSearch(searchTerm, true);
+                                                    mStart = mCurrentPosition;
+                                                }
+                                            }
+                                        });
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
-	/*
+    /*
      * Called by Location Services if the connection to the
-	 * location client drops because of an error.
-	 */
+     * location client drops because of an error.
+     */
 	/*
 	@Override
 	public void onDisconnected() {
@@ -388,7 +450,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, infoView)
                 .addToBackStack("infoView")
                 .commit();
-        mFab.setVisibility(View.INVISIBLE);
+        mFab.hide();
     }
 
     // Updates the bottom sheet with the latest selected item
@@ -398,9 +460,9 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         bottomSheet.setVisibility(View.VISIBLE);
-        TextView title = (TextView) findViewById(R.id.text_title);
-        TextView address = (TextView) findViewById(R.id.text_address);
-        TextView comments = (TextView) findViewById(R.id.text_comments);
+        TextView title = findViewById(R.id.text_title);
+        TextView address = findViewById(R.id.text_address);
+        TextView comments = findViewById(R.id.text_comments);
         title.setText(bathroom.getNameFormatted());
         address.setText(bathroom.getAddressFormatted());
         comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
@@ -437,12 +499,12 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-	    /*
-	     * Google Play services can resolve some errors it detects.
-	     * If the error has a resolution, try sending an Intent to
-	     * mStart a Google Play services activity that can resolve
-	     * error.
-	     */
+        /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * mStart a Google Play services activity that can resolve
+         * error.
+         */
         // Turn off the request flag
         mInProgress = false;
         if (connectionResult.hasResolution()) {
@@ -451,25 +513,25 @@ public class MainActivity extends AppCompatActivity
                 connectionResult.startResolutionForResult(
                         this,
                         CONNECTION_FAILURE_RESOLUTION_REQUEST);
-	            /*
-	             * Thrown if Google Play services canceled the original
-	             * PendingIntent
-	             */
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
             } catch (IntentSender.SendIntentException e) {
                 // Log the error
                 //e.printStackTrace();
             }
         } else {
-	        /*
-	         * If no resolution is available, display a dialog to the
-	         * user with the error.
-	         */
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
             showErrorDialog(connectionResult.getErrorCode());
         }
     }
 
     void showErrorDialog(int code) {
-        GooglePlayServicesUtil.getErrorDialog(code, this,
+        GoogleApiAvailability.getInstance().getErrorDialog(this, code,
                 CONNECTION_FAILURE_RESOLUTION_REQUEST).show();
     }
 
@@ -492,10 +554,10 @@ public class MainActivity extends AppCompatActivity
             mCurrentLocation = savedInstanceState.getParcelable(CURRENT_LOCATION_KEY);
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -506,17 +568,17 @@ public class MainActivity extends AppCompatActivity
 
         mServer = new Server(MainActivity.this);
 
-        mMapView = (MapView) findViewById(R.id.map);
+        mMapView = findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         bottomSheet = findViewById(R.id.bottom_info_sheet);
@@ -547,10 +609,10 @@ public class MainActivity extends AppCompatActivity
                     Context.MODE_PRIVATE);
             // Get a SharedPreferences editor
             mEditor = mPrefs.edit();
-	        /*
-	         * Create a new location client, using the enclosing class to
-	         * handle callbacks.
-	         */
+            /*
+             * Create a new location client, using the enclosing class to
+             * handle callbacks.
+             */
 
             // Start with updates turned off
             mUpdatesRequested = false;
@@ -618,8 +680,7 @@ public class MainActivity extends AppCompatActivity
                         mServer.performSearch(searchTerm, true);
                     }
                 });
-            }
-            else {
+            } else {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -632,48 +693,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRoutingFailure() {
-        // The Routing request failed
-    }
-
-    @Override
     public void onRoutingStart() {
         // The Routing Request starts
-    }
-
-    @Override
-    public void onRoutingSuccess(PolylineOptions mPolyOptions, Route route) {
-        //removes polyline on update to create new one
-        if (poly1 != null) {
-            poly1.remove();
-        }
-        if (poly2 != null) {
-            poly2.remove();
-        }
-        PolylineOptions polyline_outline = new PolylineOptions();
-        polyline_outline.color(Color.rgb(50, 15, 255)); //dark blue
-        polyline_outline.width(20);
-        polyline_outline.addAll(mPolyOptions.getPoints());
-        poly1 = mMap.addPolyline(polyline_outline);
-
-        PolylineOptions polyline = new PolylineOptions();
-        polyline.color(Color.rgb(99, 125, 255)); //light blue
-        polyline.width(10);
-        polyline.addAll(mPolyOptions.getPoints());
-        poly2 = mMap.addPolyline(polyline);
-
-        // Start marker
-        //MarkerOptions options = new MarkerOptions();
-	  /*options.position(mStart);
-	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-	  mMap.addMarker(options);
-	*/
-        // End marker
-	  /*options = new MarkerOptions();
-	  options.position(mEnd);
-	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
-	  mMap.addMarker(options);
-	*/
     }
 
     @Override
@@ -751,7 +772,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     /*
      * Request activity recognition updates based on the current detection interval.
      */
@@ -771,12 +791,12 @@ public class MainActivity extends AppCompatActivity
             // mActivityRecognitionClient.connect();
             //
         } else {
-           /*
-            * A request is already underway. You can handle
-            * this situation by disconnecting the client,
-            * re-setting the flag, and then re-trying the
-            * request.
-            */
+            /*
+             * A request is already underway. You can handle
+             * this situation by disconnecting the client,
+             * re-setting the flag, and then re-trying the
+             * request.
+             */
 
             // mActivityRecognitionClient.disconnect();
             mInProgress = false;
@@ -823,6 +843,16 @@ public class MainActivity extends AppCompatActivity
                             .addOnConnectionFailedListener(this)
                             .build();
                     mGoogleApiClient.connect();
+                    if (ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(this,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Prompt for permissions
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                    }
                     mMap.setMyLocationEnabled(true);
                 } else {
                     // TODO something
@@ -1027,10 +1057,12 @@ public class MainActivity extends AppCompatActivity
                         launchTextDirections();
                     }
                 });
-
-                Routing routing = new Routing(Routing.TravelMode.WALKING);
-                routing.registerListener(this);
-                routing.execute(mStart, mEnd);
+                Routing routing = new Routing.Builder()
+                        .travelMode(Routing.TravelMode.WALKING)
+                        .withListener(this)
+                        .waypoints(mStart, mEnd)
+                        .build();
+                routing.execute();
                 initial = false;
             } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
@@ -1074,29 +1106,34 @@ public class MainActivity extends AppCompatActivity
             setToolbarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
 
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(mStart, mEnd)
+                    .build();
+            routing.execute();
+        }
+        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
+        /*
+        else if (mLastLocation != null) {
+            mEnd = marker.getPosition();
+            setActionBarTitle(marker.getTitle());
+
+            double myLat = mLastLocation.getLatitude();
+            double myLng = mLastLocation.getLongitude();
+            mStart = new LatLng(myLat,myLng);
+            mLocationTitle = marker.getTitle();
+
             Routing routing = new Routing(Routing.TravelMode.WALKING);
             routing.registerListener(this);
             routing.execute(mStart, mEnd);
         }
-        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
-//        else if (mLastLocation != null) {
-//            mEnd = marker.getPosition();
-//            setActionBarTitle(marker.getTitle());
-//
-//            double myLat = mLastLocation.getLatitude();
-//            double myLng = mLastLocation.getLongitude();
-//            mStart = new LatLng(myLat,myLng);
-//            mLocationTitle = marker.getTitle();
-//
-//            Routing routing = new Routing(Routing.TravelMode.WALKING);
-//            routing.registerListener(this);
-//            routing.execute(mStart, mEnd);
-//        }
+        */
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -1161,7 +1198,7 @@ public class MainActivity extends AppCompatActivity
             title = getString(R.string.map_title_section);
             fragment = new MapFragment();
             fragmentTitle = "maps";
-            mFab.setVisibility(View.VISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
             title = getString(R.string.saved_bathrooms);
@@ -1169,19 +1206,19 @@ public class MainActivity extends AppCompatActivity
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
             List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
             loadBathrooms(bathrooms);
-            mFab.setVisibility(View.VISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = new AddBathroomFragment();
             fragmentTitle = "addBathroom";
-            mFab.setVisibility(View.INVISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_feedback) {
             title = getString(R.string.feedback_title_section);
             fragment = new FeedbackFormFragment();
             fragmentTitle = "feedback";
-            mFab.setVisibility(View.INVISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         }
 
@@ -1193,7 +1230,7 @@ public class MainActivity extends AppCompatActivity
             setToolbarTitle(title);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

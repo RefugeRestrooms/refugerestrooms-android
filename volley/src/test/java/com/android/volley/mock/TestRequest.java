@@ -19,7 +19,6 @@ package com.android.volley.mock;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +42,7 @@ public class TestRequest {
         }
 
         @Override
-        protected void deliverResponse(byte[] response) {
-        }
+        protected void deliverResponse(byte[] response) {}
     }
 
     /** Test example of a GET request in the deprecated style. */
@@ -56,7 +54,7 @@ public class TestRequest {
 
     /** Test example of a POST request in the deprecated style. */
     public static class DeprecatedPost extends Base {
-        private Map<String, String> mPostParams;
+        private final Map<String, String> mPostParams;
 
         public DeprecatedPost() {
             super(TEST_URL, null);
@@ -78,8 +76,8 @@ public class TestRequest {
     }
 
     /**
-     * Test example of a POST request in the new style.  In the new style, it is possible
-     * to have a POST with no body.
+     * Test example of a POST request in the new style. In the new style, it is possible to have a
+     * POST with no body.
      */
     public static class Post extends Base {
         public Post() {
@@ -89,7 +87,7 @@ public class TestRequest {
 
     /** Test example of a POST request in the new style with a body. */
     public static class PostWithBody extends Post {
-        private Map<String, String> mParams;
+        private final Map<String, String> mParams;
 
         public PostWithBody() {
             mParams = new HashMap<String, String>();
@@ -103,7 +101,7 @@ public class TestRequest {
     }
 
     /**
-     * Test example of a PUT request in the new style.  In the new style, it is possible to have a
+     * Test example of a PUT request in the new style. In the new style, it is possible to have a
      * PUT with no body.
      */
     public static class Put extends Base {

@@ -16,22 +16,44 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
+}
+
+plugins {
+    id "com.github.sherter.google-java-format" version "0.6"
+    id "net.ltgt.errorprone" version "0.0.13"
+}
+
+googleJavaFormat {
+    toolVersion = '1.5'
+    options style: 'AOSP'
 }
 
 apply plugin: 'com.android.library'
 
 repositories {
+    google()
     jcenter()
 }
 
+group = 'com.android.volley'
+version = '1.2.0-SNAPSHOT'
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion = '22.0.1'
+    compileSdkVersion 28
+    buildToolsVersion = '28.0.3'
+    defaultConfig {
+        minSdkVersion 19
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xep:ParameterComment:ERROR"
 }
 
 apply from: 'rules.gradle'
