@@ -17,33 +17,32 @@
 package com.android.volley;
 
 import android.os.Handler;
-
 import java.util.concurrent.Executor;
 
-/**
- * Delivers responses and errors.
- */
+/** Delivers responses and errors. */
 public class ExecutorDelivery implements ResponseDelivery {
     /** Used for posting responses, typically to the main thread. */
     private final Executor mResponsePoster;
 
     /**
      * Creates a new response delivery interface.
+     *
      * @param handler {@link Handler} to post responses on
      */
     public ExecutorDelivery(final Handler handler) {
         // Make an Executor that just wraps the handler.
-        mResponsePoster = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                handler.post(command);
-            }
-        };
+        mResponsePoster =
+                new Executor() {
+                    @Override
+                    public void execute(Runnable command) {
+                        handler.post(command);
+                    }
+                };
     }
 
     /**
-     * Creates a new response delivery interface, mockable version
-     * for testing.
+     * Creates a new response delivery interface, mockable version for testing.
+     *
      * @param executor For running delivery tasks
      */
     public ExecutorDelivery(Executor executor) {
@@ -69,12 +68,9 @@ public class ExecutorDelivery implements ResponseDelivery {
         mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));
     }
 
-    /**
-     * A Runnable used for delivering network responses to a listener on the
-     * main thread.
-     */
+    /** A Runnable used for delivering network responses to a listener on the main thread. */
     @SuppressWarnings("rawtypes")
-    private class ResponseDeliveryRunnable implements Runnable {
+    private static class ResponseDeliveryRunnable implements Runnable {
         private final Request mRequest;
         private final Response mResponse;
         private final Runnable mRunnable;
@@ -88,6 +84,13 @@ public class ExecutorDelivery implements ResponseDelivery {
         @SuppressWarnings("unchecked")
         @Override
         public void run() {
+            // NOTE: If cancel() is called off the thread that we're currently running in (by
+            // default, the main thread), we cannot guarantee that deliverResponse()/deliverError()
+            // won't be called, since it may be canceled after we check isCanceled() but before we
+            // deliver the response. Apps concerned about this guarantee must either call cancel()
+            // from the same thread or implement their own guarantee about not invoking their
+            // listener after cancel() has been called.
+
             // If this request has canceled, finish it and don't deliver.
             if (mRequest.isCanceled()) {
                 mRequest.finish("canceled-at-delivery");
@@ -113,6 +116,6 @@ public class ExecutorDelivery implements ResponseDelivery {
             if (mRunnable != null) {
                 mRunnable.run();
             }
-       }
+        }
     }
 }

@@ -16,64 +16,48 @@
 
 package com.android.volley.toolbox;
 
+import android.support.annotation.VisibleForTesting;
 import com.android.volley.AuthFailureError;
+import com.android.volley.Header;
 import com.android.volley.Request;
 import com.android.volley.Request.Method;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.StatusLine;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-
 import java.io.DataOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
-/**
- * An {@link HttpStack} based on {@link HttpURLConnection}.
- */
-public class HurlStack implements HttpStack {
+/** A {@link BaseHttpStack} based on {@link HttpURLConnection}. */
+public class HurlStack extends BaseHttpStack {
 
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final int HTTP_CONTINUE = 100;
 
-    /**
-     * An interface for transforming URLs before use.
-     */
+    /** An interface for transforming URLs before use. */
     public interface UrlRewriter {
         /**
-         * Returns a URL to use instead of the provided one, or null to indicate
-         * this URL should not be used at all.
+         * Returns a URL to use instead of the provided one, or null to indicate this URL should not
+         * be used at all.
          */
-        public String rewriteUrl(String originalUrl);
+        String rewriteUrl(String originalUrl);
     }
 
     private final UrlRewriter mUrlRewriter;
     private final SSLSocketFactory mSslSocketFactory;
 
     public HurlStack() {
-        this(null);
+        this(/* urlRewriter = */ null);
     }
 
-    /**
-     * @param urlRewriter Rewriter to use for request URLs
-     */
+    /** @param urlRewriter Rewriter to use for request URLs */
     public HurlStack(UrlRewriter urlRewriter) {
-        this(urlRewriter, null);
+        this(urlRewriter, /* sslSocketFactory = */ null);
     }
 
     /**
@@ -86,12 +70,13 @@ public class HurlStack implements HttpStack {
     }
 
     @Override
-    public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
+    public HttpResponse executeRequest(Request<?> request, Map<String, String> additionalHeaders)
             throws IOException, AuthFailureError {
         String url = request.getUrl();
         HashMap<String, String> map = new HashMap<>();
-        map.putAll(request.getHeaders());
         map.putAll(additionalHeaders);
+        // Request.getHeaders() takes precedence over the given additional (cache) headers).
+        map.putAll(request.getHeaders());
         if (mUrlRewriter != null) {
             String rewritten = mUrlRewriter.rewriteUrl(url);
             if (rewritten == null) {
@@ -101,35 +86,57 @@ public class HurlStack implements HttpStack {
         }
         URL parsedUrl = new URL(url);
         HttpURLConnection connection = openConnection(parsedUrl, request);
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            connection.addRequestProperty(entry.getKey(), entry.getValue());
-        }
-        setConnectionParametersForRequest(connection, request);
-        // Initialize HttpResponse with data from the HttpURLConnection.
-        int responseCode = connection.getResponseCode();
-        if (responseCode == -1) {
-            // -1 is returned by getResponseCode() if the response code could not be retrieved.
-            // Signal to the caller that something was wrong with the connection.
-            throw new IOException("Could not retrieve response code from HttpUrlConnection.");
-        }
-        ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 1);
-        StatusLine responseStatus = new BasicStatusLine(protocolVersion,
-                connection.getResponseCode(), connection.getResponseMessage());
-        BasicHttpResponse response = new BasicHttpResponse(responseStatus);
-        if (hasResponseBody(request.getMethod(), responseStatus.getStatusCode())) {
-            response.setEntity(entityFromConnection(connection));
-        }
-        for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
-            if (header.getKey() != null) {
-                Header h = new BasicHeader(header.getKey(), header.getValue().get(0));
-                response.addHeader(h);
+        boolean keepConnectionOpen = false;
+        try {
+            for (String headerName : map.keySet()) {
+                connection.setRequestProperty(headerName, map.get(headerName));
+            }
+            setConnectionParametersForRequest(connection, request);
+            // Initialize HttpResponse with data from the HttpURLConnection.
+            int responseCode = connection.getResponseCode();
+            if (responseCode == -1) {
+                // -1 is returned by getResponseCode() if the response code could not be retrieved.
+                // Signal to the caller that something was wrong with the connection.
+                throw new IOException("Could not retrieve response code from HttpUrlConnection.");
+            }
+
+            if (!hasResponseBody(request.getMethod(), responseCode)) {
+                return new HttpResponse(responseCode, convertHeaders(connection.getHeaderFields()));
+            }
+
+            // Need to keep the connection open until the stream is consumed by the caller. Wrap the
+            // stream such that close() will disconnect the connection.
+            keepConnectionOpen = true;
+            return new HttpResponse(
+                    responseCode,
+                    convertHeaders(connection.getHeaderFields()),
+                    connection.getContentLength(),
+                    new UrlConnectionInputStream(connection));
+        } finally {
+            if (!keepConnectionOpen) {
+                connection.disconnect();
             }
         }
-        return response;
+    }
+
+    @VisibleForTesting
+    static List<Header> convertHeaders(Map<String, List<String>> responseHeaders) {
+        List<Header> headerList = new ArrayList<>(responseHeaders.size());
+        for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
+            // HttpUrlConnection includes the status line as a header with a null key; omit it here
+            // since it's not really a header and the rest of Volley assumes non-null keys.
+            if (entry.getKey() != null) {
+                for (String value : entry.getValue()) {
+                    headerList.add(new Header(entry.getKey(), value));
+                }
+            }
+        }
+        return headerList;
     }
 
     /**
      * Checks if a response message contains a body.
+     *
      * @see <a href="https://tools.ietf.org/html/rfc7230#section-3.3">RFC 7230 section 3.3</a>
      * @param requestMethod request method
      * @param responseCode response status code
@@ -137,34 +144,47 @@ public class HurlStack implements HttpStack {
      */
     private static boolean hasResponseBody(int requestMethod, int responseCode) {
         return requestMethod != Request.Method.HEAD
-            && !(HttpStatus.SC_CONTINUE <= responseCode && responseCode < HttpStatus.SC_OK)
-            && responseCode != HttpStatus.SC_NO_CONTENT
-            && responseCode != HttpStatus.SC_NOT_MODIFIED;
+                && !(HTTP_CONTINUE <= responseCode && responseCode < HttpURLConnection.HTTP_OK)
+                && responseCode != HttpURLConnection.HTTP_NO_CONTENT
+                && responseCode != HttpURLConnection.HTTP_NOT_MODIFIED;
     }
 
     /**
-     * Initializes an {@link HttpEntity} from the given {@link HttpURLConnection}.
+     * Wrapper for a {@link HttpURLConnection}'s InputStream which disconnects the connection on
+     * stream close.
+     */
+    static class UrlConnectionInputStream extends FilterInputStream {
+        private final HttpURLConnection mConnection;
+
+        UrlConnectionInputStream(HttpURLConnection connection) {
+            super(inputStreamFromConnection(connection));
+            mConnection = connection;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            mConnection.disconnect();
+        }
+    }
+
+    /**
+     * Initializes an {@link InputStream} from the given {@link HttpURLConnection}.
+     *
      * @param connection
      * @return an HttpEntity populated with data from <code>connection</code>.
      */
-    private static HttpEntity entityFromConnection(HttpURLConnection connection) {
-        BasicHttpEntity entity = new BasicHttpEntity();
+    private static InputStream inputStreamFromConnection(HttpURLConnection connection) {
         InputStream inputStream;
         try {
             inputStream = connection.getInputStream();
         } catch (IOException ioe) {
             inputStream = connection.getErrorStream();
         }
-        entity.setContent(inputStream);
-        entity.setContentLength(connection.getContentLength());
-        entity.setContentEncoding(connection.getContentEncoding());
-        entity.setContentType(connection.getContentType());
-        return entity;
+        return inputStream;
     }
 
-    /**
-     * Create an {@link HttpURLConnection} for the specified {@code url}.
-     */
+    /** Create an {@link HttpURLConnection} for the specified {@code url}. */
     protected HttpURLConnection createConnection(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -178,6 +198,7 @@ public class HurlStack implements HttpStack {
 
     /**
      * Opens an {@link HttpURLConnection} with parameters.
+     *
      * @param url
      * @return an open connection
      * @throws IOException
@@ -193,15 +214,17 @@ public class HurlStack implements HttpStack {
 
         // use caller-provided custom SslSocketFactory, if any, for HTTPS
         if ("https".equals(url.getProtocol()) && mSslSocketFactory != null) {
-            ((HttpsURLConnection)connection).setSSLSocketFactory(mSslSocketFactory);
+            ((HttpsURLConnection) connection).setSSLSocketFactory(mSslSocketFactory);
         }
 
         return connection;
     }
 
+    // NOTE: Any request headers added here (via setRequestProperty or addRequestProperty) should be
+    // checked against the existing properties in the connection and not overridden if already set.
     @SuppressWarnings("deprecation")
-    /* package */ static void setConnectionParametersForRequest(HttpURLConnection connection,
-            Request<?> request) throws IOException, AuthFailureError {
+    /* package */ static void setConnectionParametersForRequest(
+            HttpURLConnection connection, Request<?> request) throws IOException, AuthFailureError {
         switch (request.getMethod()) {
             case Method.DEPRECATED_GET_OR_POST:
                 // This is the deprecated way that needs to be handled for backwards compatibility.
@@ -209,16 +232,8 @@ public class HurlStack implements HttpStack {
                 // GET.  Otherwise, it is assumed that the request is a POST.
                 byte[] postBody = request.getPostBody();
                 if (postBody != null) {
-                    // Prepare output. There is no need to set Content-Length explicitly,
-                    // since this is handled by HttpURLConnection using the size of the prepared
-                    // output stream.
-                    connection.setDoOutput(true);
                     connection.setRequestMethod("POST");
-                    connection.addRequestProperty(HEADER_CONTENT_TYPE,
-                            request.getPostBodyContentType());
-                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                    out.write(postBody);
-                    out.close();
+                    addBody(connection, request, postBody);
                 }
                 break;
             case Method.GET:
@@ -259,11 +274,23 @@ public class HurlStack implements HttpStack {
             throws IOException, AuthFailureError {
         byte[] body = request.getBody();
         if (body != null) {
-            connection.setDoOutput(true);
-            connection.addRequestProperty(HEADER_CONTENT_TYPE, request.getBodyContentType());
-            DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-            out.write(body);
-            out.close();
+            addBody(connection, request, body);
         }
+    }
+
+    private static void addBody(HttpURLConnection connection, Request<?> request, byte[] body)
+            throws IOException {
+        // Prepare output. There is no need to set Content-Length explicitly,
+        // since this is handled by HttpURLConnection using the size of the prepared
+        // output stream.
+        connection.setDoOutput(true);
+        // Set the content-type unless it was already set (by Request#getHeaders).
+        if (!connection.getRequestProperties().containsKey(HttpHeaderParser.HEADER_CONTENT_TYPE)) {
+            connection.setRequestProperty(
+                    HttpHeaderParser.HEADER_CONTENT_TYPE, request.getBodyContentType());
+        }
+        DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+        out.write(body);
+        out.close();
     }
 }
