@@ -26,8 +26,8 @@ android {
         applicationId "org.refugerestrooms"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 14
-        versionName "1.4.1"
+        versionCode 15
+        versionName "1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -73,5 +73,16 @@ dependencies {
 
     androidTestImplementation ('com.android.support.test.espresso:espresso-core:2.2.2') {
         exclude module: 'support-annotations'
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multitex")) {
+                details.useVersion "26.+"
+            }
+        }
     }
 }
