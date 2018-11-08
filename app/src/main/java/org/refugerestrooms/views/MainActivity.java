@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequest;
+    private LocationRequest mSingleLocationRequest;
     private View bottomSheet;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
@@ -242,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 
     /*
      * Handle results returned to the FragmentActivity
-     * by Google Play services
+     * by Google Play services and Location services
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -265,26 +266,30 @@ public class MainActivity extends AppCompatActivity
                 // Covers a request to turn on the location service
             case LOCATION_SETTINGS_REQUEST:
                 // If the result is okay, location should now be enabled
+                Log.d("RefugeRestrooms", "Location Settings Request Code");
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        if (mCurrentLocation == null) {
-                            OnSuccessListener<Location> successListener = new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    mCurrentLocation = location;
-                                    onLocationChanged(mCurrentLocation);
-                                    double tmpLat = mCurrentLocation.getLatitude();
-                                    double tmpLng = mCurrentLocation.getLongitude();
-                                    String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
-                                    mCurrentPosition = new LatLng(tmpLat, tmpLng);
-                                    mServer.performSearch(curLatLng, true);
-                                    mStart = mCurrentPosition;
-
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
-                                }
-                            };
-                            getLastLocation(successListener);
-                        }
+                        Log.d("RefugeRestrooms", "Activity Result Okay");
+                        // Create the callback for the location check
+                        LocationCallback oneTimeLocationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                // Updates the current location and position
+                                mCurrentLocation = locationResult.getLastLocation();
+                                double tmpLat = mCurrentLocation.getLatitude();
+                                double tmpLng = mCurrentLocation.getLongitude();
+                                String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                                mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                                // Move the camera to the new position
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
+                                onLocationChanged(mCurrentLocation);
+                                // Performs a search on that location
+                                mServer.performSearch(curLatLng, true);
+                                mStart = mCurrentPosition;
+                            }
+                        };
+                        // Request a single location for the callback
+                        getSingleLocation(oneTimeLocationCallback);
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user declined to turn their location on,
@@ -586,22 +591,30 @@ public class MainActivity extends AppCompatActivity
         // For search results
         handleIntent(getIntent());
 
+        // Create single location request for acquiring only one non-null location.
+        mSingleLocationRequest = LocationRequest.create();
+        // Location Accuracy
+        mSingleLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mSingleLocationRequest.setInterval(UPDATE_INTERVAL);
+        mSingleLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        // Set the number of updates requested to 1
+        mSingleLocationRequest.setNumUpdates(1);
+
+        // Create the LocationRequest object for regular location updates
+        mLocationRequest = LocationRequest.create();
+        // Location Accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the update interval to 5 seconds
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        // Set the fastest update interval to 1 second
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
         // TODO
         // Checks if gps is enabled, kicks out message to turn on if not.
 
         if (servicesConnected()) {
             // Disables the get directions from google maps icons (this would open the Maps app)
             //mMap.getUiSettings().setMapToolbarEnabled(false);
-            // Create the LocationRequest object
-            mLocationRequest = LocationRequest.create();
-            // Location Accuracy
-            mLocationRequest.setPriority(
-                    LocationRequest.PRIORITY_HIGH_ACCURACY);
-            // LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-            // Set the update interval to 5 seconds
-            mLocationRequest.setInterval(UPDATE_INTERVAL);
-            // Set the fastest update interval to 1 second
-            mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
             // Open the shared preferences
             mPrefs = getSharedPreferences("SharedPreferences",
@@ -613,17 +626,20 @@ public class MainActivity extends AppCompatActivity
             mFusedLocationClient = LocationServices
                     .getFusedLocationProviderClient(this);
 
-            // Is called every 20 seconds or so when location updates are requested
+            // Is called every 20 seconds or so while location updates are requested
             mLocationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
-                    onLocationChanged(locationResult.getLastLocation());
+                    // Updates the current location and position
+                    mCurrentLocation = locationResult.getLastLocation();
                     double tmpLat = mCurrentLocation.getLatitude();
                     double tmpLng = mCurrentLocation.getLongitude();
                     String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
                     mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                    //TODO Add a setting to enable or disable camera tracking of current position.
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
                     onLocationChanged(mCurrentLocation);
+                    // Performs a search on that location
                     mServer.performSearch(curLatLng, true);
                     mStart = mCurrentPosition;
                 }
@@ -733,6 +749,11 @@ public class MainActivity extends AppCompatActivity
      * This method is intended to centralize getLastLocation calls, and add permission and service
      * checks easily and with minimal code repetition across the Activity.
      *
+     * Warning: getLastLocation can return a null location if called soon after
+     * location services are turned on.
+     *
+     * For a guarenteed location, call getSingleLocation() and pass a callback function.
+     *
      * @param onSuccessListener the code to execute with the location when found
      */
     private void getLastLocation(OnSuccessListener<Location> onSuccessListener) {
@@ -751,11 +772,38 @@ public class MainActivity extends AppCompatActivity
         mFusedLocationClient.getLastLocation().addOnSuccessListener(onSuccessListener);
     }
 
+    /**
+     * Retrieves a single non-null location and attaches a given callback to that location.
+     * Use this when a single non-null location is needed, or when location services
+     * have just started (i.e. just after a settings request).
+     *
+     * @param locationCallback the code to execute when a non-null location is found
+     */
+    private void getSingleLocation(LocationCallback locationCallback) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Ask for permissions
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        }
+        // Check that location settings are enabled, if not then prompt
+        checkLocationSettings();
+        mFusedLocationClient.requestLocationUpdates(mSingleLocationRequest,
+                locationCallback,
+                null);
+
+    }
+
 
     /**
      * Checks for location permissions, then for location services being enabled on the user device.
-     * Starts a request for location updates based on the request intervals defined in mLocationRequest.
+     * Starts a request for location updates based on the request interval defined in mLocationRequest.
      * Executes the code specified in mLocationCallback each time the location is updated.
+     *
+     * This method is intended to centralize the enabling of regular location updates.
      */
     private void startLocationUpdates() {
         //TODO When options menu is finished, add a toggle for this feature.
@@ -777,9 +825,14 @@ public class MainActivity extends AppCompatActivity
                 null);
     }
 
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
     @Override
     protected void onPause() {
         // Save the current setting for updates
+        stopLocationUpdates();
         if (mEditor != null) {
             mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
             mEditor.commit();
@@ -790,8 +843,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        // When application is closed, save the last location to open to when re-opened.
-        // Similar to Google Maps.
         mMapView.onDestroy();
         drawer.removeDrawerListener(toggle);
         super.onDestroy();
@@ -814,8 +865,10 @@ public class MainActivity extends AppCompatActivity
         if (mPrefs != null) {
             if (mPrefs.contains("KEY_UPDATES_ON")) {
                 mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
-
-                // Otherwise, turn off location updates
+                // Updates are already disabled on pause, turn them back on if requested.
+                if (mUpdatesRequested) {
+                    startLocationUpdates();
+                }
             } else {
                 if (mEditor != null) {
                     mEditor.putBoolean("KEY_UPDATES_ON", false);
@@ -990,8 +1043,11 @@ public class MainActivity extends AppCompatActivity
                                         ResolvableApiException resolvable =
                                                 (ResolvableApiException) exception;
                                         // Show the dialogue
-                                        resolvable.startResolutionForResult(MainActivity.this,
-                                                RESOLUTION_REQUIRED);
+                                        //resolvable.startResolutionForResult(MainActivity.this,
+                                        //        RESOLUTION_REQUIRED);
+                                        startIntentSenderForResult(resolvable.getResolution().getIntentSender(),
+                                                LOCATION_SETTINGS_REQUEST,
+                                                null, 0, 0, 0, null);
                                     } catch (IntentSender.SendIntentException | ClassCastException e) {
                                         // Ignorable error
                                     }
