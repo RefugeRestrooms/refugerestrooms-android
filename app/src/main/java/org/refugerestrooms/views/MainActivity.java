@@ -832,7 +832,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         // Save the current setting for updates
-        stopLocationUpdates();
+        if (mFusedLocationClient != null) {
+            stopLocationUpdates();
+        }
         if (mEditor != null) {
             mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
             mEditor.commit();
@@ -867,7 +869,9 @@ public class MainActivity extends AppCompatActivity
                 mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
                 // Updates are already disabled on pause, turn them back on if requested.
                 if (mUpdatesRequested) {
-                    startLocationUpdates();
+                    if (mFusedLocationClient != null) {
+                        startLocationUpdates();
+                    }
                 }
             } else {
                 if (mEditor != null) {
