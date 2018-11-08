@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -40,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +52,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -62,7 +61,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -80,6 +78,7 @@ import com.google.android.gms.tasks.Task;
 import org.refugerestrooms.R;
 import org.refugerestrooms.application.RefugeRestroomApplication;
 import org.refugerestrooms.database.SaveBathroomPropertyHandler;
+import org.refugerestrooms.database.model.BathroomEntity;
 import org.refugerestrooms.database.model.BathroomEntityDao;
 import org.refugerestrooms.database.model.DaoSession;
 import org.refugerestrooms.database.model.DatabaseEntityConverter;
@@ -88,11 +87,10 @@ import org.refugerestrooms.models.Haversine;
 import org.refugerestrooms.servers.Server;
 import org.refugerestrooms.services.GeocodeAddressIntentService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -218,6 +216,7 @@ public class MainActivity extends AppCompatActivity
 
         // Return a Dialog to the DialogFragment.
         @Override
+        @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
@@ -366,7 +365,7 @@ public class MainActivity extends AppCompatActivity
                         //TODO get nearby location when GPS is disabled --
                         //TODO currently crashing, so it's been set to Minnesota
                         // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                        //curLatLng = "lat=44.9727&lng=-93.2354";
+                        // curLatLng = "lat=44.9727&lng=-93.2354";
                         /*
                         curLatLng = "Minneapolis, MN";
                         mServer = new Server(this);
@@ -389,46 +388,31 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Location location) {
                         mCurrentLocation = location;
-                        //Log.d("RefugeRestrooms", "Location is at Lat: " + String.valueOf(location.getLatitude()) + " and at Long: " + String.valueOf(location.getLongitude()));
                         if (mCurrentLocation != null) {
+                            // Assemble new position
                             double tmpLat = mCurrentLocation.getLatitude();
                             double tmpLng = mCurrentLocation.getLongitude();
                             String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
                             mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                            // Move camera to new position
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
                             onLocationChanged(mCurrentLocation);
-                            Log.d("RefugeRestrooms", "Searching...");
+                            // Launch bathroom search for new position
                             mServer.performSearch(curLatLng, true);
                             mStart = mCurrentPosition;
                         }
                     }
                 };
+                // Send the listener to be attached to the FusedLocationClient
                 getLastLocation(successListener);
                 return false;
             }
         });
     }
 
-    /*
-     * Called by Location Services if the connection to the
-     * location client drops because of an error.
-     */
-	/*
-	@Override
-	public void onDisconnected() {
-	    // Display the connection status
-	    Snackbar.make(mFab, "Disconnected. Please re-connect.",
-	            Snackbar.LENGTH_SHORT).show();
-	    // Turn off the request flag
-        mInProgress = false;
-        // Delete the client
-       // mActivityRecognitionClient = null;
-	}
-	*/
-
     public Dialog createDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
-        View neverShow = inflater.inflate(R.layout.never_show, null);
+        View neverShow = inflater.inflate(R.layout.never_show, (ViewGroup) findViewById(android.R.id.content), false);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -437,7 +421,6 @@ public class MainActivity extends AppCompatActivity
                 .setMessage(R.string.location_instructions)
                 .setPositiveButton(R.string.location_settings, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(myIntent);
                     }
@@ -476,9 +459,9 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         bottomSheet.setVisibility(View.VISIBLE);
-        TextView title = findViewById(R.id.text_title);
-        TextView address = findViewById(R.id.text_address);
-        TextView comments = findViewById(R.id.text_comments);
+        TextView title = (TextView) findViewById(R.id.text_title);
+        TextView address = (TextView) findViewById(R.id.text_address);
+        TextView comments = (TextView) findViewById(R.id.text_comments);
         title.setText(bathroom.getNameFormatted());
         address.setText(bathroom.getAddressFormatted());
         comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
@@ -570,10 +553,10 @@ public class MainActivity extends AppCompatActivity
             mCurrentLocation = savedInstanceState.getParcelable(CURRENT_LOCATION_KEY);
         }
 
-        mToolbar = findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mFab = findViewById(R.id.fab);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -584,17 +567,17 @@ public class MainActivity extends AppCompatActivity
 
         mServer = new Server(MainActivity.this);
 
-        mMapView = findViewById(R.id.map);
+        mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        drawer = findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         bottomSheet = findViewById(R.id.bottom_info_sheet);
@@ -629,7 +612,8 @@ public class MainActivity extends AppCompatActivity
             // Initialize the location client
             mFusedLocationClient = LocationServices
                     .getFusedLocationProviderClient(this);
-            // Is called every 20 seconds or so when location updates.
+
+            // Is called every 20 seconds or so when location updates are requested
             mLocationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
@@ -638,9 +622,8 @@ public class MainActivity extends AppCompatActivity
                     double tmpLng = mCurrentLocation.getLongitude();
                     String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
                     mCurrentPosition = new LatLng(tmpLat, tmpLng);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
                     onLocationChanged(mCurrentLocation);
-                    Log.d("RefugeRestrooms", "Searching...");
                     mServer.performSearch(curLatLng, true);
                     mStart = mCurrentPosition;
                 }
@@ -650,9 +633,7 @@ public class MainActivity extends AppCompatActivity
             // Access stored location if exists
             double lastLocationLat = Double.longBitsToDouble(mPrefs.getLong("current_lat", Double.doubleToLongBits(0.0d)));
             double lastLocationLon = Double.longBitsToDouble(mPrefs.getLong("current_lon", Double.doubleToLongBits(0.0d)));
-            Log.d("RefugeRestrooms", "Latitude: " + String.valueOf(lastLocationLat));
-            Log.d("RefugeRestrooms", "Longitude: " + String.valueOf(lastLocationLon));
-            // If the location is found to be anything other than [0,0] then it should load
+            // If a stored location is found, set that as the application default
             if (lastLocationLat != 0.0d || lastLocationLon != 0.0d) {
                 mCurrentLocation = new Location("");
                 mCurrentLocation.setLatitude(lastLocationLat);
@@ -701,6 +682,7 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        assert address != null;
                         // Get lat and long of searched address
                         double latitude = address.getLatitude();
                         double longitude = address.getLongitude();
@@ -743,6 +725,16 @@ public class MainActivity extends AppCompatActivity
         // The Routing Request starts
     }
 
+    /**
+     * Checks for location permissions, then for location services being enabled on the user device.
+     * Attaches a given OnSuccessListener to a getLastLocation() call on the Location Client.
+     * After the last known location is found, the success listener is executed.
+     *
+     * This method is intended to centralize getLastLocation calls, and add permission and service
+     * checks easily and with minimal code repetition across the Activity.
+     *
+     * @param onSuccessListener the code to execute with the location when found
+     */
     private void getLastLocation(OnSuccessListener<Location> onSuccessListener) {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -753,11 +745,21 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
-        checkLocationSettings(this);
+        // Check that location settings are enabled, if not then prompt
+        checkLocationSettings();
+        // Retrieve last location and attach the given success listener to the result.
         mFusedLocationClient.getLastLocation().addOnSuccessListener(onSuccessListener);
     }
 
+
+    /**
+     * Checks for location permissions, then for location services being enabled on the user device.
+     * Starts a request for location updates based on the request intervals defined in mLocationRequest.
+     * Executes the code specified in mLocationCallback each time the location is updated.
+     */
     private void startLocationUpdates() {
+        //TODO When options menu is finished, add a toggle for this feature.
+        // Check Location permissions
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -767,7 +769,9 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
-        checkLocationSettings(this);
+        // Check location services setting on device
+        checkLocationSettings();
+        // Create callback using the request intervals
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback,
                 null);
@@ -788,7 +792,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         // When application is closed, save the last location to open to when re-opened.
         // Similar to Google Maps.
-        Log.d("RefugeRestrooms", "Destroying app, after saving");
         mMapView.onDestroy();
         drawer.removeDrawerListener(toggle);
         super.onDestroy();
@@ -838,6 +841,13 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
+    /**
+     * Called each time the current location is updated.
+     * Saves the current location to shared prefs for offline location defaults.
+     * Displays a message stating that the location has changed.
+     *
+     * @param location A valid new Location to inform the app about
+     */
     @Override
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
@@ -848,10 +858,10 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
 
-            if (mEditor != null && mCurrentLocation != null) {
+            if (mEditor != null) {
                 // Convert the latitude and longitude into raw long bits for safe storage in
                 // shared preferences, remember to turn back into a double when read
-                Log.d("RefugeRestrooms", "saving location");
+                Log.d(TAG, "Saving location");
                 mEditor.putLong("current_lat", Double.doubleToRawLongBits(mCurrentLocation.getLatitude()));
                 mEditor.putLong("current_lon", Double.doubleToRawLongBits(mCurrentLocation.getLongitude()));
                 mEditor.commit();
@@ -875,6 +885,7 @@ public class MainActivity extends AppCompatActivity
         if (!mInProgress) {
             // Indicate that a request is in progress
             mInProgress = true;
+            
             // Request a connection to Location Services
             // mActivityRecognitionClient.connect();
             //
@@ -943,15 +954,21 @@ public class MainActivity extends AppCompatActivity
                     }
                     mMap.setMyLocationEnabled(true);
                 } else {
-                    // TODO something
+                    // In case they would like to change their mind about permissions
+                    mMap.setMyLocationEnabled(true);
                 }
             default:
                 break;
         }
     }
 
-    private void checkLocationSettings(Context context) {
-        //TODO add documentation to this method
+    /**
+     * Checks device location service settings. If disabled, prompts the user to enable them
+     * with a dialog box.
+     *
+     * In the case that Location services are unavailable for other reasons, a prompt is not created.
+     */
+    private void checkLocationSettings() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
         builder.setAlwaysShow(true);
@@ -975,9 +992,7 @@ public class MainActivity extends AppCompatActivity
                                         // Show the dialogue
                                         resolvable.startResolutionForResult(MainActivity.this,
                                                 RESOLUTION_REQUIRED);
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignorable error
-                                    } catch (ClassCastException e) {
+                                    } catch (IntentSender.SendIntentException | ClassCastException e) {
                                         // Ignorable error
                                     }
                                     break;
@@ -998,7 +1013,7 @@ public class MainActivity extends AppCompatActivity
         if (mCurrentPosition == null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
         } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 20));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 13));
         }
 
         mMap.getUiSettings().setZoomControlsEnabled(false);
@@ -1021,11 +1036,10 @@ public class MainActivity extends AppCompatActivity
 
     // Handles both the address search in the action bar and the nearest locations search when gps is on
     public void onSearchResults(final List<Bathroom> results) {
-        Log.d("RefugeRestrooms", "Got search results");
         loadBathrooms(results);
-        Log.d("RefugeRestrooms", "Got bathrooms loaded");
     }
 
+    //TODO Add Javadoc
     private void loadBathrooms(List<Bathroom> results) {
         numLocations = results.size();
         locations = new LatLng[numLocations];
@@ -1033,7 +1047,6 @@ public class MainActivity extends AppCompatActivity
         currentLoc = new int[numLocations];
         lastLoc = new int[numLocations];
 
-        Log.d("RefugeRestrooms", "Number of locations: " + String.valueOf(numLocations));
         for (int i = 0; i < numLocations; i++) {
             Bathroom bathroom = results.get(i);
             DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
@@ -1212,13 +1225,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private List loadSavedBathrooms() {
+    //TODO Add Javadoc
+    private List<BathroomEntity> loadSavedBathrooms() {
         DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
         BathroomEntityDao leaseDao = daoSession.getBathroomEntityDao();
         // Loads the last 150 bathrooms added to the database
-        List restroomsList = leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
-        //List restroomsList = leaseDao.loadAll();
-        return restroomsList;
+        return leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
     }
 
     @Override
@@ -1270,7 +1282,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -1291,6 +1303,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    //TODO Add Javadoc
     private boolean launchTextDirections() {
         Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
         //passes in current location to TextDirectionsActivity
@@ -1339,7 +1352,7 @@ public class MainActivity extends AppCompatActivity
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
             title = getString(R.string.saved_bathrooms);
-            List bathroomsList = loadSavedBathrooms();
+            List<BathroomEntity> bathroomsList = loadSavedBathrooms();
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
             List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
             loadBathrooms(bathrooms);
@@ -1367,7 +1380,7 @@ public class MainActivity extends AppCompatActivity
             setToolbarTitle(title);
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
