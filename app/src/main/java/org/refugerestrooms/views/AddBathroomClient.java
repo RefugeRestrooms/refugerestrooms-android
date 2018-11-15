@@ -9,6 +9,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class AddBathroomClient extends WebViewClient {
     private String currentUrl;
 
@@ -20,6 +24,35 @@ public class AddBathroomClient extends WebViewClient {
         this.currentUrl = currentUrl;
     }
 
+    /**
+     * Tests if a connection can be made with Google.
+     *
+     * @return true if a connection was successful, false otherwise.
+     */
+    private boolean hasInternetConnection() {
+        try {
+            // Test internet connection
+            HttpURLConnection urlConnection = (HttpURLConnection)
+                (new URL("http://clients3.google.com/generate_204")
+                .openConnection());
+            urlConnection.setRequestProperty("User-Agent", "Android");
+            urlConnection.setRequestProperty("Connection", "close");
+            urlConnection.setConnectTimeout(1500);
+            urlConnection.connect();
+            if (urlConnection.getResponseCode() == 204 &&
+                urlConnection.getContentLength() == 0) {
+                // Successfully connected to the internet.
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            // No internet connection detected, or an error has been encountered.
+            return false;
+        }
+            
+    }
+
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         /* Check to see if url equals the add a restroom page, otherwise reloads page and shows message
@@ -29,7 +62,16 @@ public class AddBathroomClient extends WebViewClient {
          */
         // Setting the render thread priority is deprecated and will not be supported
         // view.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-        view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
+        // Pre-loading the webview requires using the cache for now.
+        // Check for an internet connection so the website won't load without it.
+        if (!hasInternetConnection()) {
+            //TODO Add no connection detected page to display here.
+            return false;
+        }
+        
+            
+        // view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         if (url.equals(currentUrl)) {
             view.loadUrl(url);
         }
