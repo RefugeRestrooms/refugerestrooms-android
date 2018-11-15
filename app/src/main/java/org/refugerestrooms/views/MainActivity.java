@@ -476,6 +476,29 @@ public class MainActivity extends AppCompatActivity
         comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
         View specsView = findViewById(R.id.specs);
         BathroomSpecsViewUpdater.update(specsView, bathroom, this);
+
+        // Change text padding to center in the bottom sheet peek.
+        int lineCount = title.getLineCount();
+        if (lineCount == 1) {
+            // Single displayed line padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.one_line_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        } else if (lineCount == 2) {
+            // Two displayed line padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.two_line_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        } else {
+            // Else 0 top padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.zero_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        }
+
         findViewById(R.id.button_maps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
