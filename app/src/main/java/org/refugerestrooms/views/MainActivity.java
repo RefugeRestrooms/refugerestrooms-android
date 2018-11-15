@@ -27,6 +27,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -198,6 +199,9 @@ public class MainActivity extends AppCompatActivity
     private int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
+
+    private Fragment addBathroomFragment;
+    private FragmentManager fragmentManager;
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
@@ -584,6 +588,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Create an instance of the bathroom fragment to pre-load the website into the cache.
+        // Swap this instance in later when selected.
+        addBathroomFragment = new AddBathroomFragment();
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.attach(addBathroomFragment);
+        fragmentTransaction.commit();
 
         bottomSheet = findViewById(R.id.bottom_info_sheet);
 
@@ -1399,7 +1411,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
         String title = null;
         String fragmentTitle = null;
@@ -1420,7 +1431,6 @@ public class MainActivity extends AppCompatActivity
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
-            fragment = new AddBathroomFragment();
             fragmentTitle = "addBathroom";
             mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
@@ -1435,6 +1445,12 @@ public class MainActivity extends AppCompatActivity
         if (fragment != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
+                    .addToBackStack(fragmentTitle)
+                    .commit();
+            setToolbarTitle(title);
+        } else {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, addBathroomFragment)
                     .addToBackStack(fragmentTitle)
                     .commit();
             setToolbarTitle(title);

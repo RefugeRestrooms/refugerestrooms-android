@@ -1,4 +1,5 @@
 package org.refugerestrooms.views;
+import android.content.Context;
 
 /**
  * Created by Refuge Restrooms on 7/14/2015.
@@ -25,8 +26,15 @@ public class AddBathroomFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Pre-load the website into the cache when the fragment is first attached.
+        WebView preWebView = new WebView(context);
+        preWebView.loadUrl("https://www.refugerestrooms.org/restrooms/new?");
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_bathroom, container, false);
         mWebView = (WebView) rootView.findViewById(R.id.addBathroom);
         mWebView.getSettings().setJavaScriptEnabled(true);
