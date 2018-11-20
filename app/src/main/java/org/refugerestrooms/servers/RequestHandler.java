@@ -72,7 +72,7 @@ public final class RequestHandler {
             Response.ErrorListener errorListener, RequestQueue queue, String url) {
         JsonArrayRequest jsonObjectReq = new JsonArrayRequest(url,
                 onSuccessListener, errorListener);
-        jsonObjectReq.setRetryPolicy(new DefaultRetryPolicy(5000,
+        jsonObjectReq.setRetryPolicy(new DefaultRetryPolicy(12000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(jsonObjectReq);
