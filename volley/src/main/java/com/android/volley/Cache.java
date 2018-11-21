@@ -17,54 +17,53 @@
 package com.android.volley;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-/**
- * An interface for a cache keyed by a String with a byte array as data.
- */
+/** An interface for a cache keyed by a String with a byte array as data. */
 public interface Cache {
     /**
      * Retrieves an entry from the cache.
+     *
      * @param key Cache key
      * @return An {@link Entry} or null in the event of a cache miss
      */
-    public Entry get(String key);
+    Entry get(String key);
 
     /**
      * Adds or replaces an entry to the cache.
+     *
      * @param key Cache key
      * @param entry Data to store and metadata for cache coherency, TTL, etc.
      */
-    public void put(String key, Entry entry);
+    void put(String key, Entry entry);
 
     /**
-     * Performs any potentially long-running actions needed to initialize the cache;
-     * will be called from a worker thread.
+     * Performs any potentially long-running actions needed to initialize the cache; will be called
+     * from a worker thread.
      */
-    public void initialize();
+    void initialize();
 
     /**
      * Invalidates an entry in the cache.
+     *
      * @param key Cache key
      * @param fullExpire True to fully expire the entry, false to soft expire
      */
-    public void invalidate(String key, boolean fullExpire);
+    void invalidate(String key, boolean fullExpire);
 
     /**
      * Removes an entry from the cache.
+     *
      * @param key Cache key
      */
-    public void remove(String key);
+    void remove(String key);
 
-    /**
-     * Empties the cache.
-     */
-    public void clear();
+    /** Empties the cache. */
+    void clear();
 
-    /**
-     * Data and metadata for an entry returned by the cache.
-     */
-    public static class Entry {
+    /** Data and metadata for an entry returned by the cache. */
+    class Entry {
         /** The data returned from cache. */
         public byte[] data;
 
@@ -83,8 +82,21 @@ public interface Cache {
         /** Soft TTL for this record. */
         public long softTtl;
 
-        /** Immutable response headers as received from server; must be non-null. */
+        /**
+         * Response headers as received from server; must be non-null. Should not be mutated
+         * directly.
+         *
+         * <p>Note that if the server returns two headers with the same (case-insensitive) name,
+         * this map will only contain the one of them. {@link #allResponseHeaders} may contain all
+         * headers if the {@link Cache} implementation supports it.
+         */
         public Map<String, String> responseHeaders = Collections.emptyMap();
+
+        /**
+         * All response headers. May be null depending on the {@link Cache} implementation. Should
+         * not be mutated directly.
+         */
+        public List<Header> allResponseHeaders;
 
         /** True if the entry is expired. */
         public boolean isExpired() {
@@ -96,5 +108,4 @@ public interface Cache {
             return this.softTtl < System.currentTimeMillis();
         }
     }
-
 }

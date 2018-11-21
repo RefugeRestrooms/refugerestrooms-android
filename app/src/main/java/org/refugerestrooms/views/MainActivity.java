@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
@@ -19,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -27,6 +27,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,19 +40,29 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.Route;
+import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -61,11 +72,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import org.refugerestrooms.R;
 import org.refugerestrooms.application.RefugeRestroomApplication;
 import org.refugerestrooms.database.SaveBathroomPropertyHandler;
+import org.refugerestrooms.database.model.BathroomEntity;
 import org.refugerestrooms.database.model.BathroomEntityDao;
 import org.refugerestrooms.database.model.DaoSession;
 import org.refugerestrooms.database.model.DatabaseEntityConverter;
@@ -74,6 +88,7 @@ import org.refugerestrooms.models.Haversine;
 import org.refugerestrooms.servers.Server;
 import org.refugerestrooms.services.GeocodeAddressIntentService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +112,9 @@ public class MainActivity extends AppCompatActivity
     private MapView mMapView;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
+    private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequest;
+    private LocationRequest mSingleLocationRequest;
     private View bottomSheet;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
@@ -105,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     private boolean searchPerformed;
 
     private Location mCurrentLocation;
+    private LocationCallback mLocationCallback;
 
     private LatLng mCurrentPosition;
     private boolean mUpdatesRequested;
@@ -145,7 +163,7 @@ public class MainActivity extends AppCompatActivity
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
 
-	/*
+    /*
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult
      */
@@ -154,6 +172,11 @@ public class MainActivity extends AppCompatActivity
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 123;
+
+    // Check for location settings
+    public static final int LOCATION_SETTINGS_REQUEST = 10540;
+
+    public static final int RESOLUTION_REQUIRED = 10542;
 
     private String mLocationTitle;
 
@@ -177,6 +200,9 @@ public class MainActivity extends AppCompatActivity
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
+    private Fragment addBathroomFragment;
+    private FragmentManager fragmentManager;
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
@@ -195,14 +221,33 @@ public class MainActivity extends AppCompatActivity
 
         // Return a Dialog to the DialogFragment.
         @Override
+        @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
     }
 
+    //TODO: Do something
+    @Override
+    public void onRoutingCancelled() {
+        // Nothing yet
+    }
+
+    //TODO: Do something
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> foo, int bar) {
+        // Nothing yet
+    }
+
+    //TODO: Do something
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        // Nothing yet
+    }
+
     /*
      * Handle results returned to the FragmentActivity
-     * by Google Play services
+     * by Google Play services and Location services
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -222,6 +267,41 @@ public class MainActivity extends AppCompatActivity
                     default:
                         break;
                 }
+                // Covers a request to turn on the location service
+            case LOCATION_SETTINGS_REQUEST:
+                // If the result is okay, location should now be enabled
+                Log.d("RefugeRestrooms", "Location Settings Request Code");
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.d("RefugeRestrooms", "Activity Result Okay");
+                        // Create the callback for the location check
+                        LocationCallback oneTimeLocationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                // Updates the current location and position
+                                mCurrentLocation = locationResult.getLastLocation();
+                                double tmpLat = mCurrentLocation.getLatitude();
+                                double tmpLng = mCurrentLocation.getLongitude();
+                                String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                                mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                                // Move the camera to the new position
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
+                                onLocationChanged(mCurrentLocation);
+                                // Performs a search on that location
+                                mServer.performSearch(curLatLng, true);
+                                mStart = mCurrentPosition;
+                            }
+                        };
+                        // Request a single location for the callback
+                        getSingleLocation(oneTimeLocationCallback);
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user declined to turn their location on,
+                        // nothing else to do
+                        break;
+                    default:
+                        break;
+                }
             default:
                 break;
         }
@@ -229,14 +309,14 @@ public class MainActivity extends AppCompatActivity
 
     private boolean servicesConnected() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             return true;
         } else { // Google Play services was not available for some reason
             // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(
+                    this, resultCode, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
             // If Google Play services can provide an error dialog
             if (errorDialog != null) {
@@ -258,99 +338,90 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onConnected(Bundle dataBundle) {
+        //TODO break up this method a bit, new Fused version takes more lines of code
         if (servicesConnected()) {
             // Display the connection status
             Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
             // If already requested, mStart periodic updates
             // 3rd parameter just (this)?
             if (mUpdatesRequested) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(
-                        mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                // Check if have access to location already, if not, prompt
+                startLocationUpdates();
             }
             //TODO debug this part when no wifi/gps/mobile
 
-            // Get the current location and move camera to it
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            // Create a success listener that will trigger when the last location is found.
+            // Then send the listener to be added to the mFusedLocationClient via getLastLocation()
+            OnSuccessListener<Location> onSuccessListener = new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Gets bathroom data from RefugeRestrooms.org
+                    // (20 closest entries -- defined in Server.java)
+                    mCurrentLocation = location;
+                    String curLatLng;
+                    if (mCurrentLocation != null) {
+                        double tmpLat = mCurrentLocation.getLatitude();
+                        double tmpLng = mCurrentLocation.getLongitude();
+                        mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                        mStart = mCurrentPosition;
+                        onLocationChanged(mCurrentLocation);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
 
-            /*******************************************************************
-             * API call to Refuge Restrooms here
-             **************************************************************/
+                        // String manipulation here to get in the right format for API call
+                        curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                        mServer.performSearch(curLatLng, true);
+                    } else {
+                        //TODO get nearby location when GPS is disabled --
+                        //TODO currently crashing, so it's been set to Minnesota
+                        // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
+                        // curLatLng = "lat=44.9727&lng=-93.2354";
+                        /*
+                        curLatLng = "Minneapolis, MN";
+                        mServer = new Server(this);
+                        mServer.performSearch(curLatLng, false); */
+                    }
 
-            // Gets bathroom data from RefugeRestrooms.org (20 closest entries -- defined in Server.java)
-            String curLatLng;
-            if (mCurrentLocation != null) {
-                double tmpLat = mCurrentLocation.getLatitude();
-                double tmpLng = mCurrentLocation.getLongitude();
-
-                // String manipulation here to get in the right format for API call
-                curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
-                mServer.performSearch(curLatLng, true);
-            } else {
-                //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
-                // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                //curLatLng = "lat=44.9727&lng=-93.2354";
-                /*
-                curLatLng = "Minneapolis, MN";
-                mServer = new Server(this);
-                mServer.performSearch(curLatLng, false); */
-            }
-
-            /*******************************************************************
-             * End of API call to Refuge Restrooms
-             **************************************************************/
-
-            if (mCurrentLocation != null) {
-                double myLat = mCurrentLocation.getLatitude();
-                double myLng = mCurrentLocation.getLongitude();
-                mCurrentPosition = new LatLng(myLat, myLng);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(mCurrentPosition));
-
-                // Starts directions from location routing library
-                mStart = mCurrentPosition;
-                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    /*******************************************************************
+                     * End of API call to Refuge Restrooms
+                     **************************************************************/
+                }
+            };
+            getLastLocation(onSuccessListener);
+        }
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap
+                .OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                // Check for location permissions, and prompt if unavailable
+                OnSuccessListener<Location> successListener = new OnSuccessListener<Location>() {
                     @Override
-                    public boolean onMyLocationButtonClick() {
-                        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    public void onSuccess(Location location) {
+                        mCurrentLocation = location;
                         if (mCurrentLocation != null) {
-                            String searchTerm = Server.getSearchTermFromLatLng(
-                                    mCurrentLocation.getLatitude(),
-                                    mCurrentLocation.getLongitude()
-                            );
-                            double myLat = mCurrentLocation.getLatitude();
-                            double myLng = mCurrentLocation.getLongitude();
-                            mCurrentPosition = new LatLng(myLat, myLng);
+                            // Assemble new position
+                            double tmpLat = mCurrentLocation.getLatitude();
+                            double tmpLng = mCurrentLocation.getLongitude();
+                            String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                            mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                            // Move camera to new position
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
                             onLocationChanged(mCurrentLocation);
-                            mServer.performSearch(searchTerm, true);
+                            // Launch bathroom search for new position
+                            mServer.performSearch(curLatLng, true);
                             mStart = mCurrentPosition;
                         }
-
-                        return false;
                     }
-                });
+                };
+                // Send the listener to be attached to the FusedLocationClient
+                getLastLocation(successListener);
+                return false;
             }
-        }
+        });
     }
-
-	/*
-     * Called by Location Services if the connection to the
-	 * location client drops because of an error.
-	 */
-	/*
-	@Override
-	public void onDisconnected() {
-	    // Display the connection status
-	    Snackbar.make(mFab, "Disconnected. Please re-connect.",
-	            Snackbar.LENGTH_SHORT).show();
-	    // Turn off the request flag
-        mInProgress = false;
-        // Delete the client
-       // mActivityRecognitionClient = null;
-	}
-	*/
 
     public Dialog createDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
-        View neverShow = inflater.inflate(R.layout.never_show, null);
+        View neverShow = inflater.inflate(R.layout.never_show, (ViewGroup) findViewById(android.R.id.content), false);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -359,7 +430,6 @@ public class MainActivity extends AppCompatActivity
                 .setMessage(R.string.location_instructions)
                 .setPositiveButton(R.string.location_settings, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(myIntent);
                     }
@@ -388,7 +458,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, infoView)
                 .addToBackStack("infoView")
                 .commit();
-        mFab.setVisibility(View.INVISIBLE);
+        mFab.hide();
     }
 
     // Updates the bottom sheet with the latest selected item
@@ -406,6 +476,29 @@ public class MainActivity extends AppCompatActivity
         comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
         View specsView = findViewById(R.id.specs);
         BathroomSpecsViewUpdater.update(specsView, bathroom, this);
+
+        // Change text padding to center in the bottom sheet peek.
+        int lineCount = title.getLineCount();
+        if (lineCount == 1) {
+            // Single displayed line padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.one_line_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        } else if (lineCount == 2) {
+            // Two displayed line padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.two_line_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        } else {
+            // Else 0 top padding
+            title.setPadding(title.getPaddingLeft(),
+                    getResources().getDimensionPixelOffset(R.dimen.zero_padding),
+                    title.getPaddingRight(),
+                    title.getPaddingBottom());
+        }
+
         findViewById(R.id.button_maps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -437,12 +530,12 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-	    /*
-	     * Google Play services can resolve some errors it detects.
-	     * If the error has a resolution, try sending an Intent to
-	     * mStart a Google Play services activity that can resolve
-	     * error.
-	     */
+        /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * mStart a Google Play services activity that can resolve
+         * error.
+         */
         // Turn off the request flag
         mInProgress = false;
         if (connectionResult.hasResolution()) {
@@ -451,25 +544,25 @@ public class MainActivity extends AppCompatActivity
                 connectionResult.startResolutionForResult(
                         this,
                         CONNECTION_FAILURE_RESOLUTION_REQUEST);
-	            /*
-	             * Thrown if Google Play services canceled the original
-	             * PendingIntent
-	             */
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
             } catch (IntentSender.SendIntentException e) {
                 // Log the error
                 //e.printStackTrace();
             }
         } else {
-	        /*
-	         * If no resolution is available, display a dialog to the
-	         * user with the error.
-	         */
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
             showErrorDialog(connectionResult.getErrorCode());
         }
     }
 
     void showErrorDialog(int code) {
-        GooglePlayServicesUtil.getErrorDialog(code, this,
+        GoogleApiAvailability.getInstance().getErrorDialog(this, code,
                 CONNECTION_FAILURE_RESOLUTION_REQUEST).show();
     }
 
@@ -519,11 +612,37 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Create an instance of the bathroom fragment to pre-load the website into the cache.
+        // Swap this instance in later when selected.
+        addBathroomFragment = new AddBathroomFragment();
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.attach(addBathroomFragment);
+        fragmentTransaction.commit();
+
         bottomSheet = findViewById(R.id.bottom_info_sheet);
 
         mResultReceiver = new AddressResultReceiver(null);
         // For search results
         handleIntent(getIntent());
+
+        // Create single location request for acquiring only one non-null location.
+        mSingleLocationRequest = LocationRequest.create();
+        // Location Accuracy
+        mSingleLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mSingleLocationRequest.setInterval(UPDATE_INTERVAL);
+        mSingleLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        // Set the number of updates requested to 1
+        mSingleLocationRequest.setNumUpdates(1);
+
+        // Create the LocationRequest object for regular location updates
+        mLocationRequest = LocationRequest.create();
+        // Location Accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the update interval to 5 seconds
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        // Set the fastest update interval to 1 second
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
         // TODO
         // Checks if gps is enabled, kicks out message to turn on if not.
@@ -531,26 +650,47 @@ public class MainActivity extends AppCompatActivity
         if (servicesConnected()) {
             // Disables the get directions from google maps icons (this would open the Maps app)
             //mMap.getUiSettings().setMapToolbarEnabled(false);
-            // Create the LocationRequest object
-            mLocationRequest = LocationRequest.create();
-            // Location Accuracy
-            mLocationRequest.setPriority(
-                    LocationRequest.PRIORITY_HIGH_ACCURACY);
-            // LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-            // Set the update interval to 5 seconds
-            mLocationRequest.setInterval(UPDATE_INTERVAL);
-            // Set the fastest update interval to 1 second
-            mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
             // Open the shared preferences
             mPrefs = getSharedPreferences("SharedPreferences",
                     Context.MODE_PRIVATE);
             // Get a SharedPreferences editor
             mEditor = mPrefs.edit();
-	        /*
-	         * Create a new location client, using the enclosing class to
-	         * handle callbacks.
-	         */
+
+            // Initialize the location client
+            mFusedLocationClient = LocationServices
+                    .getFusedLocationProviderClient(this);
+
+            // Is called every 20 seconds or so while location updates are requested
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    // Updates the current location and position
+                    mCurrentLocation = locationResult.getLastLocation();
+                    double tmpLat = mCurrentLocation.getLatitude();
+                    double tmpLng = mCurrentLocation.getLongitude();
+                    String curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
+                    mCurrentPosition = new LatLng(tmpLat, tmpLng);
+                    //TODO Add a setting to enable or disable camera tracking of current position.
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 15));
+                    onLocationChanged(mCurrentLocation);
+                    // Performs a search on that location
+                    mServer.performSearch(curLatLng, true);
+                    mStart = mCurrentPosition;
+                }
+            };
+
+
+            // Access stored location if exists
+            double lastLocationLat = Double.longBitsToDouble(mPrefs.getLong("current_lat", Double.doubleToLongBits(0.0d)));
+            double lastLocationLon = Double.longBitsToDouble(mPrefs.getLong("current_lon", Double.doubleToLongBits(0.0d)));
+            // If a stored location is found, set that as the application default
+            if (lastLocationLat != 0.0d || lastLocationLon != 0.0d) {
+                mCurrentLocation = new Location("");
+                mCurrentLocation.setLatitude(lastLocationLat);
+                mCurrentLocation.setLongitude(lastLocationLon);
+                mCurrentPosition = new LatLng(lastLocationLat, lastLocationLon);
+            }
 
             // Start with updates turned off
             mUpdatesRequested = false;
@@ -582,7 +722,7 @@ public class MainActivity extends AppCompatActivity
 
     // Receiver for address search result
     class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
+        private AddressResultReceiver(Handler handler) {
             super(handler);
         }
 
@@ -593,6 +733,7 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        assert address != null;
                         // Get lat and long of searched address
                         double latitude = address.getLatitude();
                         double longitude = address.getLongitude();
@@ -618,13 +759,12 @@ public class MainActivity extends AppCompatActivity
                         mServer.performSearch(searchTerm, true);
                     }
                 });
-            }
-            else {
+            } else {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "Location not found.");
-                        Toast.makeText(MainActivity.this, R.string.location_not_found, Toast.LENGTH_SHORT);
+                        Toast.makeText(MainActivity.this, R.string.location_not_found, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -632,53 +772,104 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRoutingFailure() {
-        // The Routing request failed
-    }
-
-    @Override
     public void onRoutingStart() {
         // The Routing Request starts
     }
 
-    @Override
-    public void onRoutingSuccess(PolylineOptions mPolyOptions, Route route) {
-        //removes polyline on update to create new one
-        if (poly1 != null) {
-            poly1.remove();
+    /**
+     * Checks for location permissions, then for location services being enabled on the user device.
+     * Attaches a given OnSuccessListener to a getLastLocation() call on the Location Client.
+     * After the last known location is found, the success listener is executed.
+     *
+     * This method is intended to centralize getLastLocation calls, and add permission and service
+     * checks easily and with minimal code repetition across the Activity.
+     *
+     * Warning: getLastLocation can return a null location if called soon after
+     * location services are turned on.
+     *
+     * For a guarenteed location, call getSingleLocation() and pass a callback function.
+     *
+     * @param onSuccessListener the code to execute with the location when found
+     */
+    private void getLastLocation(OnSuccessListener<Location> onSuccessListener) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Ask for permissions
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
-        if (poly2 != null) {
-            poly2.remove();
+        // Check that location settings are enabled, if not then prompt
+        checkLocationSettings();
+        // Retrieve last location and attach the given success listener to the result.
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(onSuccessListener);
+    }
+
+    /**
+     * Retrieves a single non-null location and attaches a given callback to that location.
+     * Use this when a single non-null location is needed, or when location services
+     * have just started (i.e. just after a settings request).
+     *
+     * @param locationCallback the code to execute when a non-null location is found
+     */
+    private void getSingleLocation(LocationCallback locationCallback) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Ask for permissions
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
-        PolylineOptions polyline_outline = new PolylineOptions();
-        polyline_outline.color(Color.rgb(50, 15, 255)); //dark blue
-        polyline_outline.width(20);
-        polyline_outline.addAll(mPolyOptions.getPoints());
-        poly1 = mMap.addPolyline(polyline_outline);
+        // Check that location settings are enabled, if not then prompt
+        checkLocationSettings();
+        mFusedLocationClient.requestLocationUpdates(mSingleLocationRequest,
+                locationCallback,
+                null);
 
-        PolylineOptions polyline = new PolylineOptions();
-        polyline.color(Color.rgb(99, 125, 255)); //light blue
-        polyline.width(10);
-        polyline.addAll(mPolyOptions.getPoints());
-        poly2 = mMap.addPolyline(polyline);
+    }
 
-        // Start marker
-        //MarkerOptions options = new MarkerOptions();
-	  /*options.position(mStart);
-	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-	  mMap.addMarker(options);
-	*/
-        // End marker
-	  /*options = new MarkerOptions();
-	  options.position(mEnd);
-	  options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
-	  mMap.addMarker(options);
-	*/
+
+    /**
+     * Checks for location permissions, then for location services being enabled on the user device.
+     * Starts a request for location updates based on the request interval defined in mLocationRequest.
+     * Executes the code specified in mLocationCallback each time the location is updated.
+     *
+     * This method is intended to centralize the enabling of regular location updates.
+     */
+    private void startLocationUpdates() {
+        //TODO When options menu is finished, add a toggle for this feature.
+        // Check Location permissions
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Ask for permissions
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        }
+        // Check location services setting on device
+        checkLocationSettings();
+        // Create callback using the request intervals
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null);
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     @Override
     protected void onPause() {
         // Save the current setting for updates
+        if (mFusedLocationClient != null) {
+            stopLocationUpdates();
+        }
         if (mEditor != null) {
             mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
             mEditor.commit();
@@ -711,8 +902,12 @@ public class MainActivity extends AppCompatActivity
         if (mPrefs != null) {
             if (mPrefs.contains("KEY_UPDATES_ON")) {
                 mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
-
-                // Otherwise, turn off location updates
+                // Updates are already disabled on pause, turn them back on if requested.
+                if (mUpdatesRequested) {
+                    if (mFusedLocationClient != null) {
+                        startLocationUpdates();
+                    }
+                }
             } else {
                 if (mEditor != null) {
                     mEditor.putBoolean("KEY_UPDATES_ON", false);
@@ -738,6 +933,13 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
+    /**
+     * Called each time the current location is updated.
+     * Saves the current location to shared prefs for offline location defaults.
+     * Displays a message stating that the location has changed.
+     *
+     * @param location A valid new Location to inform the app about
+     */
     @Override
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
@@ -747,9 +949,17 @@ public class MainActivity extends AppCompatActivity
                     Double.toString(location.getLongitude());
             Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
+
+            if (mEditor != null) {
+                // Convert the latitude and longitude into raw long bits for safe storage in
+                // shared preferences, remember to turn back into a double when read
+                Log.d(TAG, "Saving location");
+                mEditor.putLong("current_lat", Double.doubleToRawLongBits(mCurrentLocation.getLatitude()));
+                mEditor.putLong("current_lon", Double.doubleToRawLongBits(mCurrentLocation.getLongitude()));
+                mEditor.commit();
+            }
         }
     }
-
 
 
     /*
@@ -767,16 +977,17 @@ public class MainActivity extends AppCompatActivity
         if (!mInProgress) {
             // Indicate that a request is in progress
             mInProgress = true;
+            
             // Request a connection to Location Services
             // mActivityRecognitionClient.connect();
             //
         } else {
-           /*
-            * A request is already underway. You can handle
-            * this situation by disconnecting the client,
-            * re-setting the flag, and then re-trying the
-            * request.
-            */
+            /*
+             * A request is already underway. You can handle
+             * this situation by disconnecting the client,
+             * re-setting the flag, and then re-trying the
+             * request.
+             */
 
             // mActivityRecognitionClient.disconnect();
             mInProgress = false;
@@ -823,20 +1034,83 @@ public class MainActivity extends AppCompatActivity
                             .addOnConnectionFailedListener(this)
                             .build();
                     mGoogleApiClient.connect();
+                    if (ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(this,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Prompt for permissions
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                    }
                     mMap.setMyLocationEnabled(true);
                 } else {
-                    // TODO something
+                    // In case they would like to change their mind about permissions
+                    mMap.setMyLocationEnabled(true);
                 }
             default:
                 break;
         }
     }
 
+    /**
+     * Checks device location service settings. If disabled, prompts the user to enable them
+     * with a dialog box.
+     *
+     * In the case that Location services are unavailable for other reasons, a prompt is not created.
+     */
+    private void checkLocationSettings() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        builder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this)
+                .checkLocationSettings(builder.build())
+                .addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+                        try {
+                            LocationSettingsResponse response = task.getResult(ApiException.class);
+                            // Location settings are satisfied, no need to display the dialogue
+                        } catch (ApiException exception) {
+                            switch (exception.getStatusCode()) {
+                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                    // Location settings are not satisfied, but could be fixed
+                                    try {
+                                        // First make the exception resolvable
+                                        ResolvableApiException resolvable =
+                                                (ResolvableApiException) exception;
+                                        // Show the dialogue
+                                        //resolvable.startResolutionForResult(MainActivity.this,
+                                        //        RESOLUTION_REQUIRED);
+                                        startIntentSenderForResult(resolvable.getResolution().getIntentSender(),
+                                                LOCATION_SETTINGS_REQUEST,
+                                                null, 0, 0, 0, null);
+                                    } catch (IntentSender.SendIntentException | ClassCastException e) {
+                                        // Ignorable error
+                                    }
+                                    break;
+                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                    // Location settings aren't satisfied, but there's no way
+                                    // to change the settings
+                                    break;
+                            }
+                        }
+                    }
+                });
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
+        if (mCurrentPosition == null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCurrentPosition, 13));
+        }
+
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.setInfoWindowAdapter(new BathroomInfoWindow(this));
 
@@ -860,6 +1134,7 @@ public class MainActivity extends AppCompatActivity
         loadBathrooms(results);
     }
 
+    //TODO Add Javadoc
     private void loadBathrooms(List<Bathroom> results) {
         numLocations = results.size();
         locations = new LatLng[numLocations];
@@ -1027,10 +1302,12 @@ public class MainActivity extends AppCompatActivity
                         launchTextDirections();
                     }
                 });
-
-                Routing routing = new Routing(Routing.TravelMode.WALKING);
-                routing.registerListener(this);
-                routing.execute(mStart, mEnd);
+                Routing routing = new Routing.Builder()
+                        .travelMode(Routing.TravelMode.WALKING)
+                        .withListener(this)
+                        .waypoints(mStart, mEnd)
+                        .build();
+                routing.execute();
                 initial = false;
             } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
@@ -1043,13 +1320,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private List loadSavedBathrooms() {
+    //TODO Add Javadoc
+    private List<BathroomEntity> loadSavedBathrooms() {
         DaoSession daoSession = RefugeRestroomApplication.getInstance().getDaoSession();
         BathroomEntityDao leaseDao = daoSession.getBathroomEntityDao();
         // Loads the last 150 bathrooms added to the database
-        List restroomsList = leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
-        //List restroomsList = leaseDao.loadAll();
-        return restroomsList;
+        return leaseDao.queryBuilder().orderDesc(BathroomEntityDao.Properties.Timestamp).limit(150).list();
     }
 
     @Override
@@ -1074,24 +1350,29 @@ public class MainActivity extends AppCompatActivity
             setToolbarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
 
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(mStart, mEnd)
+                    .build();
+            routing.execute();
+        }
+        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
+        /*
+        else if (mLastLocation != null) {
+            mEnd = marker.getPosition();
+            setActionBarTitle(marker.getTitle());
+
+            double myLat = mLastLocation.getLatitude();
+            double myLng = mLastLocation.getLongitude();
+            mStart = new LatLng(myLat,myLng);
+            mLocationTitle = marker.getTitle();
+
             Routing routing = new Routing(Routing.TravelMode.WALKING);
             routing.registerListener(this);
             routing.execute(mStart, mEnd);
         }
-        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
-//        else if (mLastLocation != null) {
-//            mEnd = marker.getPosition();
-//            setActionBarTitle(marker.getTitle());
-//
-//            double myLat = mLastLocation.getLatitude();
-//            double myLng = mLastLocation.getLongitude();
-//            mStart = new LatLng(myLat,myLng);
-//            mLocationTitle = marker.getTitle();
-//
-//            Routing routing = new Routing(Routing.TravelMode.WALKING);
-//            routing.registerListener(this);
-//            routing.execute(mStart, mEnd);
-//        }
+        */
     }
 
     @Override
@@ -1117,6 +1398,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    //TODO Add Javadoc
     private boolean launchTextDirections() {
         Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
         //passes in current location to TextDirectionsActivity
@@ -1152,7 +1434,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
         String title = null;
         String fragmentTitle = null;
@@ -1161,33 +1442,38 @@ public class MainActivity extends AppCompatActivity
             title = getString(R.string.map_title_section);
             fragment = new MapFragment();
             fragmentTitle = "maps";
-            mFab.setVisibility(View.VISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
             title = getString(R.string.saved_bathrooms);
-            List bathroomsList = loadSavedBathrooms();
+            List<BathroomEntity> bathroomsList = loadSavedBathrooms();
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
             List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
             loadBathrooms(bathrooms);
-            mFab.setVisibility(View.VISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
-            fragment = new AddBathroomFragment();
             fragmentTitle = "addBathroom";
-            mFab.setVisibility(View.INVISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_feedback) {
             title = getString(R.string.feedback_title_section);
             fragment = new FeedbackFormFragment();
             fragmentTitle = "feedback";
-            mFab.setVisibility(View.INVISIBLE);
+            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         }
 
         if (fragment != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
+                    .addToBackStack(fragmentTitle)
+                    .commit();
+            setToolbarTitle(title);
+        } else {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, addBathroomFragment)
                     .addToBackStack(fragmentTitle)
                     .commit();
             setToolbarTitle(title);
