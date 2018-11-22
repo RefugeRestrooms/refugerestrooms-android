@@ -1445,6 +1445,7 @@ public class MainActivity extends AppCompatActivity
             mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_bathrooms) {
+            Log.d("RefugeRestrooms", "Nav bathrooms");
             title = getString(R.string.saved_bathrooms);
             List<BathroomEntity> bathroomsList = loadSavedBathrooms();
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
@@ -1454,6 +1455,7 @@ public class MainActivity extends AppCompatActivity
             bottomSheet.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
+            fragment = addBathroomFragment;
             fragmentTitle = "addBathroom";
             mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
@@ -1468,12 +1470,6 @@ public class MainActivity extends AppCompatActivity
         if (fragment != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
-                    .addToBackStack(fragmentTitle)
-                    .commit();
-            setToolbarTitle(title);
-        } else {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, addBathroomFragment)
                     .addToBackStack(fragmentTitle)
                     .commit();
             setToolbarTitle(title);
