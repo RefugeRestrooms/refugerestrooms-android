@@ -39,6 +39,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
+*release-key.keystore
 
 # External tool builders
 .externalToolBuilders/
