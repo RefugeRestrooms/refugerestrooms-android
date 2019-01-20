@@ -65,10 +65,12 @@ public class AddBathroomClient extends WebViewClient {
 
         // Pre-loading the webview requires using the cache for now.
         // Check for an internet connection so the website won't load without it.
-        if (!hasInternetConnection()) {
+
+        // Causing crashes presently, replace with a proper volley HTTP Request later
+        /*if (!hasInternetConnection()) {
             //TODO Add no connection detected page to display here.
             return false;
-        }
+        }*/
         
             
         // view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
