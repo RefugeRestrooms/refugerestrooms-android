@@ -1,6 +1,7 @@
 package org.refugerestrooms.views;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -797,8 +798,7 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Ask for permissions
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
         // Check that location settings are enabled, if not then prompt
@@ -820,8 +820,7 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Ask for permissions
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
         // Check that location settings are enabled, if not then prompt
@@ -1068,6 +1067,7 @@ public class MainActivity extends AppCompatActivity
         Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this)
                 .checkLocationSettings(builder.build())
                 .addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+                    @SuppressLint("RestrictedApi")
                     @Override
                     public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
                         try {
