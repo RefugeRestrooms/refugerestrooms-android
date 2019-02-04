@@ -1400,6 +1400,25 @@ public class MainActivity extends AppCompatActivity
 
     //TODO Add Javadoc
     private boolean launchTextDirections() {
+        // Temporary code to open a Google Maps Intent in lieu of a proper gmm API key setup.
+        if (mCurrentLocation != null && mEnd != null) {
+            // Walking mode to currently set end location from current GPS location.
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + mEnd.latitude + "," + mEnd.longitude + "&mode=w");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
+                return true;
+            } else {
+                Snackbar.make(mFab, "Google Maps not found.", Snackbar.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return false;
+
+        // Below is the original code.
+
+        /*
         Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
         //passes in current location to TextDirectionsActivity
         if (mCurrentLocation != null && mEnd != null) {
@@ -1426,6 +1445,7 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(mFab, R.string.no_nearby_locations, Snackbar.LENGTH_SHORT).show();
             return false;
         }
+        */
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
