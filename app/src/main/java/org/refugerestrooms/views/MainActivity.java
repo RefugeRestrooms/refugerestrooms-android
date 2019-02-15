@@ -3,11 +3,9 @@ package org.refugerestrooms.views;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -18,7 +16,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -37,11 +34,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -118,11 +113,8 @@ public class MainActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private LocationCallback mLocationCallback;
 
-    private boolean searchPerformed;
-
     private LatLng mCurrentPosition;
     private boolean mUpdatesRequested;
-    private boolean mInProgress;
     public boolean doNotDisplayDialog;
     protected LatLng mStart;
     protected LatLng mEnd;
@@ -130,7 +122,6 @@ public class MainActivity extends AppCompatActivity
     // temp lat/lng for setting up initial map
     private static final LatLng COFFMAN = new LatLng(44.972905, -93.235613);
 
-    private int numLocations;
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
@@ -169,14 +160,7 @@ public class MainActivity extends AppCompatActivity
     private Server mServer;
 
     // Adds bathrooms from json query
-    private double[] distances;
     private int closestLoc = -1;
-    private LatLng[] locations;
-    private String[] names;
-    // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
-    private int[] currentLoc;
-    // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
-    private int[] lastLoc;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
@@ -341,20 +325,7 @@ public class MainActivity extends AppCompatActivity
                         // String manipulation here to get in the right format for API call
                         curLatLng = "lat=" + Double.toString(tmpLat) + "&lng=" + Double.toString(tmpLng);
                         mServer.performSearch(curLatLng, true);
-                    } else {
-                        //TODO get nearby location when GPS is disabled --
-                        //TODO currently crashing, so it's been set to Minnesota
-                        // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                        // curLatLng = "lat=44.9727&lng=-93.2354";
-                        /*
-                        curLatLng = "Minneapolis, MN";
-                        mServer = new Server(this);
-                        mServer.performSearch(curLatLng, false); */
                     }
-
-                    /*******************************************************************
-                     * End of API call to Refuge Restrooms
-                     **************************************************************/
                 }
             };
             getLastLocation(onSuccessListener);
@@ -391,7 +362,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public Dialog createDialog() {
+/*    public Dialog createDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View neverShow = inflater.inflate(R.layout.never_show, (ViewGroup) findViewById(android.R.id.content), false);
 
@@ -413,13 +384,15 @@ public class MainActivity extends AppCompatActivity
                 });
         // Create the AlertDialog object and return it
         return builder.create();
-    }
+    } */
 
+    /*
     private void doNotShowAgain() {
         // Persist shared preference to prevent dialog from showing again.
         // Log.d("MainActivity", "TODO: Persist shared preferences.");
-    }
+    } */
 
+    /*
     // Launches the detailed info view from InfoViewFragment
     private void launchDetails(Bathroom bathroom) {
         Bundle bundle = new Bundle();
@@ -431,7 +404,7 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack("infoView")
                 .commit();
         mFab.hide();
-    }
+    } */
 
     // Updates the bottom sheet with the latest selected item
     private void setBottomSheet(final Bathroom bathroom) {
@@ -440,9 +413,9 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         bottomSheet.setVisibility(View.VISIBLE);
-        TextView title = (TextView) findViewById(R.id.text_title);
-        TextView address = (TextView) findViewById(R.id.text_address);
-        TextView comments = (TextView) findViewById(R.id.text_comments);
+        TextView title = findViewById(R.id.text_title);
+        TextView address = findViewById(R.id.text_address);
+        TextView comments = findViewById(R.id.text_comments);
         title.setText(bathroom.getNameFormatted());
         address.setText(bathroom.getAddressFormatted());
         comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
@@ -501,7 +474,7 @@ public class MainActivity extends AppCompatActivity
      * Location Services fails.
      */
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         /*
          * Google Play services can resolve some errors it detects.
          * If the error has a resolution, try sending an Intent to
@@ -509,7 +482,6 @@ public class MainActivity extends AppCompatActivity
          * error.
          */
         // Turn off the request flag
-        mInProgress = false;
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
@@ -557,10 +529,10 @@ public class MainActivity extends AppCompatActivity
             mCurrentLocation = savedInstanceState.getParcelable(CURRENT_LOCATION_KEY);
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -571,17 +543,17 @@ public class MainActivity extends AppCompatActivity
 
         mServer = new Server(MainActivity.this);
 
-        mMapView = (MapView) findViewById(R.id.map);
+        mMapView = findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Create an instance of the bathroom fragment to pre-load the website into the cache.
@@ -625,6 +597,7 @@ public class MainActivity extends AppCompatActivity
                     Context.MODE_PRIVATE);
             // Get a SharedPreferences editor
             mEditor = mPrefs.edit();
+            mEditor.apply();
 
             // Initialize the location client
             mFusedLocationClient = LocationServices
@@ -758,7 +731,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     /**
      * Checks for location permissions, then for location services being enabled on the user device.
@@ -941,60 +913,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    /*
-     * Request activity recognition updates based on the current detection interval.
-     */
-    public void startUpdates() {
-        // Set the request type to START
-
-        // Check for Google Play services
-        if (!servicesConnected()) {
-            return;
-        }
-        // If a request is not already underway
-        if (!mInProgress) {
-            // Indicate that a request is in progress
-            mInProgress = true;
-        } else {
-            /*
-             * A request is already underway. You can handle
-             * this situation by disconnecting the client,
-             * re-setting the flag, and then re-trying the
-             * request.
-             */
-
-            mInProgress = false;
-            startUpdates();
-        }
-    }
-
-    public void stopUpdates() {
-        // Set the request type to STOP
-        /*
-         * Test for Google Play services after setting the request type.
-         * If Google Play services isn't present, the request can be
-         * restarted.
-         */
-        if (!servicesConnected()) {
-            return;
-        }
-        // If a request is not already underway
-        if (!mInProgress) {
-            // Indicate that a request is in progress
-            mInProgress = true;
-        } else {
-            /*
-             * A request is already underway. Can handle
-             * this situation by disconnecting the client,
-             * re-setting the flag, and then re-trying the
-             * request.
-             */
-        }
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_ACCESS_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -1035,14 +955,14 @@ public class MainActivity extends AppCompatActivity
                 .addLocationRequest(mLocationRequest);
         builder.setAlwaysShow(true);
 
-        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this)
+        LocationServices.getSettingsClient(this)
                 .checkLocationSettings(builder.build())
                 .addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
                     @SuppressLint("RestrictedApi")
                     @Override
                     public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
                         try {
-                            LocationSettingsResponse response = task.getResult(ApiException.class);
+                            task.getResult(ApiException.class);
                             // Location settings are satisfied, no need to display the dialogue
                         } catch (ApiException exception) {
                             switch (exception.getStatusCode()) {
@@ -1105,11 +1025,11 @@ public class MainActivity extends AppCompatActivity
 
     //TODO Add Javadoc
     private void loadBathrooms(List<Bathroom> results) {
+        int numLocations;
+
         numLocations = results.size();
-        locations = new LatLng[numLocations];
-        names = new String[numLocations];
-        currentLoc = new int[numLocations];
-        lastLoc = new int[numLocations];
+        LatLng[] locations = new LatLng[numLocations];
+        String[] names = new String[numLocations];
 
         for (int i = 0; i < numLocations; i++) {
             Bathroom bathroom = results.get(i);
@@ -1125,7 +1045,7 @@ public class MainActivity extends AppCompatActivity
             float hue = (isAccessible == 1) ? BitmapDescriptorFactory.HUE_AZURE : BitmapDescriptorFactory.HUE_RED;
 
             // Adds bathroom markers, blue for accessible, red for not
-            Marker marker = mMap.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(temp.latitude, temp.longitude))
                     .title(name)
                     .snippet(bathroom.getAddress() + "*" + isAccessible + isUnisex)
@@ -1230,7 +1150,7 @@ public class MainActivity extends AppCompatActivity
 
             // Defined before now
             // int closestLoc = -1;
-            distances = new double[numLocations];
+            double distances[] = new double[numLocations];
             // For loop to find the nearest bathroom
             for (int i = 0; i < numLocations; i++) {
                 // Gets i'th array locations latlng
@@ -1244,8 +1164,6 @@ public class MainActivity extends AppCompatActivity
                     closestLoc = i;
                 }
             }
-            currentLoc[closestLoc] = closestLoc;
-            // lastLoc[location_count] = closestLoc;
         }
         // Make sure mEnd location doesn't change
         if (mCurrentLocation != null && initial) {
@@ -1262,12 +1180,7 @@ public class MainActivity extends AppCompatActivity
                 });
                 initial = false;
             } else {
-                // Check to see if a bathroom wasn't found because of a search, or from gps, and
-                // display appropriate message
-                int textRes = searchPerformed
-                        ? R.string.no_search_locations_initial
-                        : R.string.no_nearby_locations_initial;
-                Snackbar.make(mFab, textRes, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mFab, R.string.no_search_locations_initial, Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -1305,7 +1218,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -1327,7 +1240,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //TODO Add Javadoc
-    private boolean launchNavigation() {
+    private void launchNavigation() {
         if (mCurrentLocation != null && mEnd != null) {
             // Walking mode to currently set end location from current GPS location.
             Uri gmmIntentUri = Uri.parse("google.navigation:q=" + mEnd.latitude + "," + mEnd.longitude + "&mode=w");
@@ -1335,7 +1248,6 @@ public class MainActivity extends AppCompatActivity
             mapIntent.setPackage("com.google.android.apps.maps");
             if (mapIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(mapIntent);
-                return true;
             } else {
                 Snackbar.make(mFab, "Google Maps App not found.", Snackbar.LENGTH_SHORT).show();
 
@@ -1345,15 +1257,14 @@ public class MainActivity extends AppCompatActivity
                         + "&destination=" + mEnd.latitude + "," + mEnd.longitude
                         + "&travelmode=walking");
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserIntentUri);
-                return false;
+                startActivity(browserIntent);
             }
         }
-        return false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -1400,7 +1311,7 @@ public class MainActivity extends AppCompatActivity
             setToolbarTitle(title);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
