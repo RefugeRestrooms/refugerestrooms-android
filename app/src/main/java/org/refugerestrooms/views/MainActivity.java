@@ -362,50 +362,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-/*    public Dialog createDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View neverShow = inflater.inflate(R.layout.never_show, (ViewGroup) findViewById(android.R.id.content), false);
-
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(neverShow)
-                .setTitle(R.string.location_settings_title)
-                .setMessage(R.string.location_instructions)
-                .setPositiveButton(R.string.location_settings, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton(R.string.location_skip, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        return builder.create();
-    } */
-
-    /*
-    private void doNotShowAgain() {
-        // Persist shared preference to prevent dialog from showing again.
-        // Log.d("MainActivity", "TODO: Persist shared preferences.");
-    } */
-
-    /*
-    // Launches the detailed info view from InfoViewFragment
-    private void launchDetails(Bathroom bathroom) {
-        Bundle bundle = new Bundle();
-        bundle.putString(InfoViewFragment.EXTRA_BATHROOM, bathroom.toJson());
-        InfoViewFragment infoView = new InfoViewFragment();
-        infoView.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, infoView)
-                .addToBackStack("infoView")
-                .commit();
-        mFab.hide();
-    } */
-
     // Updates the bottom sheet with the latest selected item
     private void setBottomSheet(final Bathroom bathroom) {
         if (bathroom == null) {
