@@ -1331,6 +1331,7 @@ public class MainActivity extends AppCompatActivity
                         + "&destination=" + mEnd.latitude + "," + mEnd.longitude
                         + "&travelmode=walking");
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserIntentUri);
+                startActivity(browserIntent);
                 return false;
             }
         }
