@@ -43,9 +43,9 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Search by address option -- need to translate address to lat/lng
   - [ ] Auto-complete search (google places api)
   - [ ] Have filter options for only returning accessible, unisex restrooms
-- [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
-	- [ ] Populate map with nearby pins like when gps is enabled
-	- [ ] Implement 'Search Here' button when scrolling to a different location on map like in google maps
+- [x] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
+	- [x] Populate map with nearby pins like when gps is enabled
+	- [x] Implement 'Search Here' button when scrolling to a different location on map like in google maps
 - [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
 - [x] Detailed info window
   - [ ] Allow users to rate and report bathrooms
@@ -58,18 +58,16 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
 - [ ] Style
   - [x] Style Feedback Form better
   - [x] Navigation drawer icons
-  - [ ] Style text directions section (directions.html)
 - [ ] Better add bathroom section, currently just a webview
   - [x] Style webview in the meantime
-  - [ ] Start webview on app startup, then just switch content views (currently reloads everytime)
+  - [x] Start webview on app startup, then just switch content views (currently reloads everytime)
   - [ ] Use current location option
 - [ ] Contact form without email client
-- [ ] Update text directions while on tab
 - [x] Actionbar activity depreciated
 - [ ] Add bathroom styling when no cellular data?
 - [ ] Add different locales in strings.xml file
 - [ ] Optimize for responsive layouts: tablet, landscape on mobile
-- [ ] Remove unnecessary permissions (accounts, contacts)
+- [x] Remove unnecessary permissions (accounts, contacts)
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
