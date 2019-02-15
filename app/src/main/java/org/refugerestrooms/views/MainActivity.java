@@ -42,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,7 +69,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -85,7 +85,6 @@ import org.refugerestrooms.models.Haversine;
 import org.refugerestrooms.servers.Server;
 import org.refugerestrooms.services.GeocodeAddressIntentService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,6 +196,8 @@ public class MainActivity extends AppCompatActivity
     private Fragment addBathroomFragment;
     private FragmentManager fragmentManager;
 
+    private Button mSearchHereButton;
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
@@ -266,6 +267,7 @@ public class MainActivity extends AppCompatActivity
                                 // Performs a search on that location
                                 mServer.performSearch(curLatLng, true);
                                 mStart = mCurrentPosition;
+                                mSearchHereButton.setVisibility(View.INVISIBLE);
                             }
                         };
                         // Request a single location for the callback
@@ -391,6 +393,7 @@ public class MainActivity extends AppCompatActivity
                             // Launch bathroom search for new position
                             mServer.performSearch(curLatLng, true);
                             mStart = mCurrentPosition;
+                            mSearchHereButton.setVisibility(View.INVISIBLE);
                         }
                     }
                 };
@@ -630,9 +633,6 @@ public class MainActivity extends AppCompatActivity
         // Checks if gps is enabled, kicks out message to turn on if not.
 
         if (servicesConnected()) {
-            // Disables the get directions from google maps icons (this would open the Maps app)
-            //mMap.getUiSettings().setMapToolbarEnabled(false);
-
             // Open the shared preferences
             mPrefs = getSharedPreferences("SharedPreferences",
                     Context.MODE_PRIVATE);
@@ -662,7 +662,6 @@ public class MainActivity extends AppCompatActivity
                 }
             };
 
-
             // Access stored location if exists
             double lastLocationLat = Double.longBitsToDouble(mPrefs.getLong("current_lat", Double.doubleToLongBits(0.0d)));
             double lastLocationLon = Double.longBitsToDouble(mPrefs.getLong("current_lon", Double.doubleToLongBits(0.0d)));
@@ -678,6 +677,26 @@ public class MainActivity extends AppCompatActivity
             mUpdatesRequested = false;
 
             setToolbarTitle("Refuge Restrooms");
+
+            mSearchHereButton = findViewById(R.id.search_here_button);
+            mSearchHereButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCurrentPosition = mMap.getCameraPosition().target;
+                    mCurrentLocation = new Location("");
+                    mCurrentLocation.setLatitude(mCurrentPosition.latitude);
+                    mCurrentLocation.setLongitude(mCurrentPosition.longitude);
+
+                    String curLatLng = "lat=" + Double.toString(mCurrentPosition.latitude) +
+                            "&lng=" + Double.toString(mCurrentPosition.longitude);
+
+                    onLocationChanged(mCurrentLocation);
+                    // Performs a search on that location
+                    mServer.performSearch(curLatLng, true);
+                    mStart = mCurrentPosition;
+                    mSearchHereButton.setVisibility(View.INVISIBLE);
+                }
+            });
         }
     }
 
@@ -881,6 +900,7 @@ public class MainActivity extends AppCompatActivity
                 if (mUpdatesRequested) {
                     if (mFusedLocationClient != null) {
                         startLocationUpdates();
+                        Snackbar.make(mFab, "Finding your current location...", Snackbar.LENGTH_SHORT);
                     }
                 }
             } else {
@@ -919,9 +939,7 @@ public class MainActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
         if (location != null) {
-            String msg = "Updated Location: " +
-                    Double.toString(location.getLatitude()) + "," +
-                    Double.toString(location.getLongitude());
+            String msg = "Loading new bathrooms...";
             Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
 
@@ -1197,6 +1215,19 @@ public class MainActivity extends AppCompatActivity
                     //launchDetails(bathroom);
                     setBottomSheet(bathroom);
                     expandBottomSheet();
+                }
+            }
+        });
+
+        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+                if (mCurrentPosition.latitude != 0.0d && mCurrentPosition.longitude != 0.0) {
+                    mSearchHereButton.setVisibility(View.VISIBLE);
+                } else {
+                    mCurrentPosition = mMap.getCameraPosition().target;
+                    mCurrentLocation.setLatitude(mCurrentPosition.latitude);
+                    mCurrentLocation.setLongitude(mCurrentPosition.longitude);
                 }
             }
         });

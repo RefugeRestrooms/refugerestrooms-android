@@ -35,10 +35,6 @@
             android:exported="false"/>
 
         <activity
-            android:name=".views.TextDirectionsActivity"
-            android:label="@string/title_directions"
-            android:parentActivityName=".views.MainActivity" />
-        <activity
             android:name=".views.MainActivity"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize"

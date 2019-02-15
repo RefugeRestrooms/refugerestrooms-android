@@ -48,6 +48,19 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <Button
+                android:id="@+id/search_here_button"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/search_here_button"
+                android:singleLine="true"
+                android:text="Search here.."
+                android:textAlignment="center"
+                android:visibility="invisible"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/bottom_info_sheet"
                 android:layout_width="match_parent"
