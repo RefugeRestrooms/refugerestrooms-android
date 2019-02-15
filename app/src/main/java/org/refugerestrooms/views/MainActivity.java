@@ -134,10 +134,6 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
-    public enum REQUEST_TYPE {START, STOP}
-
-    private REQUEST_TYPE mRequestType;
-
     // Global constants
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
@@ -152,10 +148,6 @@ public class MainActivity extends AppCompatActivity
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
-    // Update User's activity (Driving, biking, etc ...)
-    public static final int ACTIVITY_INTERVAL_SECONDS = 20;
-    public static final int ACTIVITY_INTERVAL_MILLISECONDS =
-            MILLISECONDS_PER_SECOND * ACTIVITY_INTERVAL_SECONDS;
     // Store the current activity recognition client
     //private ActivityRecognitionClient mActivityRecognitionClient;
 
@@ -172,10 +164,6 @@ public class MainActivity extends AppCompatActivity
     // Check for location settings
     public static final int LOCATION_SETTINGS_REQUEST = 10540;
 
-    public static final int RESOLUTION_REQUIRED = 10542;
-
-    private String mLocationTitle;
-
     private String query;
 
     private Server mServer;
@@ -189,7 +177,6 @@ public class MainActivity extends AppCompatActivity
     private int[] currentLoc;
     // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     private int[] lastLoc;
-    private int location_count;
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
@@ -960,7 +947,6 @@ public class MainActivity extends AppCompatActivity
      */
     public void startUpdates() {
         // Set the request type to START
-        mRequestType = REQUEST_TYPE.START;
 
         // Check for Google Play services
         if (!servicesConnected()) {
@@ -985,7 +971,6 @@ public class MainActivity extends AppCompatActivity
 
     public void stopUpdates() {
         // Set the request type to STOP
-        mRequestType = REQUEST_TYPE.STOP;
         /*
          * Test for Google Play services after setting the request type.
          * If Google Play services isn't present, the request can be
@@ -1260,14 +1245,13 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             currentLoc[closestLoc] = closestLoc;
-            lastLoc[location_count] = closestLoc;
+            // lastLoc[location_count] = closestLoc;
         }
         // Make sure mEnd location doesn't change
         if (mCurrentLocation != null && initial) {
             if (numLocations > 0) {
                 mEnd = locations[closestLoc];
                 setToolbarTitle(names[closestLoc]);
-                mLocationTitle = names[closestLoc];
                 final LatLng defaultLocation = new LatLng(mEnd.latitude, mEnd.longitude);
                 setBottomSheet(allBathroomsMap.get(defaultLocation));
                 mFab.setOnClickListener(new View.OnClickListener() {
@@ -1316,7 +1300,6 @@ public class MainActivity extends AppCompatActivity
         if (mCurrentLocation != null) {
             mEnd = marker.getPosition();
             setToolbarTitle(marker.getTitle());
-            mLocationTitle = marker.getTitle();
         }
     }
 
