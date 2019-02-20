@@ -46,10 +46,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.directions.route.Route;
-import com.directions.route.RouteException;
-import com.directions.route.Routing;
-import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -101,7 +97,6 @@ public class MainActivity extends AppCompatActivity
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
         LocationListener,
-        RoutingListener,
         Server.ServerListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -120,10 +115,11 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
     private boolean initial = true;
-    private boolean searchPerformed;
 
     private Location mCurrentLocation;
     private LocationCallback mLocationCallback;
+
+    private boolean searchPerformed;
 
     private LatLng mCurrentPosition;
     private boolean mUpdatesRequested;
@@ -183,9 +179,6 @@ public class MainActivity extends AppCompatActivity
 
     private String query;
 
-    private Polyline poly1;
-    private Polyline poly2;
-
     private Server mServer;
 
     // Adds bathrooms from json query
@@ -226,24 +219,6 @@ public class MainActivity extends AppCompatActivity
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
-    }
-
-    //TODO: Do something
-    @Override
-    public void onRoutingCancelled() {
-        // Nothing yet
-    }
-
-    //TODO: Do something
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> foo, int bar) {
-        // Nothing yet
-    }
-
-    //TODO: Do something
-    @Override
-    public void onRoutingFailure(RouteException e) {
-        // Nothing yet
     }
 
     /*
@@ -342,7 +317,13 @@ public class MainActivity extends AppCompatActivity
         //TODO break up this method a bit, new Fused version takes more lines of code
         if (servicesConnected()) {
             // Display the connection status
-            Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(mFab, R.string.connected, Snackbar.LENGTH_SHORT).show();
+                }
+            });
+
             // If already requested, mStart periodic updates
             // 3rd parameter just (this)?
             if (mUpdatesRequested) {
@@ -772,10 +753,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onRoutingStart() {
-        // The Routing Request starts
-    }
 
     /**
      * Checks for location permissions, then for location services being enabled on the user device.
@@ -830,7 +807,6 @@ public class MainActivity extends AppCompatActivity
                 null);
 
     }
-
 
     /**
      * Checks for location permissions, then for location services being enabled on the user device.
@@ -976,10 +952,6 @@ public class MainActivity extends AppCompatActivity
         if (!mInProgress) {
             // Indicate that a request is in progress
             mInProgress = true;
-            
-            // Request a connection to Location Services
-            // mActivityRecognitionClient.connect();
-            //
         } else {
             /*
              * A request is already underway. You can handle
@@ -988,7 +960,6 @@ public class MainActivity extends AppCompatActivity
              * request.
              */
 
-            // mActivityRecognitionClient.disconnect();
             mInProgress = false;
             startUpdates();
         }
@@ -1009,9 +980,6 @@ public class MainActivity extends AppCompatActivity
         if (!mInProgress) {
             // Indicate that a request is in progress
             mInProgress = true;
-            // Request a connection to Location Services
-            //   mActivityRecognitionClient.connect();
-            //
         } else {
             /*
              * A request is already underway. Can handle
@@ -1082,8 +1050,6 @@ public class MainActivity extends AppCompatActivity
                                         ResolvableApiException resolvable =
                                                 (ResolvableApiException) exception;
                                         // Show the dialogue
-                                        //resolvable.startResolutionForResult(MainActivity.this,
-                                        //        RESOLUTION_REQUIRED);
                                         startIntentSenderForResult(resolvable.getResolution().getIntentSender(),
                                                 LOCATION_SETTINGS_REQUEST,
                                                 null, 0, 0, 0, null);
@@ -1208,29 +1174,14 @@ public class MainActivity extends AppCompatActivity
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*
-                        Bathroom bathroom;
-                        // Get bathroom from hashmap using marker's location
-                        bathroom = allBathroomsMap.get(markerLatLng);
-                        if (bathroom != null) {
-                            launchDetails(bathroom);
-                        }
-                        */
-                        launchTextDirections();
+                        launchNavigation();
                     }
                 });
-                //mMap.getUiSettings().setMapToolbarEnabled(true);
+
                 if (mCurrentLocation != null) {
                     navigateToMarker(marker);
                 }
-                // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
-//                else {
-//                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-//                            mGoogleApiClient);
-//                    if (mLastLocation != null) {
-//                        navigateToMarker(marker);
-//                    }
-//                }
+
                 return true;
             }
         });
@@ -1291,23 +1242,9 @@ public class MainActivity extends AppCompatActivity
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*
-                        Bathroom bathroom;
-                        // Get bathroom from hashmap using marker's location
-                        bathroom = allBathroomsMap.get(defaultLocation);
-                        if (bathroom != null) {
-                            launchDetails(bathroom);
-                        }
-                        */
-                        launchTextDirections();
+                        launchNavigation();
                     }
                 });
-                Routing routing = new Routing.Builder()
-                        .travelMode(Routing.TravelMode.WALKING)
-                        .withListener(this)
-                        .waypoints(mStart, mEnd)
-                        .build();
-                routing.execute();
                 initial = false;
             } else {
                 // Check to see if a bathroom wasn't found because of a search, or from gps, and
@@ -1349,30 +1286,7 @@ public class MainActivity extends AppCompatActivity
             mEnd = marker.getPosition();
             setToolbarTitle(marker.getTitle());
             mLocationTitle = marker.getTitle();
-
-            Routing routing = new Routing.Builder()
-                    .travelMode(Routing.TravelMode.WALKING)
-                    .withListener(this)
-                    .waypoints(mStart, mEnd)
-                    .build();
-            routing.execute();
         }
-        // was causing java.lang.IllegalArgumentException: GoogleApiClient parameter is required.
-        /*
-        else if (mLastLocation != null) {
-            mEnd = marker.getPosition();
-            setActionBarTitle(marker.getTitle());
-
-            double myLat = mLastLocation.getLatitude();
-            double myLng = mLastLocation.getLongitude();
-            mStart = new LatLng(myLat,myLng);
-            mLocationTitle = marker.getTitle();
-
-            Routing routing = new Routing(Routing.TravelMode.WALKING);
-            routing.registerListener(this);
-            routing.execute(mStart, mEnd);
-        }
-        */
     }
 
     @Override
@@ -1399,33 +1313,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     //TODO Add Javadoc
-    private boolean launchTextDirections() {
-        Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
-        //passes in current location to TextDirectionsActivity
+    private boolean launchNavigation() {
         if (mCurrentLocation != null && mEnd != null) {
-            double tmpLat = mCurrentLocation.getLatitude();
-            double tmpLng = mCurrentLocation.getLongitude();
-            // string manipulation here to get in the right format for API call
-            String start = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
-            //LatLng object
-            tmpLat = mEnd.latitude;
-            tmpLng = mEnd.longitude;
-            String end = Double.toString(tmpLat) + " " + Double.toString(tmpLng);
+            // Walking mode to currently set end location from current GPS location.
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + mEnd.latitude + "," + mEnd.longitude + "&mode=w");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
+                return true;
+            } else {
+                Snackbar.make(mFab, "Google Maps App not found.", Snackbar.LENGTH_SHORT).show();
 
-            Bundle extras = new Bundle();
-            extras.putString("START_LOC", start);
-            extras.putString("END_LOC", end);
-            extras.putString("TITLE", mLocationTitle);
-            intent.putExtras(extras);
-            startActivity(intent);
-            return true;
-        } else if (mCurrentLocation == null) {
-            Snackbar.make(mFab, R.string.location_not_enabled, Snackbar.LENGTH_SHORT).show();
-            return false;
-        } else {
-            Snackbar.make(mFab, R.string.no_nearby_locations, Snackbar.LENGTH_SHORT).show();
-            return false;
+                // If Google Maps app can't be launched, instead launch the Android browser.
+                Uri browserIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=" +
+                        mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude()
+                        + "&destination=" + mEnd.latitude + "," + mEnd.longitude
+                        + "&travelmode=walking");
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserIntentUri);
+                startActivity(browserIntent);
+                return false;
+            }
         }
+        return false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -1453,6 +1363,8 @@ public class MainActivity extends AppCompatActivity
             loadBathrooms(bathrooms);
             mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
+            //Toast.makeText(this, "Loading recent bathrooms...", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mFab, "Loading recent bathrooms...", Snackbar.LENGTH_SHORT).show();
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = addBathroomFragment;
