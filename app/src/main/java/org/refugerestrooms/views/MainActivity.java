@@ -1228,7 +1228,8 @@ public class MainActivity extends AppCompatActivity
         String title = null;
         String fragmentTitle = null;
 
-        mSearchHereButton.setVisibility(View.INVISIBLE);
+        mSearchHereButton.setVisibility(View.GONE);
+        mFab.setVisibility(View.GONE);
 
         if (id == R.id.nav_map) {
             title = getString(R.string.map_title_section);
@@ -1251,13 +1252,11 @@ public class MainActivity extends AppCompatActivity
             title = getString(R.string.add_title_section);
             fragment = addBathroomFragment;
             fragmentTitle = "addBathroom";
-            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_feedback) {
             title = getString(R.string.feedback_title_section);
             fragment = new FeedbackFormFragment();
             fragmentTitle = "feedback";
-            mFab.show();
             bottomSheet.setVisibility(View.INVISIBLE);
         }
 
