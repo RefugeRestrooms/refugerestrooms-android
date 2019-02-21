@@ -65,4 +65,5 @@
     <string name="bathroom_details_address">3200 Chicago Ave\nMinneapolis, MN, US</string>
 
     <string name="map_api_key">AIzaSyBABBVsda23KF3TMrrbzYUqu6SClih5ZfA</string>
+    <string name="search_here">Search here..</string>
 </resources>
