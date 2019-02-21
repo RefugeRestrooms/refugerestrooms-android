@@ -34,7 +34,8 @@
         android:layout_marginLeft="3dp"
         android:layout_marginStart="3dp"
         android:layout_marginBottom="-24dp"
-        android:layout_marginTop="-16dp" />
+        android:layout_marginTop="-16dp"
+        android:contentDescription="@string/accessible" />
 
     <ImageView
         android:id="@+id/unisex"
@@ -45,6 +46,7 @@
         android:layout_toEndOf="@id/window_snippet"
         android:layout_below="@id/accessible"
         android:layout_marginLeft="3dp"
-        android:layout_marginStart="3dp" />
+        android:layout_marginStart="3dp"
+        android:contentDescription="@string/unisex" />
 
 </RelativeLayout>
