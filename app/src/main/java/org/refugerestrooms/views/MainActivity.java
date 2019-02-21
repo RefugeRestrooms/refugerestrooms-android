@@ -1228,6 +1228,8 @@ public class MainActivity extends AppCompatActivity
         String title = null;
         String fragmentTitle = null;
 
+        mSearchHereButton.setVisibility(View.INVISIBLE);
+
         if (id == R.id.nav_map) {
             title = getString(R.string.map_title_section);
             fragment = new MapFragment();
