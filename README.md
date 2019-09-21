@@ -39,35 +39,18 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - Searching with no GPS will move camera to first location found, and shows a toast saying locations were foun
 
 ## TODO
+- [ ] Better add bathroom section, currently just a webview
+  - [ ] Recreate as form in Android and api call to submit (to make more responsive)
+  - [ ] Allow current location option like in webapp
+- [x] Detailed info window
+  - [ ] Allow edit suggestions on restroom like in web app
+  - [ ] Allow users to rate and report bathrooms
+  - [ ] Allow users to leave comments on bathrooms like in webapp
+- [ ] Add translations / locales in strings.xml file (see github issue)
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
   - [ ] Auto-complete search (google places api)
   - [ ] Have filter options for only returning accessible, unisex restrooms
-- [x] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
-	- [x] Populate map with nearby pins like when gps is enabled
-	- [x] Implement 'Search Here' button when scrolling to a different location on map like in google maps
-- [ ] Add list view to Drawer menu like in the original app w\ BathroomSpecsViewUpdater, DetailViewActivity (files in older commits)
-- [x] Detailed info window
-  - [ ] Allow users to rate and report bathrooms
-  - [x] Google Maps button
-  - [x] Allow text to be highlighted/copied
-- [ ] Settings Menu
-  - [ ] Add option to turn off navigation so that the blue line doesn't appear on map
-  - [ ] Change colors of navigation line, map markers (accessible vs non-accessible)
-  - [ ] Select number of bathrooms to show 1-99 (separate settings for search, gps)
-- [ ] Style
-  - [x] Style Feedback Form better
-  - [x] Navigation drawer icons
-- [ ] Better add bathroom section, currently just a webview
-  - [x] Style webview in the meantime
-  - [x] Start webview on app startup, then just switch content views (currently reloads everytime)
-  - [ ] Use current location option
-- [ ] Contact form without email client
-- [x] Actionbar activity depreciated
-- [ ] Add bathroom styling when no cellular data?
-- [ ] Add different locales in strings.xml file
-- [ ] Optimize for responsive layouts: tablet, landscape on mobile
-- [x] Remove unnecessary permissions (accounts, contacts)
 
 ## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
