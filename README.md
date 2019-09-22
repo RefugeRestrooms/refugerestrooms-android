@@ -1,7 +1,7 @@
 # Refuge Restrooms for Android
 [![license: AGPL](https://img.shields.io/badge/license-AGPL-lightgrey.svg)](https://raw.githubusercontent.com/RefugeRestrooms/refugerestrooms-ios/master/LICENSE)
 ![platform: android](https://img.shields.io/badge/platform-android-lightgrey.svg)
-[![Travis CI Build Status](https://travis-ci.org/RefugeRestrooms/refugerestrooms-android.svg?branch=master)](https://travis-ci.org/RefugeRestrooms/refugerestrooms-android)
+[![Travis CI Build Status](https://travis-ci.com/RefugeRestrooms/refugerestrooms-android.svg?branch=master)](https://travis-ci.com/RefugeRestrooms/refugerestrooms-android)
 
 [![Play Store Badge](https://cloud.githubusercontent.com/assets/16610908/18124896/7be337b6-6f74-11e6-9814-79b9c2d53961.png)](https://play.google.com/store/apps/details?id=org.refugerestrooms)
 
