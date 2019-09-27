@@ -169,6 +169,8 @@ public class MainActivity extends AppCompatActivity
 
     private Button mSearchHereButton;
 
+    private Context mContext = this;
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
