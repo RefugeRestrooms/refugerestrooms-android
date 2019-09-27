@@ -69,7 +69,7 @@ public class InfoViewFragment extends android.support.v4.app.Fragment {
             TextView tv2 = (TextView) view.findViewById(R.id.text_address);
             tv2.setText(mBathroom.getAddressFormatted() + "\n");
             TextView tv3 = (TextView) view.findViewById(R.id.text_comments);
-            tv3.setText(Html.fromHtml(mBathroom.getCommentsFormatted()));
+            tv3.setText(Html.fromHtml(mBathroom.getCommentsFormatted(getActivity())));
             // Gets specs such as bathroom rating, accessibility, and unisex properties
             View specsView = view.findViewById(R.id.specs);
             BathroomSpecsViewUpdater.update(specsView, mBathroom, getActivity());
