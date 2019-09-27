@@ -856,7 +856,7 @@ public class MainActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
         if (location != null) {
-            String msg = "Loading new bathrooms...";
+            String msg = getString(R.string.loading_new_bathrooms);
             Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
 
