@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity
         TextView comments = findViewById(R.id.text_comments);
         title.setText(bathroom.getNameFormatted());
         address.setText(bathroom.getAddressFormatted());
-        comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
+        comments.setText(Html.fromHtml(bathroom.getCommentsFormatted(mContext)));
         View specsView = findViewById(R.id.specs);
         BathroomSpecsViewUpdater.update(specsView, bathroom, this);
 
