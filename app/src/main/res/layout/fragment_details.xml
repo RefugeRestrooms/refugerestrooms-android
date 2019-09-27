@@ -88,7 +88,7 @@
             android:textColor="@color/ColorComments"
             android:textIsSelectable="true"
             android:textSize="16sp"
-            tools:text="\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n\n" />
+            tools:text="@string/dir_comments_text" />
     </ScrollView>
 
 </RelativeLayout>
