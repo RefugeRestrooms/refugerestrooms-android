@@ -4,7 +4,7 @@
     <string name="location_settings_title">Improve location accuracy</string>
     <string name="location_settings">Settings</string>
     <string name="location_skip">skip</string>
-    <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
+    <string name="location_instructions">To enhance your Maps experience:  • Turn on GPS and mobile network location</string>
     <string name="never_show_again">Never show this again</string>
     <string name="location_not_found">Location not found</string>
 
@@ -13,15 +13,13 @@
     <string name="add_title_section">Add Bathroom</string>
     <string name="feedback_title_section">Feedback</string>
     <string name="title_directions">Directions</string>
-    <string name="email">refugerestroomsapp@gmail.com</string>
+    <string name="email" translatable="false">refugerestroomsapp@gmail.com</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="location_not_enabled">Location not enabled</string>
     <string name="no_nearby_locations">No nearby restrooms found</string>
     <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
     <string name="no_search_locations">No restrooms found in %1$s</string>
-    <string name="no_search_locations_initial">No restrooms found with Search</string>
     <string name="no_recent_locations">You don\'t have any recent restrooms</string>
     <string name="no_marker_selected">Select a map pin to view its info</string>
     <string name="action_directions">Text</string>
@@ -34,11 +32,9 @@
     <string name="add_activity_title">Add a Restroom</string>
     <string name="list_activity_title">Search Results</string>
     <string name="action_search">Search Address</string>
-    <string name="search_hint">Minneapolis, MN</string>
+    <string name="search_hint" translatable="false">Minneapolis, MN</string>
     <string name="restrooms_found">Restrooms found!</string>
     <string name="success_toast">Restroom successfully submitted</string>
-    <string name="fail_toast">There was an error submitting the restroom</string>
-    <string name="accessible">Accessible</string>
     <string name="unisex">Unisex</string>
     <string name="score">Score:  </string>
     <string name="unknown">No Ratings</string>
@@ -55,15 +51,36 @@
     <string name="add_bathroom_accessible">Accessible</string>
     <string name="add_bathroom_unisex">Unisex</string>
     <string name="add_bathroom_directions">Directions</string>
-    <string name="add_bathroom_direction_hint">(e.g.: third floor in the back, by the dressing rooms)</string>
     <string name="add_bathroom_comment">Comment</string>
     <string name="add_bathroom_comment_hint">(e.g.: you have to be a "paying customer," just act like you are browsing for a bit)</string>
     <string name="add_bathroom_save">Save Restroom</string>
 
     <string name="open_in_maps">Open in Google Maps</string>
-    <string name="bathroom_details_cafe">Modern Times Cafe</string>
-    <string name="bathroom_details_address">3200 Chicago Ave\nMinneapolis, MN, US</string>
+    <string name="bathroom_details_cafe" translatable="false">Modern Times Cafe</string>
+    <string name="bathroom_details_address">3200 Chicago Ave Minneapolis, MN, US</string>
 
-    <string name="map_api_key">AIzaSyBABBVsda23KF3TMrrbzYUqu6SClih5ZfA</string>
+    <string name="map_api_key" translatable="false">AIzaSyBABBVsda23KF3TMrrbzYUqu6SClih5ZfA</string>
     <string name="search_here">Search here..</string>
+    <string name="accessible">Accessible</string>
+    <string name="add_bathroom_direction_hint">(e.g.: third floor in the back, by the dressing rooms)</string>
+    <string name="fail_toast">There was an error submitting the restroom</string>
+    <string name="location_not_enabled">Location not enabled</string>
+    <string name="no_search_locations_initial">No restrooms found with Search</string>
+
+    <!-- Comments -->
+    <string name="comments_subject">Subject</string>
+    <string name="comments_hint">Bug&#8230;</string>
+    <string name="comments_message">Message</string>
+    <string name="comments_instructions">Write a detailed description here&#8230;</string>
+    <string name="send">Send</string>
+
+    <string name="loading_new_bathrooms">Loading new bathrooms&#8230;</string>
+    <string name="loading_recent_bathrooms">Loading recent bathrooms&#8230;</string>
+    <string name="percent_positive">POSITIVE</string>
+
+    <string name="dir_comments_text">"\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n"</string>
+    <string name="directions">Directions</string>
+    <string name="no_directions">No directions at this time.</string>
+    <string name="comments">Comments</string>
+    <string name="no_comments">No comments at this time.</string>
 </resources>
