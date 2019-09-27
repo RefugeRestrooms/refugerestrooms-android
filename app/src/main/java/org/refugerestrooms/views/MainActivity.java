@@ -1248,8 +1248,7 @@ public class MainActivity extends AppCompatActivity
             loadBathrooms(bathrooms);
             mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
-            //Toast.makeText(this, "Loading recent bathrooms...", Toast.LENGTH_SHORT).show();
-            Snackbar.make(mFab, "Loading recent bathrooms...", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mFab, getString(R.string.loading_recent_bathrooms), Snackbar.LENGTH_SHORT).show();
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = addBathroomFragment;
