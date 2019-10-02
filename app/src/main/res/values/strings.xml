@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Refuge Restrooms</string>
+    <string name="app_name" translatable="false">Refuge Restrooms</string>
 
     <string name="location_settings_title">Improve location accuracy</string>
     <string name="location_settings">Settings</string>
