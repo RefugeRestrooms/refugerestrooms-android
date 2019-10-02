@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Baños para Refugiados</string>
     <string name="about_button">Acerca</string>
     <string name="accessible">Accesible</string>
     <string name="action_directions">Texto</string>
