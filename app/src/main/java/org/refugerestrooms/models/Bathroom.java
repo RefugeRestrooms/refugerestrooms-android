@@ -1,10 +1,13 @@
 package org.refugerestrooms.models;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+
+import org.refugerestrooms.R;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -279,22 +282,22 @@ public class Bathroom {
         return getStringInBytes(address);
     }
 
-    public String getCommentsFormatted() {
+    public String getCommentsFormatted(Context context) {
         String text = "";
         String directions = getDirections();
         String comments = getComments();
 
-        text += "<br><b>Directions</b><br><br>";
+        text += "<br><b>" + context.getString(R.string.directions) + "</b><br><br>";
         if (!TextUtils.isEmpty(directions)) {
             text += directions + "<br><br>";
         } else {
-            text += "No directions at this time.<br><br>";
+            text += context.getString(R.string.no_directions) + "<br><br>";
         }
-        text += "<br><b>Comments</b><br><br>";
+        text += "<br><b>" + context.getString(R.string.comments) + "</b><br><br>";
         if (!TextUtils.isEmpty(comments)) {
             text += comments;
         } else {
-            text += "No comments at this time.<br><br>";
+            text += context.getString(R.string.no_comments) + "<br><br>";
         }
         text = getStringInBytes(text);
         return text;

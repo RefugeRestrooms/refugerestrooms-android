@@ -46,7 +46,7 @@ public final class BathroomSpecsViewUpdater {
 
     // Get bathroom's rating
     private static String getScoreDescription(Context context, int score) {
-        return (score < 0 ? context.getString(R.string.unknown) : "" + score * 100 + "% POSITIVE");
+        return (score < 0 ? context.getString(R.string.unknown) : "" + score * 100 + "% " + context.getString(R.string.percent_positive));
     }
 
     // Color the bathroom score appropriately.

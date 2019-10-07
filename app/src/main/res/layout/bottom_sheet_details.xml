@@ -67,5 +67,5 @@
         android:textSize="16sp"
         android:paddingBottom="12dp"
 
-        tools:text="\nDirections\n\nNo directions at this time.\n\n\nComments\n\nNo comments at this time.\n" />
+        tools:text="@string/dir_comments_text" />
 </RelativeLayout>

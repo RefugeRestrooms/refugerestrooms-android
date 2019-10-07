@@ -169,6 +169,8 @@ public class MainActivity extends AppCompatActivity
 
     private Button mSearchHereButton;
 
+    private Context mContext = this;
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
@@ -374,7 +376,7 @@ public class MainActivity extends AppCompatActivity
         TextView comments = findViewById(R.id.text_comments);
         title.setText(bathroom.getNameFormatted());
         address.setText(bathroom.getAddressFormatted());
-        comments.setText(Html.fromHtml(bathroom.getCommentsFormatted()));
+        comments.setText(Html.fromHtml(bathroom.getCommentsFormatted(mContext)));
         View specsView = findViewById(R.id.specs);
         BathroomSpecsViewUpdater.update(specsView, bathroom, this);
 
@@ -854,7 +856,7 @@ public class MainActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
         if (location != null) {
-            String msg = "Loading new bathrooms...";
+            String msg = getString(R.string.loading_new_bathrooms);
             Snackbar.make(mFab, msg, Snackbar.LENGTH_SHORT).show();
             mCurrentLocation = location;
 
@@ -1246,8 +1248,7 @@ public class MainActivity extends AppCompatActivity
             loadBathrooms(bathrooms);
             mFab.show();
             bottomSheet.setVisibility(View.VISIBLE);
-            //Toast.makeText(this, "Loading recent bathrooms...", Toast.LENGTH_SHORT).show();
-            Snackbar.make(mFab, "Loading recent bathrooms...", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mFab, getString(R.string.loading_recent_bathrooms), Snackbar.LENGTH_SHORT).show();
         } else if (id == R.id.nav_add) {
             title = getString(R.string.add_title_section);
             fragment = addBathroomFragment;

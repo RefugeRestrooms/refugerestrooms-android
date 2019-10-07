@@ -16,12 +16,12 @@
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
         android:paddingLeft="20dp"
-        android:text="Subject "
+        android:text="@string/comments_subject"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/editTextSubject"
-        android:hint="Bug.."
+        android:hint="@string/comments_hint"
         android:layout_margin="15dp"
         android:background="@drawable/back"
         android:padding="20dp"
@@ -37,12 +37,12 @@
         android:textColor="#8377AF"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Message"
+        android:text="@string/comments_message"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/editTextMessage"
-        android:hint="Write a detailed description here..."
+        android:hint="@string/comments_instructions"
         android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:background="@drawable/back"
@@ -62,6 +62,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text="Send" />
+        android:text="@string/send" />
 
 </LinearLayout>
