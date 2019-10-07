@@ -46,7 +46,8 @@ If you push code, please make sure it builds correctly. Feel free to use pull re
   - [ ] Allow edit suggestions on restroom like in web app
   - [ ] Allow users to rate and report bathrooms
   - [ ] Allow users to leave comments on bathrooms like in webapp
-- [ ] Add translations / locales in strings.xml file [#57](/../../issues/57)
+- [x] Add translations / locales in strings.xml file
+  - [ ] Add more languages
 - [x] Search bar
   - [ ] Search by address option -- need to translate address to lat/lng
   - [ ] Auto-complete search (google places api)
