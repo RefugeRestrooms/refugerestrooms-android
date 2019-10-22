@@ -15,11 +15,11 @@
     <string name="add_bathroom_direction_hint">(por ejemplo, tercer piso en la parte posterior, junto a los vestuarios)</string>
     <string name="add_bathroom_directions">Direcciones</string>
     <string name="add_bathroom_place">* Ubicación/Lugar/Nombre Comercial</string>
-    <string name="add_bathroom_save">Guardada Baño</string>
+    <string name="add_bathroom_save">Guarda Baño</string>
     <string name="add_bathroom_state">* Estado/Provincia</string>
     <string name="add_bathroom_title">Enviar un baño a nuestra base de datos</string>
     <string name="add_bathroom_unisex">Unisexo</string>
-    <string name="add_title_section">Añide Baño</string>
+    <string name="add_title_section">Añadir Baño</string>
     <string name="bathroom_details_address">3320 Avenida Chicago, Minneapolis, MN, EE UU</string>
     <string name="connected">Conectado</string>
     <string name="fail_toast">Se produjo un error al enviar el baño</string>
@@ -34,7 +34,8 @@
     <string name="map_title_section">Mapa</string>
     <string name="navigation_drawer_close">Cerrar el cajón de navegación</string>
     <string name="navigation_drawer_open">Abrir el cajón de navegación</string>
-    <string name="never_show_again">Nunca muestrar esto otra vez</string>
+    <string name="never_show_again">Nunca mostrar esto otra vez</string>
+
     <string name="no_marker_selected">Seleccione un pin del mapa para ver su información</string>
     <string name="no_nearby_locations">No se encontraron baños cercanos</string>
     <string name="no_nearby_locations_initial">No se encontraron baños cerca; Si conoces alguno, agrégalo!</string>
