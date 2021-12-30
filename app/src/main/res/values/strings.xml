@@ -11,6 +11,7 @@
     <string name="saved_bathrooms">Recent Bathrooms</string>
     <string name="map_title_section">Map</string>
     <string name="add_title_section">Add Bathroom</string>
+    <string name="edit_title_section">Edit Bathroom</string>
     <string name="feedback_title_section">Feedback</string>
     <string name="title_directions">Directions</string>
     <string name="email" translatable="false">refugerestroomsapp@gmail.com</string>
@@ -56,6 +57,7 @@
     <string name="add_bathroom_save">Save Restroom</string>
 
     <string name="open_in_maps">Open in Google Maps</string>
+    <string name="suggest_an_edit">Suggest an Edit</string>
     <string name="bathroom_details_cafe" translatable="false">Modern Times Cafe</string>
     <string name="bathroom_details_address">3200 Chicago Ave Minneapolis, MN, US</string>
 

@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
     // Create hashmap to store bathrooms (Key = LatLng, Value = Bathroom)
     private final Map<LatLng, Bathroom> allBathroomsMap = new HashMap<>();
 
-    private Fragment addBathroomFragment;
+    private AddBathroomFragment addBathroomFragment;
     private FragmentManager fragmentManager;
 
     private Button mSearchHereButton;
@@ -414,6 +414,22 @@ public class MainActivity extends AppCompatActivity
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
+            }
+        });
+
+        findViewById(R.id.button_edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSearchHereButton.setVisibility(View.GONE);
+                mFab.setVisibility(View.GONE);
+                bottomSheet.setVisibility(View.INVISIBLE);
+
+                addBathroomFragment.setEditId(bathroom.getmId().toString());
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, addBathroomFragment)
+                        .addToBackStack("editBathroom")
+                        .commit();
+                setToolbarTitle(getString(R.string.edit_title_section));
             }
         });
     }
@@ -1242,6 +1258,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_bathrooms) {
             Log.d("RefugeRestrooms", "Nav bathrooms");
             title = getString(R.string.saved_bathrooms);
+            fragment = new MapFragment();
+            fragmentTitle = "maps";
             List<BathroomEntity> bathroomsList = loadSavedBathrooms();
             DatabaseEntityConverter dataEntityConv = new DatabaseEntityConverter();
             List<Bathroom> bathrooms = dataEntityConv.convertBathroomEntity(bathroomsList);
@@ -1250,6 +1268,7 @@ public class MainActivity extends AppCompatActivity
             bottomSheet.setVisibility(View.VISIBLE);
             Snackbar.make(mFab, getString(R.string.loading_recent_bathrooms), Snackbar.LENGTH_SHORT).show();
         } else if (id == R.id.nav_add) {
+            addBathroomFragment.setEditId(null);
             title = getString(R.string.add_title_section);
             fragment = addBathroomFragment;
             fragmentTitle = "addBathroom";

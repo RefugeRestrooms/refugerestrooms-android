@@ -47,11 +47,24 @@
         android:id="@+id/button_maps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/open_in_maps"
-        android:textColor="@android:color/white"
-        android:background="@color/ColorPrimaryDark"
         android:layout_below="@+id/text_comments"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/ColorPrimaryDark"
+        android:text="@string/open_in_maps"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/button_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_maps"
+        android:layout_margin="8dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/ColorPrimaryDark"
+        android:text="@string/suggest_an_edit"
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/text_comments"
@@ -62,10 +75,11 @@
         android:layout_margin="8dp"
         android:background="@android:color/white"
         android:gravity="center_horizontal"
+
+        android:paddingBottom="12dp"
         android:textColor="@color/ColorComments"
         android:textIsSelectable="true"
         android:textSize="16sp"
-        android:paddingBottom="12dp"
-
         tools:text="@string/dir_comments_text" />
+
 </RelativeLayout>

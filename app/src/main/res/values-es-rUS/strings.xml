@@ -20,6 +20,7 @@
     <string name="add_bathroom_title">Enviar un baño a nuestra base de datos</string>
     <string name="add_bathroom_unisex">Unisexo</string>
     <string name="add_title_section">Añadir Baño</string>
+    <string name="edit_title_section">Editar Baño</string>
     <string name="bathroom_details_address">3320 Avenida Chicago, Minneapolis, MN, EE UU</string>
     <string name="connected">Conectado</string>
     <string name="fail_toast">Se produjo un error al enviar el baño</string>
@@ -43,6 +44,7 @@
     <string name="no_search_locations">No se encontraron baños en %1$s</string>
     <string name="no_search_locations_initial">"No se encontraron baños con búsqueda "</string>
     <string name="open_in_maps">Abrir en Google Maps</string>
+    <string name="suggest_an_edit">Sugerir una Edición</string>
     <string name="restrooms_found">Baños encontrados!</string>
     <string name="saved_bathrooms">Baños Recientes</string>
     <string name="score">Puntuación:</string>
