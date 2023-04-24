@@ -5,6 +5,7 @@ import android.content.Context;
  * Created by Refuge Restrooms on 7/14/2015.
  */
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ public class AddBathroomFragment extends Fragment {
     private WebView mWebView;
     private Bundle mWebViewBundle;
     private String editParams;
+    private Location mCurrentLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class AddBathroomFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_add_bathroom, container, false);
         mWebView = (WebView) rootView.findViewById(R.id.addBathroom);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new AddBathroomClient("https://www.refugerestrooms.org/restrooms/new?" + editParams));
+        mWebView.setWebViewClient(new AddBathroomClient("https://www.refugerestrooms.org/restrooms/new?" + editParams, getContext(), mWebView, mCurrentLocation));
 
         // If possible, restore the WebView state - otherwise load the new restroom page
         if (mWebViewBundle != null) {
@@ -65,5 +67,9 @@ public class AddBathroomFragment extends Fragment {
     public void setEditId(String editId) {
         this.editParams = editId != null ? "edit_id=" + editId + "&id=" + editId : "";
         mWebViewBundle = null;
+    }
+
+    public void setmCurrentLocation(Location location) {
+        this.mCurrentLocation = location;
     }
 }

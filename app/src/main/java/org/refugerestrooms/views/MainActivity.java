@@ -884,6 +884,8 @@ public class MainActivity extends AppCompatActivity
                 mEditor.putLong("current_lon", Double.doubleToRawLongBits(mCurrentLocation.getLongitude()));
                 mEditor.commit();
             }
+
+            addBathroomFragment.setmCurrentLocation(this.mCurrentLocation);
         }
     }
 
