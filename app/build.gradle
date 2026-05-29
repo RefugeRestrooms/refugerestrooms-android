@@ -26,8 +26,8 @@ android {
         applicationId "org.refugerestrooms"
         minSdk 21
         targetSdk 35
-        versionCode 22
-        versionName "1.9.0"
+        versionCode 23
+        versionName "1.9.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,7 +40,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def mapsApiKey = localProperties.getProperty('MAPS_API_KEY') ?: ""
+            resValue "string", "map_api_key", mapsApiKey
             signingConfig signingConfigs.release
         }
         debug {
