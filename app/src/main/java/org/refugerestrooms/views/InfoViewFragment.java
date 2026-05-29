@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 
-public class InfoViewFragment extends android.support.v4.app.Fragment {
+public class InfoViewFragment extends androidx.fragment.app.Fragment {
 
     public static final String EXTRA_BATHROOM = "bathroom";
     protected static final String TAG = InfoViewFragment.class.getSimpleName();

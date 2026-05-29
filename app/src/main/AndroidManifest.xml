@@ -28,7 +28,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/map_api_key" />
+            android:value="${MAPS_API_KEY}" />
 
         <service
             android:name=".services.GeocodeAddressIntentService"
@@ -36,6 +36,7 @@
 
         <activity
             android:name=".views.MainActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">

@@ -6,6 +6,7 @@ package org.refugerestrooms.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,7 +16,7 @@ import android.widget.EditText;
 
 import org.refugerestrooms.R;
 
-public class FeedbackFormFragment extends android.support.v4.app.Fragment {
+public class FeedbackFormFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
